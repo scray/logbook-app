@@ -12,3 +12,6 @@ spec:
     - name: chaincode
       port: 9999
       protocol: TCP
+    - name: ssh
+      port: 22
+      protocol: TCP
