@@ -11,6 +11,10 @@ pushDockerHub() {
     docker push  scrayorg/hl-fabric-external-invoice-example:$VERISON
 }
 
+build-local-chaincode() {
+    docker build -t  scrayorg/hl-fabric-external-invoice-example:$VERISON .
+}
+
 pushLocal() {
     docker build -t $REPO_URL/research/hl-fabric-external-invoice-example:$VERISON .
     docker push $REPO_URL/research/hl-fabric-external-invoice-example:$VERISON
@@ -32,6 +36,10 @@ fi
 
 while [ "$1" != "" ]; do
     case $1 in
+        --build-local) shift
+            build-local-chaincode
+            ;;
+        
         -l | --local )   shift
                                 REPO_URL=$1
                                 cleanUp
