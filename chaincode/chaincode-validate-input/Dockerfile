@@ -7,6 +7,8 @@ ARG ALPINE_VER=3.12
 
 FROM golang:${GO_VER}-alpine${ALPINE_VER}
 
+RUN apk add screen
+
 WORKDIR /go/src/github.com/hyperledger/fabric-samples/asset-transfer-basic/chaincode-external
 COPY . .
 
