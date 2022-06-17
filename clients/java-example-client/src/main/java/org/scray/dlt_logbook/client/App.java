@@ -11,7 +11,7 @@ public class App
     public static void main(String[] args)
         throws Exception
     {
-        String walletPath = "wallet";
+        String walletPath = "./clients/java-example-client/wallet";
 
         BlockchainOperations blockchainOperations = new BlockchainOperations("channel-t", "basic", "alice", walletPath);
 
