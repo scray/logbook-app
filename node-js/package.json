@@ -1,18 +1,17 @@
 {
-  "dependencies": {
-    "fabric-contract-api": "^2.2.3",
-    "fabric-shim": "^2.2.3"
-  },
-  "name": "chaincode",
+  "name": "mychaincode",
   "version": "1.0.0",
-  "description": "the basic chaincode of our work with Seeburger AG",
-  "main": "./release/index.js",
-  "scripts": {
-    "start": "fabric-chaincode-node server --chaincode-address '0.0.0.0:9999' --chaincode-id 'basic_1.0:ba34a009afad6425acc404bab1ab05fe237309c686a417dff31ab1615fa06dc8'"
+  "description": "My first exciting chaincode implemented in node.js",
+  "engines": {
+      "node": "^12.16.1",
+      "npm": "^6.4.1"
   },
-  "keywords": [
-    "chaincode"
-  ],
-  "author": "DevGrab (Dominik Stieberitz)",
-  "license": "ISC"
+  "main": "release/index.js",
+      "scripts": { "start" : "fabric-chaincode-node server --chaincode-address 0.0.0.0:9999 --chaincode-id basic_1.0:ba34a009afad6425acc404bab1ab05fe237309c686a417dff31ab1615fa06dc8" },
+  "engine-strict": true,
+  "engineStrict": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+      "fabric-shim": "2.4.1"
+  }
 }

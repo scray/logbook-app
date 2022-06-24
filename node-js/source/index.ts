@@ -1,9 +1,4 @@
-const shim = require('fabric-shim');
+import { FabCar } from './fabcar';
+export { FabCar } from './fabcar';
 
-const Chaincode = class {
-	async Init(stub : any) {
-		return shim.success(Buffer.from('Initialized Successfully!'));
-	}
-};
-
-shim.start(new Chaincode());
+export const contracts: any[] = [ FabCar ];
