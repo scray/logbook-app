@@ -1,18 +1,9 @@
-import { Context, Contract } from "fabric-contract-api";
+const shim = require('fabric-shim');
 
-export class AddChangesContract extends Contract {
+const Chaincode = class {
+	async Init(stub : any) {
+		return shim.success(Buffer.from('Initialized Successfully!'));
+	}
+};
 
-    constructor() {
-        super("AddChangesContract");
-    }
-
-    async instantiate(ctx : Context) {
-     
-    }
-
-    async setNewAssetValue(ctx : Context, newValue : number) {
-    
-    }
-}
-
-module.exports = AddChangesContract;
+shim.start(new Chaincode());

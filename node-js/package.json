@@ -8,7 +8,7 @@
   "description": "the basic chaincode of our work with Seeburger AG",
   "main": "./release/index.js",
   "scripts": {
-    "start": "fabric-chaincode-node start --peer.address 0.0.0.0:9999 --chaincode-id-name 'basic_1.0:ba34a009afad6425acc404bab1ab05fe237309c686a417dff31ab1615fa06dc8'"
+    "start": "fabric-chaincode-node server --chaincode-address '0.0.0.0:9999' --chaincode-id 'basic_1.0:ba34a009afad6425acc404bab1ab05fe237309c686a417dff31ab1615fa06dc8'"
   },
   "keywords": [
     "chaincode"

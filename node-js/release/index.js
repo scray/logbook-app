@@ -8,21 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddChangesContract = void 0;
-const fabric_contract_api_1 = require("fabric-contract-api");
-class AddChangesContract extends fabric_contract_api_1.Contract {
-    constructor() {
-        super("AddChangesContract");
-    }
-    instantiate(ctx) {
+const shim = require('fabric-shim');
+const Chaincode = class {
+    Init(stub) {
         return __awaiter(this, void 0, void 0, function* () {
+            return shim.success(Buffer.from('Initialized Successfully!'));
         });
     }
-    setNewAssetValue(ctx, newValue) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-}
-exports.AddChangesContract = AddChangesContract;
-module.exports = AddChangesContract;
+};
+shim.start(new Chaincode());
