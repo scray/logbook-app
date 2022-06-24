@@ -1,4 +1,4 @@
-package main.java.com.example.demo;
+package com.example.demo;
 
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import main.java.com.example.demo.Users;
-import main.java.com.example.demo.UserDAO;
-import main.java.com.example.demo.User;
+//import com.example.demo.Users;
+//import com.example.demo.UserDAO;
+//import com.example.demo.User;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -28,7 +28,7 @@ public class UserController {
 	}
 
 	@GetMapping(path = "/{id}", produces = "application/json")
-	public Employee getEmployee(@PathVariable int id) {
+	public User getEmployee(@PathVariable int id) {
 		return userDataAccess.getUser(id);
 	}
 	
@@ -40,8 +40,8 @@ public class UserController {
 	@GetMapping(path = "/names", produces = "application/json")
 	public String getEmployeesMails() {
 		StringBuilder s = new StringBuilder("");
-		for (int i = 0; i < userDataAccess.getEmployeeCount(); i++) {
-			s.append(userDataAccess.getEmployee.getName()).append;
+		for (int i = 0; i < userDataAccess.getUserCount(); i++) {
+			s.append(userDataAccess.getUser(i).getName());
 		}
 		return s.toString();
 	}
@@ -49,10 +49,10 @@ public class UserController {
 	// Create a POST method to add an employee to the list
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
 
-	public ResponseEntity<Object> addUser(@RequestBody Employee user) {
+	public ResponseEntity<Object> addUser(@RequestBody User user) {
 
 		// Creating an ID of an employee from the number of employees
-		Integer id = userDataAccess.getAllUsers().getUserList().size + 1;
+		Integer id = userDataAccess.getAllUsers().getUserList().size() + 1;
 		user.setId(id);
 
 		userDataAccess.addUser(user);	

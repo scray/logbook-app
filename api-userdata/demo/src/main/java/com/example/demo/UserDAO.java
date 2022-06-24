@@ -1,11 +1,6 @@
-package main.java.com.example.demo;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.example.demo;
 
 import org.springframework.stereotype.Repository;
-
-import com.example.demo.Employees;
 
 @Repository
 public class UserDAO {
