@@ -34,3 +34,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /chaincode/chaincode-validate-input/.vscode/
+
+#ignoring node modules which can be installed on each seperate system itself
+/node-js/node_modules
