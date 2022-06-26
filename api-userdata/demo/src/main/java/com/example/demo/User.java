@@ -5,6 +5,7 @@ public class User {
     private String name;
     private String surname;
     private boolean hasVisited;
+    private Positions positions;
 
     public User (int id, String name, String surname){
         this.id = id;
@@ -43,5 +44,9 @@ public class User {
 
     public void setHasVisited(boolean v){
         hasVisited = v;
+    }
+
+    public Positions getPosition(){
+        return positions;
     }
 }
