@@ -23,12 +23,12 @@ public class UserController {
 	private UserDAO userDataAccess;
 
     @GetMapping(path = "/", produces = "application/json")
-	public Users getEmployees() {
+	public Users getUserList() {
 		return userDataAccess.getAllUsers();
 	}
 
 	@GetMapping(path = "/{id}", produces = "application/json")
-	public User getEmployee(@PathVariable int id) {
+	public User getUser(@PathVariable int id) {
 		return userDataAccess.getUser(id);
 	}
 	
@@ -38,11 +38,18 @@ public class UserController {
 	}
 	
 	@GetMapping(path = "/names", produces = "application/json")
-	public String getEmployeesMails() {
+	public String getUserNames() {
 		StringBuilder s = new StringBuilder("");
 		for (int i = 0; i < userDataAccess.getUserCount(); i++) {
 			s.append(userDataAccess.getUser(i).getName());
 		}
+		return s.toString();
+	}
+
+	@GetMapping(path = "/{id}/positions", produces = "application/json")
+	public String getUserPositions(@PathVariable int id) {
+		StringBuilder s = new StringBuilder("");
+		s.append(userDataAccess.getUser(id).getPositions().getAllPositions());
 		return s.toString();
 	}
 
