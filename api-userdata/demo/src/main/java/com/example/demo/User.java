@@ -4,15 +4,13 @@ public class User {
     private int id;
     private String name;
     private String surname;
-    private boolean hasVisited;
-    private Positions positions;
+    private Travels travels;
 
     public User(int id, String name, String surname) {
         this.id = id;
         this.name = name;
         this.surname = surname;
-        hasVisited = false;
-        positions = new Positions();
+        travels = new Travels();
     }
 
     public int getId() {
@@ -35,15 +33,7 @@ public class User {
         surname = s;
     }
 
-    public boolean getHasVisited() {
-        return hasVisited;
-    }
-
-    public void setHasVisited(boolean v) {
-        hasVisited = v;
-    }
-
-    public Positions getPositions() {
-        return positions;
+    public Travels getTravels() {
+        return travels;
     }
 }

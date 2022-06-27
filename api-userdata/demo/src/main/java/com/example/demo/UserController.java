@@ -32,9 +32,24 @@ public class UserController {
 		return userDataAccess.getUser(id);
 	}
 	
-	@GetMapping(path = "/{id}/name", produces = "application/json")
-	public String getEmployeeMail(@PathVariable int id) {
-		return userDataAccess.getUser(id).getName();
+	@GetMapping(path = "/{id}/travels", produces = "application/json")
+	public String getAllUserTravels(@PathVariable int userID) {
+		return userDataAccess.getUser(userID).getTravels().getAllTravels().toString();
+	}
+
+	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
+	public String getUserTravel(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).toString();
+	}
+
+	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
+	public String getUserTravelStartPosition(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getFirstTravelPosition().toString();
+	}
+
+	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
+	public String getUserTravelEndPosition(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getLastTravelPosition().toString();
 	}
 	
 	@GetMapping(path = "/names", produces = "application/json")
@@ -45,13 +60,7 @@ public class UserController {
 		}
 		return s.toString();
 	}
-
-	@GetMapping(path = "/{id}/positions", produces = "application/json")
-	public String getUserPositions(@PathVariable int id) {
-		StringBuilder s = new StringBuilder("");
-		s.append(userDataAccess.getUser(id).getPositions().getAllPositions());
-		return s.toString();
-	}
+	
 
 	// Create a POST method to add an employee to the list
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
