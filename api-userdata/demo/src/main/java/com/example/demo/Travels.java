@@ -18,8 +18,11 @@ public class Travels {
     }
 
     public void addTravel(Travel t) {
-        travelList.add(t);
-    }
+		if (travelList == null) {
+			travelList = new ArrayList<>();
+		}
+		travelList.add(t);
+	}
 
     public List<Travel> getAllTravels() {
         return travelList;
@@ -30,9 +33,5 @@ public class Travels {
             return travelList.get(id);
         }
         return null;
-    }
-
-    public Travel getLastPosition(){
-        return travelList.get(travelList.size() -1);
     }
 }

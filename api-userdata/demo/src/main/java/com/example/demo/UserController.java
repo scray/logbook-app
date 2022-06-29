@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.net.URI;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,10 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-//import com.example.demo.Users;
-//import com.example.demo.UserDAO;
-//import com.example.demo.User;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -33,23 +30,23 @@ public class UserController {
 	}
 	
 	@GetMapping(path = "/{id}/travels", produces = "application/json")
-	public String getAllUserTravels(@PathVariable int userID) {
-		return userDataAccess.getUser(userID).getTravels().getAllTravels().toString();
+	public List<Travel> getAllUserTravels(@PathVariable int userID) {
+		return userDataAccess.getUser(userID).getTravels().getAllTravels();
 	}
 
 	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
-	public String getUserTravel(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).toString();
+	public Travel getUserTravel(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID);
 	}
 
-	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
-	public String getUserTravelStartPosition(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getFirstTravelPosition().toString();
+	@GetMapping(path = "/{userID}/travels/{travelID}/start", produces = "application/json")
+	public Position getUserTravelStartPosition(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getFirstTravelPosition();
 	}
 
-	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
-	public String getUserTravelEndPosition(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getLastTravelPosition().toString();
+	@GetMapping(path = "/{userID}/travels/{travelID}/end", produces = "application/json")
+	public Position getUserTravelEndPosition(@PathVariable int userID , @PathVariable int travelID) {
+		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getLastTravelPosition();
 	}
 	
 	@GetMapping(path = "/names", produces = "application/json")
@@ -61,7 +58,6 @@ public class UserController {
 		return s.toString();
 	}
 	
-
 	// Create a POST method to add an employee to the list
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
 
