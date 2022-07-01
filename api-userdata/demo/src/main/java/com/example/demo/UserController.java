@@ -29,7 +29,7 @@ public class UserController {
 		return userDataAccess.getUser(id);
 	}
 	
-	@GetMapping(path = "/{id}/travels", produces = "application/json")
+	@GetMapping(path = "/{userID}/travels/", produces = "application/json")
 	public List<Travel> getAllUserTravels(@PathVariable int userID) {
 		return userDataAccess.getUser(userID).getTravels().getAllTravels();
 	}
