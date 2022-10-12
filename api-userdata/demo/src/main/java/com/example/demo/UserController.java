@@ -17,60 +17,107 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class UserController {
 
 	@Autowired
-	private UserDAO userDataAccess;
+	//private UserDAO userDataAccess;
+	private BlockchainOperations blockchainOperations = new BlockchainOperations(
+			"channel-t",
+			"basic",
+			"alice",
+			"walletPath");
 
-    @GetMapping(path = "/", produces = "application/json")
-	public Users getUserList() {
-		return userDataAccess.getAllUsers();
+	@GetMapping(path = "/{method}/", produces = "application/json")
+	public String getData(@PathVariable String method) {
+		return blockchainOperations.read(method);
 	}
 
-	@GetMapping(path = "/{id}", produces = "application/json")
-	public User getUser(@PathVariable int id) {
-		return userDataAccess.getUser(id);
-	}
-	
-	@GetMapping(path = "/{userID}/travels/", produces = "application/json")
-	public List<Travel> getAllUserTravels(@PathVariable int userID) {
-		return userDataAccess.getUser(userID).getTravels().getAllTravels();
+	@GetMapping(path = "/add/travels/{ts}/", produces = "application/json")
+	public void addTravels(@PathVariable Travels ts) {
+		blockchainOperations.writeTravels(ts);
 	}
 
-	@GetMapping(path = "/{userID}/travels/{travelID}", produces = "application/json")
-	public Travel getUserTravel(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID);
+	@GetMapping(path = "/add/travel/{t}/", produces = "application/json")
+	public void addTravel(@PathVariable Travel t) {
+		blockchainOperations.writeTravel(t);
 	}
 
-	@GetMapping(path = "/{userID}/travels/{travelID}/start", produces = "application/json")
-	public Position getUserTravelStartPosition(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getFirstTravelPosition();
+	@GetMapping(path = "/add/position/{tID}/{p}", produces = "application/json")
+	public void addPosition(@PathVariable String tID, @PathVariable Position p) {
+		blockchainOperations.writePosition(tID, p);
 	}
 
-	@GetMapping(path = "/{userID}/travels/{travelID}/end", produces = "application/json")
-	public Position getUserTravelEndPosition(@PathVariable int userID , @PathVariable int travelID) {
-		return userDataAccess.getUser(userID).getTravels().getTravel(travelID).getLastTravelPosition();
-	}
-	
-	@GetMapping(path = "/names", produces = "application/json")
-	public String getUserNames() {
-		StringBuilder s = new StringBuilder("");
-		for (int i = 0; i < userDataAccess.getUserCount(); i++) {
-			s.append(userDataAccess.getUser(i).getName());
-		}
-		return s.toString();
-	}
-	
-	// Create a POST method to add an employee to the list
-	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
+	/*
+	 * READ METHODEN
+	 * 
+	 * @GetMapping(path = "/", produces = "application/json")
+	 * public Users getUserList() {
+	 * // return userDataAccess.getAllUsers();
+	 * }
+	 * 
+	 * @GetMapping(path = "/{id}", produces = "application/json")
+	 * public User getUser(@PathVariable int id) {
+	 * // return userDataAccess.getUser(id);
+	 * }
+	 * 
+	 * @GetMapping(path = "/{userID}/travels/", produces = "application/json")
+	 * public List<Travel> getAllUserTravels(@PathVariable int userID) {
+	 * // return userDataAccess.getUser(userID).getTravels().getAllTravels();
+	 * }
+	 * 
+	 * @GetMapping(path = "/{userID}/travels/{travelID}", produces =
+	 * "application/json")
+	 * public Travel getUserTravel(@PathVariable int userID, @PathVariable int
+	 * travelID) {
+	 * // return userDataAccess.getUser(userID).getTravels().getTravel(travelID);
+	 * }
+	 * 
+	 * @GetMapping(path = "/{userID}/travels/{travelID}/start", produces =
+	 * "application/json")
+	 * public Position getUserTravelStartPosition(@PathVariable int
+	 * userID, @PathVariable int travelID) {
+	 * // return
+	 * // userDataAccess.getUser(userID).getTravels().getTravel(travelID).
+	 * getFirstTravelPosition();
+	 * }
+	 * 
+	 * @GetMapping(path = "/{userID}/travels/{travelID}/end", produces =
+	 * "application/json")
+	 * public Position getUserTravelEndPosition(@PathVariable int
+	 * userID, @PathVariable int travelID) {
+	 * // return
+	 * // userDataAccess.getUser(userID).getTravels().getTravel(travelID).
+	 * getLastTravelPosition();
+	 * }
+	 * 
+	 * @GetMapping(path = "/names", produces = "application/json")
+	 * public String getUserNames() {
+	 * StringBuilder s = new StringBuilder("");
+	 * for (int i = 0; i < userDataAccess.getUserCount(); i++) {
+	 * s.append(userDataAccess.getUser(i).getName());
+	 * }
+	 * return s.toString();
+	 * }
+	 */
 
-	public ResponseEntity<Object> addUser(@RequestBody User user) {
-
-		// Creating an ID of an employee from the number of employees
-		Integer id = userDataAccess.getAllUsers().getUserList().size() + 1;
-		user.setId(id);
-
-		userDataAccess.addUser(user);	
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
-				.toUri();
-
-		return ResponseEntity.created(location).build();
-	}
+	/*
+	 * WRITE METHODEN
+	 * // Create a POST method to add an employee to the list
+	 * 
+	 * @PostMapping(path = "/", consumes = "application/json", produces =
+	 * "application/json")
+	 * 
+	 * public ResponseEntity<Object> addUser(@RequestBody User user) {
+	 * 
+	 * // Creating an ID of an employee from the number of employees
+	 * Integer id = userDataAccess.getAllUsers().getUserList().size() + 1;
+	 * user.setId(id);
+	 * 
+	 * userDataAccess.addUser(user);
+	 * URI location =
+	 * ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand
+	 * (user.getId())
+	 * .toUri();
+	 * 
+	 * return ResponseEntity.created(location).build();
+	 * 
+	 * }
+	 */
 }
