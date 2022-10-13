@@ -5,7 +5,8 @@ import Tour from "../../model/Tour";
 
 let tourlist: Tour[] = [
   {userId: "Guenther69", travelId: "travelid1",waypoints: [new Coordinates(100,100,1),new Coordinates(101,100,2),new Coordinates(102,100,3)]},
-  {userId: "Guenther69", travelId: "travelid1",waypoints: [new Coordinates(1,100,4),new Coordinates(2,100,5),new Coordinates(3,100,6)]}
+  {userId: "Guenther69", travelId: "travelid1",waypoints: [new Coordinates(1,100,4),new Coordinates(2,100,5),new Coordinates(3,100,6)]},
+  {userId: "Felix", travelId: "travelid1",waypoints: [new Coordinates(99,100,5),new Coordinates(98,100,40),new Coordinates(90,100,200)]}
 ]
 
 export default function Tourlist(){
