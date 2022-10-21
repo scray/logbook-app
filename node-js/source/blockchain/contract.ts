@@ -1,4 +1,6 @@
 import { Context, Contract } from 'fabric-contract-api';
+import { Logger } from '..';
+import { Prefix } from '../logger';
 import { Asset } from './asset';
 
 export class Contracts extends Contract {
@@ -10,7 +12,7 @@ export class Contracts extends Contract {
     public async Initialize(context: Context) {
         /* Set initialization paramters in this function and call it once the chaincode has been started. */
 
-        console.info("The ledger has been initialized.");
+        Logger.write(Prefix.NORMAL, "The ledger will be initialized.");
 
         let entry = new Asset();
         entry.userId = "user-0";
@@ -19,13 +21,12 @@ export class Contracts extends Contract {
 
         context.stub.putState("entry-0", Buffer.from(JSON.stringify(entry)));
 
-        console.info("Ledger has been put in final state.");
+        Logger.write(Prefix.SUCCESS, "Ledger has been put in final state.");
     }
 
     public async createEntry(context: Context, entryId: string, userId: string, travelId: string, positions: string) {
         /* Adding a new entry to the ledger with the given ID and details. */
-
-        console.info("Added entry on id " + entryId + " to the chain.");
+        Logger.write(Prefix.NORMAL, "Added entry on id " + entryId + " to the chain.");
 
         let entry = new Asset();
         entry.userId = userId;
@@ -38,14 +39,14 @@ export class Contracts extends Contract {
     public async getEntry(context: Context, entryId: string) {
         /* Requesting entry on a given id and return the valid entry or throw error */
 
-        console.info("Request entry with the id " + entryId + " from the blockchain.");
+        Logger.write(Prefix.NORMAL, "Request entry with the id " + entryId + " from the blockchain.");
 
         let bytes = await context.stub.getState(entryId);
 
         if (bytes.length <= 0)
             throw new Error("The required entry with id " + entryId + " is not available.");
         else
-            console.info("Entry with id " + entryId + " has been found.");
+            Logger.write(Prefix.SUCCESS, "Entry with id " + entryId + " has been found.");
 
         return bytes.toString();
     }
