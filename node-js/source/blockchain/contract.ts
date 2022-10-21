@@ -50,4 +50,9 @@ export class Contracts extends Contract {
 
         return bytes.toString();
     }
+
+    public async getAllEntries(context : Context)
+    {
+        /* TODO; */
+    }
 } 
