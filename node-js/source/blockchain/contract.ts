@@ -30,4 +30,4 @@ export class Contracts extends Contract {
 
         context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
     }
-}
+} 
