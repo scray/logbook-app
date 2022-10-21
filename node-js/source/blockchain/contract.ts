@@ -3,6 +3,10 @@ import { Asset } from './asset';
 
 export class Contracts extends Contract {
 
+    constructor() {
+        super("ContractsContract");
+    }
+
     public async Initialize(context: Context) {
         /* Set initialization paramters in this function and call it once the chaincode has been started. */
 
@@ -29,5 +33,20 @@ export class Contracts extends Contract {
         entry.positions = positions;
 
         context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
+    }
+
+    public async getEntry(context: Context, entryId: string) {
+        /* Requesting entry on a given id and return the valid entry or throw error */
+
+        console.info("Request entry with the id " + entryId + " from the blockchain.");
+
+        let bytes = await context.stub.getState(entryId);
+
+        if (bytes.length <= 0)
+            throw new Error("The required entry with id " + entryId + " is not available.");
+        else
+            console.info("Entry with id " + entryId + " has been found.");
+
+        return bytes.toString();
     }
 } 

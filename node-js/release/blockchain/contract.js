@@ -13,6 +13,9 @@ exports.Contracts = void 0;
 const fabric_contract_api_1 = require("fabric-contract-api");
 const asset_1 = require("./asset");
 class Contracts extends fabric_contract_api_1.Contract {
+    constructor() {
+        super("ContractsContract");
+    }
     Initialize(context) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Set initialization paramters in this function and call it once the chaincode has been started. */
@@ -34,6 +37,18 @@ class Contracts extends fabric_contract_api_1.Contract {
             entry.travelId = travelId;
             entry.positions = positions;
             context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
+        });
+    }
+    getEntry(context, entryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /* Requesting entry on a given id and return the valid entry or throw error */
+            console.info("Request entry with the id " + entryId + " from the blockchain.");
+            let bytes = yield context.stub.getState(entryId);
+            if (bytes.length <= 0)
+                throw new Error("The required entry with id " + entryId + " is not available.");
+            else
+                console.info("Entry with id " + entryId + " has been found.");
+            return bytes.toString();
         });
     }
 }
