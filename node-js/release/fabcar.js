@@ -165,5 +165,4 @@ class FabCar extends fabric_contract_api_1.Contract {
         });
     }
 }
-
 exports.FabCar = FabCar;

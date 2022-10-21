@@ -7,6 +7,7 @@ import { Car } from './car';
 
 export class FabCar extends Contract {
 
+
     public async initLedger(ctx: Context) {
         console.info('============= START : Initialize Ledger ===========');
         const cars: Car[] = [
