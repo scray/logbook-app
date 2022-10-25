@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "expo": "~45.0.0",
+    "expo-location": "~14.2.2",
     "expo-status-bar": "~1.3.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
+    "react-native-geocoding": "^0.5.0",
+    "react-native-geolocation-service": "^5.3.1",
     "react-native-maps": "0.30.2",
     "react-native-web": "0.17.7"
   },
