@@ -37,7 +37,7 @@ public class BlockchainOperations {
     }
 
     /* WRITE METHODEN */
-    public void writeTravels(Travels ts) {
+    public void writeTravels(String ts) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -48,13 +48,13 @@ public class BlockchainOperations {
 
             contract.submitTransaction("writeTravels_BLOCKCHAIN",
                     userName,
-                    ts.getAllTravels().toString());
+                    ts);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void writeTravel(Travel t) {
+    public void writeTravel(String t) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -65,13 +65,13 @@ public class BlockchainOperations {
 
             contract.submitTransaction("writeTravel_BLOCKCHAIN",
                     userName,
-                    t.toString());
+                    t);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void writePosition(String tID, Position p) {
+    public void writePosition(String tID, String p) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -83,7 +83,7 @@ public class BlockchainOperations {
             contract.submitTransaction("writePosition_BLOCKCHAIN",
             userName,
             tID,
-            p.toString());
+            p);
         } catch (Exception e) {
             e.printStackTrace();
         }

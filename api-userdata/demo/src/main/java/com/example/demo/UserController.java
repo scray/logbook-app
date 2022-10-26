@@ -5,43 +5,49 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectWriter; 
 
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
 
 	@Autowired
-	//private UserDAO userDataAccess;
+	// private UserDAO userDataAccess;
 	private BlockchainOperations blockchainOperations = new BlockchainOperations(
 			"channel-t",
 			"basic",
 			"alice",
 			"walletPath");
 
+	// READ Methoden
 	@GetMapping(path = "/{method}/", produces = "application/json")
 	public String getData(@PathVariable String method) {
 		return blockchainOperations.read(method);
 	}
 
-	@GetMapping(path = "/add/travels/{ts}/", produces = "application/json")
-	public void addTravels(@PathVariable Travels ts) {
-		blockchainOperations.writeTravels(ts);
+	// WRITE METHODEN
+
+	@PutMapping(path = "/add/travels/{ts}/")
+	public void addTravels(@PathVariable("ts") String ts, @RequestBody String travels) {
+		blockchainOperations.writeTravels(travels);
 	}
 
-	@GetMapping(path = "/add/travel/{t}/", produces = "application/json")
-	public void addTravel(@PathVariable Travel t) {
-		blockchainOperations.writeTravel(t);
+	@PutMapping(path = "/add/travel/{t}/")
+	public void addTravel(@PathVariable("t") String t, @RequestBody String travel) {
+		blockchainOperations.writeTravel(travel);
 	}
 
-	@GetMapping(path = "/add/position/{tID}/{p}", produces = "application/json")
-	public void addPosition(@PathVariable String tID, @PathVariable Position p) {
-		blockchainOperations.writePosition(tID, p);
+	@PutMapping(path = "/add/position/{tID}/{p}")
+	public void addPosition(@PathVariable String tID, @PathVariable String position) {
+		blockchainOperations.writePosition(tID, position);
 	}
 
 	/*
