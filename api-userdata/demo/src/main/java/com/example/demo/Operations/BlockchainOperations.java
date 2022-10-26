@@ -1,11 +1,4 @@
-/*
- * BlockchainWriter.java
- *
- * created at 2021-07-01 by st.obermeier <YOURMAILADDRESS>
- *
- * Copyright (c) SEEBURGER AG, Germany. All Rights Reserved.
- */
-package com.example.demo;
+package com.example.demo.Operations;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -24,6 +17,16 @@ public class BlockchainOperations {
     String userName = "";
     Gateway gateway = null;
 
+    // ------------------------------------ TEST METHOD (TO DELETE) ------------------------------------ //
+    public String readtest(int methode){
+        if (methode == 1){
+            return "Returned from" + this.getClass().toString();
+        } else {
+            return "Wrong method!";
+        }
+    }
+
+    // ------------------------------------ CONSTRUCTOR ------------------------------------ // 
     public BlockchainOperations(String channel, String smartContract, String userName, String walletPath) {
         super();
         this.channel = channel;
@@ -32,64 +35,26 @@ public class BlockchainOperations {
         this.userName = userName;
     }
 
+    // ------------------------------------ BUILD UP CONNECTION ------------------------------------ //
+    public Gateway connect(String userName)
+            throws Exception {
+        // Load a file system based wallet for managing identities.
+        Path walletPath = Paths.get(walletPathString);
+
+        Wallet wallet = Wallets.newFileSystemWallet(walletPath);
+
+        Path networkConfigPath = Paths.get(walletPathString + File.separator + "connection.yaml");
+        Gateway.Builder builder = Gateway.createBuilder();
+        builder.identity(wallet, userName).networkConfig(networkConfigPath).discovery(true);
+
+        return builder.connect();
+    }
+
     static {
         System.setProperty("org.hyperledger.fabric.sdk.service_discovery.as_localhost", "false");
     }
 
-    /* WRITE METHODEN */
-    public void writeTravels(String ts) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writeTravels_BLOCKCHAIN",
-                    userName,
-                    ts);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeTravel(String t) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writeTravel_BLOCKCHAIN",
-                    userName,
-                    t);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writePosition(String tID, String p) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writePosition_BLOCKCHAIN",
-            userName,
-            tID,
-            p);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /* READ METHODEN */
+    // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
     public String read(String methodName) {
         String data = "{}";
         try {
@@ -108,17 +73,55 @@ public class BlockchainOperations {
         return data;
     }
 
-    public Gateway connect(String userName)
-            throws Exception {
-        // Load a file system based wallet for managing identities.
-        Path walletPath = Paths.get(walletPathString);
+    // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
+    public void writeTours(String ts) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            // get the network and contract
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
 
-        Wallet wallet = Wallets.newFileSystemWallet(walletPath);
+            contract.submitTransaction("writeTravels_BLOCKCHAIN",
+                    userName,
+                    ts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        Path networkConfigPath = Paths.get(walletPathString + File.separator + "connection.yaml");
-        Gateway.Builder builder = Gateway.createBuilder();
-        builder.identity(wallet, userName).networkConfig(networkConfigPath).discovery(true);
+    public void writeTour(String t) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            // get the network and contract
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
 
-        return builder.connect();
+            contract.submitTransaction("writeTravel_BLOCKCHAIN",
+                    userName,
+                    t);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writePosition(String p) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            // get the network and contract
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            contract.submitTransaction("writePosition_BLOCKCHAIN",
+            userName,
+            p);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

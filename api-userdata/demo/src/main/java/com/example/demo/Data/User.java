@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Data;
 
 public class User {
     private int id;
