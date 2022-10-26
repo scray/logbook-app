@@ -1,24 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Tourlist from './components/tourlist/Tourlist';
-import TourStartButton from './components/tourManagement/TourStartButton';
+import {StatusBar} from 'expo-status-bar';
+import {StyleSheet, View} from 'react-native';
 import Overview from './pages/Overview';
-import Map from "./components/map/Map";
-
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-        <Overview/>
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <Overview/>
+            <StatusBar style="auto"/>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });

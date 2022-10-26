@@ -4,18 +4,18 @@ export default class Coordinates{
     timestamp: number;
 
 
-    public constructor(latitude: number, longitude: number , timestamp: number){
-        this.latitude = latitude;
+    public constructor(latitude: number, longitude: number, timestamp: number){
         this.longitude = longitude;
+        this.latitude = latitude;
         this.timestamp = timestamp;
     }
 
+    public getLongitude(): number{
+        return this.longitude;
+    }
 
     public getLatitude(): number{
         return this.latitude;
-    }
-    public getLongitude(): number{
-        return this.longitude;
     }
     public getTimestamp(): number{
         return this.timestamp;
