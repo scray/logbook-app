@@ -1,6 +1,5 @@
 import {Button, StyleSheet, View, Text} from "react-native";
 import Tour from "../../model/Tour";
-
 import {tours} from "../../api/TourManagementAPI";
 
 export default function Tourlist({
@@ -8,7 +7,13 @@ export default function Tourlist({
                                      setCurrentTour
                                  }: { currentTour: Tour | undefined, setCurrentTour: (tour: Tour | undefined) => void }) {
 
-    const options = {year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "numeric"}
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: "numeric",
+        minute: "numeric"
+    }
 
     function LoadTour(selectedTour: Tour) {//loads selected Tour after pressing the tourbutton
         setCurrentTour(selectedTour);
@@ -30,10 +35,7 @@ export default function Tourlist({
                 </View>
             ) : (
                 tours.map((tour, index) => {
-
-                    //@ts-ignore
                     let date1 = new Date(tour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options)
-                    //@ts-ignore
                     let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)
                     return (
                         <Button
