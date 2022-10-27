@@ -23,7 +23,7 @@ public class Controller {
 	// ------------------------------------ TEST FUNCTIONS (TO DELETE) ------------------------------------ //
 	@GetMapping(path = "/test-1", produces = "application/json")
 	public String test_function() {
-	return "Returned from" + this.getClass().toString();
+	return "Returned from" + this.getClass().toString() + " THIS WAS AN UPDATE";
 	}
 
 	@GetMapping(path = "/test-2/{methode}", produces = "application/json")
