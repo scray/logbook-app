@@ -28,7 +28,7 @@ export default function Tourlist({
                         onPress={() => setCurrentTour(undefined)}
                     />
 
-                    <Text> {"Travel ID: " + currentTour.travelId} </Text>
+                    <Text> {"Tour ID: " + currentTour.tourId} </Text>
                     <Text> {"User ID: " + currentTour.userId} </Text>
                     <Text> {"Coordinates: " + currentTour.waypoints[0].getLatitude() + ", " + currentTour.waypoints[0].getLongitude() + " - " + currentTour.waypoints[currentTour.waypoints.length - 1].getLatitude() + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].getLongitude()} </Text>
                     <Text> {"Time: " + new Date(currentTour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)} </Text>

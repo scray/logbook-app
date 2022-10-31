@@ -2,7 +2,7 @@ import Coordinates from "./Coordinates";
 
 interface Tour {
     userId: string
-    travelId: string
+    tourId: string
     waypoints: Array<Coordinates>
 }
 

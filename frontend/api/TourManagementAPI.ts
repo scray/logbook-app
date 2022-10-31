@@ -6,17 +6,17 @@ import {LocationObject} from "expo-location";
 export const tours: Array<Tour> = [
     {
         userId: "Guenther69",
-        travelId: "travelid1",
+        tourId: "tourid1",
         waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
     },
     {
         userId: "Guenther69",
-        travelId: "travelid1",
+        tourId: "tourid1",
         waypoints: [new Coordinates(1, 11, 4), new Coordinates(2, 11, 5), new Coordinates(3, 11, 6)]
     },
     {
         userId: "Felix",
-        travelId: "travelid1",
+        tourId: "tourid1",
         waypoints: [new Coordinates(99, 11, 5), new Coordinates(98, 11, 40), new Coordinates(90, 11, 200)]
     }
 ]
@@ -31,7 +31,7 @@ export function createTour(userId: string): Tour {
     //example data
     return {
         userId,
-        travelId: "abcdefghijklmnopqrstuvwxyz",
+        tourId: "abcdefghijklmnopqrstuvwxyz",
         waypoints: []
     }
 }
