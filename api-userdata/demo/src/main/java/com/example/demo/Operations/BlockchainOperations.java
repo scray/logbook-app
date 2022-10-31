@@ -83,7 +83,7 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("writeTravels_BLOCKCHAIN",
+            contract.submitTransaction("writeTours_BLOCKCHAIN",
                     userName,
                     ts);
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("writeTravel_BLOCKCHAIN",
+            contract.submitTransaction("writeTour_BLOCKCHAIN",
                     userName,
                     t);
         } catch (Exception e) {

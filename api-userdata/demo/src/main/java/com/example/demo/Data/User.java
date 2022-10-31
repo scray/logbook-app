@@ -4,13 +4,13 @@ public class User {
     private int id;
     private String name;
     private String surname;
-    private Travels travels;
+    private Tours tours;
 
     public User(int id, String name, String surname) {
         this.id = id;
         this.name = name;
         this.surname = surname;
-        travels = new Travels();
+        tours = new Tours();
     }
 
     public int getId() {
@@ -33,7 +33,7 @@ public class User {
         surname = s;
     }
 
-    public Travels getTravels() {
-        return travels;
+    public Tours getTours() {
+        return tours;
     }
 }
