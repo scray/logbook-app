@@ -1,24 +1,17 @@
 package com.example.demo.Operations;
 
-//import java.net.URI;
-//import java.util.List;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Component;
-//import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-//import com.fasterxml.jackson.databind.ObjectMapper; 
-//import com.fasterxml.jackson.databind.ObjectWriter; 
+import org.springframework.web.bind.annotation.RestController; 
 
 @RestController
 @RequestMapping(path = "/tour-app")
 public class Controller {
+
+// TODO --> return as json, Testdaten erstellen, get methode allgemein für Frontend
 
 	// ------------------------------------ TEST FUNCTIONS (TO DELETE) ------------------------------------ //
 	@GetMapping(path = "/test-1", produces = "application/json")
@@ -40,9 +33,9 @@ public class Controller {
 			"walletPath");
 
 	// ------------------------------------ READ METHODS ------------------------------------ //	
-	@GetMapping(path = "/read/{method}/", produces = "application/json")
-	public String getData(@PathVariable String method) {
-		return blockchainOperations.read(method);
+	@GetMapping(path = "/read/tour/", produces = "application/json")
+	public String getData() {
+		return blockchainOperations.read("READ_TOUR");
 	}
 
 	// ------------------------------------ WRITE METHODS ------------------------------------ //
@@ -58,6 +51,8 @@ public class Controller {
 
 	@PutMapping(path = "/add/position/{p}")
 	public void addPosition(@PathVariable String p, @PathVariable String POSITION_JSON) {
+
+
 		blockchainOperations.writePosition(POSITION_JSON);
 	}
 }
