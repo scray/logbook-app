@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/tour-app")
 public class Controller {
 
-// TODO --> return as json, Testdaten erstellen, get methode allgemein für Frontend
+// TODO --> return as json, Testdaten erstellen, get methode allgemein für Frontend / clarify data type used in transfer with frontend
 
 	// ------------------------------------ TEST FUNCTIONS (TO DELETE) ------------------------------------ //
 	@GetMapping(path = "/test-1", produces = "application/json")
