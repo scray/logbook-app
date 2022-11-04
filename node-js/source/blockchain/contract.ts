@@ -8,6 +8,7 @@ export class Contracts extends Contract {
 
     constructor() {
         super("ContractsContract");
+        Logger.write(Prefix.WARNING, "Contract has been started.");
     }
 
     public async Initialize(context: Context) {
@@ -45,11 +46,11 @@ export class Contracts extends Contract {
         let bytes = await context.stub.getState(entryId);
 
         if (bytes.length <= 0)
-            throw new Error("The required entry with id " + entryId + " is not available.");
+            Logger.write(Prefix.ERROR, "The required entry with id " + entryId + " is not available.");
         else
             Logger.write(Prefix.SUCCESS, "Entry with id " + entryId + " has been found.");
 
-        return bytes.toString();
+        return JSON.parse(bytes.toString());
     }
 
     public async getAllEntries(context : Context): Promise<string>
