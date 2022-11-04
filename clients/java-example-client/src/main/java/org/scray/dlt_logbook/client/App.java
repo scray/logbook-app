@@ -4,6 +4,8 @@ package org.scray.dlt_logbook.client;
 import java.util.Date;
 import java.util.Random;
 
+import org.scray.hyperledger.fabric.example.app.BlockchainOperations;
+
 
 public class App
 {
@@ -22,6 +24,12 @@ public class App
         String assets = blockchainOperations.read("GetAllAssets");
 
         System.out.println("Assets: " + assets);
+    }
+
+    public static void writeAndReadEntry(BlockchainOperations blockchainOperations) {
+        blockchainOperations.createEntry("entry1", "user1", "travel1", "pos1");
+        String entry = blockchainOperations.getEntry("entry1");
+        System.out.println("Assets: " + entry);
     }
 
 }
