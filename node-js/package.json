@@ -7,7 +7,7 @@
       "npm": "^6.4.1"
   },
   "main": "release/index.js",
-      "scripts": { "start" : "fabric-chaincode-node server --chaincode-address 0.0.0.0:9999 --chaincode-id basic_1.0:ba34a009afad6425acc404bab1ab05fe237309c686a417dff31ab1615fa06dc8 -c '\"Args\": [\"ContractsContract\"]'" },
+      "scripts": { "start" : "fabric-chaincode-node server --chaincode-address 0.0.0.0:9999 --chaincode-id basic_1.0:a50b6e6de3ac0a753193c6f36767ca26f2a09670542ed6a5ded0b1ac3efef923 -c '\"Args\": [\"ContractsContract\"]'" },
   "engine-strict": true,
   "engineStrict": true,
   "license": "Apache-2.0",
