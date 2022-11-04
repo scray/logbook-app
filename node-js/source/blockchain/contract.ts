@@ -3,6 +3,7 @@ import { Logger } from '..';
 import { Prefix } from '../logger';
 import { Asset } from './asset';
 
+
 export class Contracts extends Contract {
 
     constructor() {
@@ -51,8 +52,38 @@ export class Contracts extends Contract {
         return bytes.toString();
     }
 
-    public async getAllEntries(context : Context)
+    public async getAllEntries(context : Context): Promise<string>
     {
-        /* TODO; */
+        /* iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html */
+        let working = true;
+        const begin = 'entry-0';
+        const end = 'entry-9999';
+        let entries = [];
+        const iteration = await context.stub.getStateByRange(begin, end);
+
+        while(working){
+            
+            const state = await iteration.next();
+
+            /*  sate.value.value := Buffer  */ 
+            if(state.value !== undefined && state.value.value !== undefined){
+                const insert = JSON.parse(state.value.value.toString());
+                const key = state.value.key;
+                entries.push({ key, insert })
+                
+            }
+
+            if(state.done){
+                Logger.write(Prefix.NORMAL,'Query finished!')
+                working = false;
+                await iteration.close()
+            }
+        }
+
+        return JSON.stringify(entries);
+
+    }
+    public async changeEntries(context: Context){
+        /*TODO*/
     }
 } 
