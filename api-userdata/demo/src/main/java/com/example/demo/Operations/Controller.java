@@ -1,11 +1,15 @@
 package com.example.demo.Operations;
 
+import javax.json.JsonString;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController; 
+import org.springframework.web.bind.annotation.RestController;
+import org.apache.juli.logging.Log;
+import org.json.*;
 
 @RestController
 @RequestMapping(path = "/tour-app")
@@ -26,11 +30,16 @@ public class Controller {
 
 	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
 	private BlockchainOperations blockchainOperations = new BlockchainOperations(
-		// TODO --> change to blockchain parameters
 			"channel-t",
 			"basic",
 			"alice",
 			"walletPath");
+
+	// ------------------------------------ WRITE METHODS ------------------------------------ //
+	@PutMapping(path = "/add/tour/")
+	public void addTour(@PathVariable String ts, @RequestBody String TOUR_TO_PARSE) { 
+		blockchainOperations.writeTour(TOUR_TO_PARSE);
+	}
 
 	// ------------------------------------ READ METHODS ------------------------------------ //	
 	@GetMapping(path = "/read/tour/", produces = "application/json")
@@ -38,21 +47,33 @@ public class Controller {
 		return blockchainOperations.read("Initialize");
 	}
 
-	// ------------------------------------ WRITE METHODS ------------------------------------ //
-	@PutMapping(path = "/add/tours/{ts}/")
-	public void addTours(@PathVariable String ts, @RequestBody String TOURS_JSON) {
-		blockchainOperations.writeTours(TOURS_JSON);
+	private static String getName (JSONObject TOUR_JSON) {
+		try {
+			return TOUR_JSON.getString("name");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	@PutMapping(path = "/add/tour/{t}/")
-	public void addTour(@PathVariable String t, @RequestBody String TOUR_JSON) {
-		blockchainOperations.writeTour(TOUR_JSON);
+	private static String getTour (JSONObject TOUR_JSON) {
+		try {
+			return TOUR_JSON.getString("tour");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	@PutMapping(path = "/add/position/{p}")
-	public void addPosition(@PathVariable String p, @PathVariable String POSITION_JSON) {
-
-
-		blockchainOperations.writePosition(POSITION_JSON);
+	private static String getPositions (JSONObject TOUR_JSON) {
+		try {
+			return TOUR_JSON.getString("positions");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+	
 }
+
+// TODO --> Methoden um JSON zu zerlegen und geforderte Daten zurückzugeben

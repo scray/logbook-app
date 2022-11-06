@@ -9,6 +9,9 @@ import org.hyperledger.fabric.gateway.Gateway;
 import org.hyperledger.fabric.gateway.Network;
 import org.hyperledger.fabric.gateway.Wallet;
 import org.hyperledger.fabric.gateway.Wallets;
+import org.apache.commons.logging.Log;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.*;
 
 public class BlockchainOperations {
     String channel = "mychannel";
@@ -74,7 +77,8 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
-    public void writeTours(String ts) {
+   
+    public void writeTour(String tour_string) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -83,43 +87,8 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("writeTours_BLOCKCHAIN",
-                    userName,
-                    ts);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeTour(String t) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writeTour_BLOCKCHAIN",
-                    userName,
-                    t);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writePosition(String p) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writePosition_BLOCKCHAIN",
-            userName,
-            p);
+            contract.submitTransaction("Initialize",
+            tour_string);
         } catch (Exception e) {
             e.printStackTrace();
         }

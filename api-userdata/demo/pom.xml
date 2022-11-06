@@ -35,6 +35,14 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- DEPENDENCY FOR import org.json.JSONObject >>> -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+		<!-- <<< DEPENDENCY FOR import org.json.JSONObject; -->
+
 		<!-- DEPENDENCY FOR org.hyperledger.fabric.gateway >>> -->
 		<dependency>
 			<groupId>org.hyperledger.fabric</groupId>
