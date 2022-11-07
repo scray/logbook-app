@@ -17,6 +17,7 @@ const asset_1 = require("./asset");
 class Contracts extends fabric_contract_api_1.Contract {
     constructor() {
         super("ContractsContract");
+        __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
     Initialize(context) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -47,10 +48,60 @@ class Contracts extends fabric_contract_api_1.Contract {
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + entryId + " from the blockchain.");
             let bytes = yield context.stub.getState(entryId);
             if (bytes.length <= 0)
-                throw new Error("The required entry with id " + entryId + " is not available.");
+                __1.Logger.write(logger_1.Prefix.ERROR, "The required entry with id " + entryId + " is not available.");
             else
                 __1.Logger.write(logger_1.Prefix.SUCCESS, "Entry with id " + entryId + " has been found.");
-            return bytes.toString();
+            return JSON.parse(bytes.toString());
+        });
+    }
+    getAllEntries(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /* iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html */
+            let working = true;
+            const begin = 'entry-0';
+            const end = 'entry-9999';
+            let entries = [];
+            const iteration = yield context.stub.getStateByRange(begin, end);
+            while (working) {
+                const state = yield iteration.next();
+                /*  sate.value.value := Buffer  */
+                if (state.value !== undefined && state.value.value !== undefined) {
+                    const insert = JSON.parse(state.value.value.toString());
+                    const key = state.value.key;
+                    entries.push({ key, insert });
+                }
+                if (state.done) {
+                    __1.Logger.write(logger_1.Prefix.NORMAL, 'Query finished!');
+                    working = false;
+                    yield iteration.close();
+                }
+            }
+            return JSON.stringify(entries);
+        });
+    }
+    changeEntries(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /*TODO*/
+        });
+    }
+    /* Temporary Transactions */
+    saveTempEntry(context, entryId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Some data has been written to the blockchain. (" + entryId + ")");
+            let entry = new asset_1.TemporaryAsset();
+            entry.data = data;
+            context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
+        });
+    }
+    getTempEntry(context, entryId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + entryId + " from the blockchain.");
+            let bytes = yield context.stub.getState(entryId);
+            if (bytes.length <= 0)
+                __1.Logger.write(logger_1.Prefix.ERROR, "The required entry with id " + entryId + " is not available.");
+            else
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Entry with id " + entryId + " has been found.");
+            return JSON.parse(bytes.toString());
         });
     }
 }
