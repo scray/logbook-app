@@ -8,5 +8,5 @@ exports.Logger.register("LOG", logger_1.Prefix.NORMAL, logger_1.Colors.FgWhite);
 exports.Logger.register("WARNING", logger_1.Prefix.WARNING, logger_1.Colors.FgYellow);
 exports.Logger.register("ERROR", logger_1.Prefix.ERROR, logger_1.Colors.FgRed);
 exports.Logger.register("SUCCESS", logger_1.Prefix.SUCCESS, logger_1.Colors.FgGreen);
-exports.Logger.write(logger_1.Prefix.SUCCESS, "The ledger has been started and is trying to work. :)");
+exports.Logger.write(logger_1.Prefix.SUCCESS, "Chaincode has been started successfully and is ready to receive transactions.");
 exports.contracts = [contract_1.Contracts];
