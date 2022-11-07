@@ -1,4 +1,5 @@
 import { appendFileSync } from "fs-extra";
+import { Discord } from "./discord";
 
 export enum Prefix {
     NORMAL,
@@ -49,9 +50,11 @@ export class LoggerPrefix {
 export class LoggerManager {
 
     prefixes: LoggerPrefix[] = [];
+    discord : Discord;
 
     constructor() {
         this.prefixes = [];
+        this.discord = new Discord();
     }
 
     register(name: string, id: number, color: Colors) {
@@ -67,6 +70,7 @@ export class LoggerManager {
         if (prefix) {
             appendFileSync("./logs/" + prefix.name.toLowerCase() + ".log", "[" + new Date().toDateString() + "] " + text + "\n")
             console.info(prefix.color + "[" + prefix.name + "] " + Colors.Reset + text);
+            this.discord.send(prefix.name, text);
         }
     }
 }

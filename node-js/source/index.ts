@@ -1,5 +1,6 @@
 import { Contracts } from "./blockchain/contract";
 import { Colors, LoggerManager, Prefix } from "./logger";
+import { Discord } from "./logger/discord";
 
 export var Logger = new LoggerManager();
 
