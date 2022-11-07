@@ -9,6 +9,6 @@ Logger.register("WARNING", Prefix.WARNING, Colors.FgYellow);
 Logger.register("ERROR", Prefix.ERROR, Colors.FgRed);
 Logger.register("SUCCESS", Prefix.SUCCESS, Colors.FgGreen);
 
-Logger.write(Prefix.SUCCESS, "The ledger has been started and is trying to work. :)");
+Logger.write(Prefix.SUCCESS, "Chaincode has been started successfully and is ready to receive transactions.");
 
 export const contracts: any[] = [Contracts];

@@ -8,15 +8,15 @@ class Discord {
             url: "https://discord.com/api/webhooks/1039155000233955378/we69m2UPkKmGocOg7lCLJAvRkPK0KBBBaScBbME81vIIyEi858sGNceF7RYAp7tvxBXj"
         });
     }
-    send(prefix, message) {
+    send(color, prefix, message) {
         let date = new Date();
         let embed = {
             "content": null,
             "embeds": [
                 {
-                    "title": prefix + " " + date.toLocaleDateString("de-DE") + " " + date.toLocaleTimeString("de-DE"),
+                    "title": prefix + " - " + date.toLocaleDateString("de-DE") + " " + date.toLocaleTimeString("de-DE"),
                     "description": message,
-                    "color": 7143256
+                    "color": color
                 }
             ],
             "attachments": []

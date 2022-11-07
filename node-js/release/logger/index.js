@@ -62,7 +62,21 @@ class LoggerManager {
         if (prefix) {
             (0, fs_extra_1.appendFileSync)("./logs/" + prefix.name.toLowerCase() + ".log", "[" + new Date().toDateString() + "] " + text + "\n");
             console.info(prefix.color + "[" + prefix.name + "] " + Colors.Reset + text);
-            this.discord.send(prefix.name, text);
+            // actually a bad fix, but working for now, colors need to be pre-defined
+            switch (id) {
+                case Prefix.NORMAL:
+                    this.discord.send(16777215, "NORMAL", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.ERROR:
+                    this.discord.send(16711680, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.SUCCESS:
+                    this.discord.send(3997440, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.WARNING:
+                    this.discord.send(16767232, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+            }
         }
     }
 }

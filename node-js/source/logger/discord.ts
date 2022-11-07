@@ -10,7 +10,7 @@ export class Discord {
         });
     }
 
-    send(prefix: string, message: string) {
+    send(color: number, prefix: string, message: string) {
 
         let date = new Date();
 
@@ -20,7 +20,7 @@ export class Discord {
                 {
                     "title": prefix + " - " + date.toLocaleDateString("de-DE") + " " + date.toLocaleTimeString("de-DE"),
                     "description": message,
-                    "color": 7143256
+                    "color": color
                 }
             ],
             "attachments": []
