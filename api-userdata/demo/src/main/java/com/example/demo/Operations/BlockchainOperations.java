@@ -9,9 +9,6 @@ import org.hyperledger.fabric.gateway.Gateway;
 import org.hyperledger.fabric.gateway.Network;
 import org.hyperledger.fabric.gateway.Wallet;
 import org.hyperledger.fabric.gateway.Wallets;
-import org.apache.commons.logging.Log;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.*;
 
 public class BlockchainOperations {
     String channel = "mychannel";
@@ -58,39 +55,37 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
-    public String read(String methodName) {
+    public String read(String id) {
         String data = "{}";
         try {
             if (gateway == null) {
                 gateway = connect(userName);
             }
-            // get the network and contract
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            data = new String(contract.evaluateTransaction(methodName));
+            data = new String(contract.evaluateTransaction("getTempEntry", id));
             return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return data;
+        return "Failed to get Data!";
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
    
-    public void writeTour(String tour_string) {
+    public void writeTour(String id, String tour_string) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
             }
-            // get the network and contract
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("Initialize",
-            tour_string);
+            contract.submitTransaction("saveTempEntry", id, tour_string);
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 }

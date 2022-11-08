@@ -1,53 +1,37 @@
 package com.example.demo.Operations;
 
-import javax.json.JsonString;
-
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.apache.juli.logging.Log;
-import org.json.*;
 
 @RestController
 @RequestMapping(path = "/tour-app")
 public class Controller {
-
-// TODO --> return as json, Testdaten erstellen, get methode allgemein für Frontend / parse data to JSON for transfer to blockchain
-
-	// ------------------------------------ TEST FUNCTIONS (TO DELETE) ------------------------------------ //
-	@GetMapping(path = "/test-1", produces = "application/json")
-	public String test_function() {
-	return getData();
-	}
-
-	@GetMapping(path = "/test-2/{methode}", produces = "application/json")
-	public String test_function2(@PathVariable int methode ) {
-	return  blockchainOperations.readtest(methode);
-	}
 
 	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
 	private BlockchainOperations blockchainOperations = new BlockchainOperations(
 			"channel-t",
 			"basic",
 			"alice",
-			"walletPath");
+			"./wallet");
 
 	// ------------------------------------ WRITE METHODS ------------------------------------ //
-	@PutMapping(path = "/add/tour/")
-	public void addTour(@PathVariable String ts, @RequestBody String TOUR_TO_PARSE) { 
-		blockchainOperations.writeTour(TOUR_TO_PARSE);
+	@GetMapping("/write/{id}/{data}")
+	@ResponseBody
+	public String getEmployeesById(@PathVariable String id, @PathVariable String data) {
+		blockchainOperations.writeTour(id, data);
+		return "Data has been inserted!";
 	}
 
 	// ------------------------------------ READ METHODS ------------------------------------ //	
-	@GetMapping(path = "/read/tour/", produces = "application/json")
-	public String getData() {
-		return blockchainOperations.read("Initialize");
+	@GetMapping(path = "/read/{id}", produces = "application/json")
+	public String test_function(@PathVariable String id) {
+		return blockchainOperations.read(id);
 	}
 
-	private static String getName (JSONObject TOUR_JSON) {
+	/*private static String getName (JSONObject TOUR_JSON) {
 		try {
 			return TOUR_JSON.getString("name");
 		} catch (JSONException e) {
@@ -72,7 +56,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 }
 
