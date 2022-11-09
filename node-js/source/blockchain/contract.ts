@@ -55,7 +55,7 @@ export class Contracts extends Contract {
 
     public async getAllEntries(context : Context): Promise<string>
     {
-        /* iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html */
+        // iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html
         let working = true;
         const begin = 'entry-0';
         const end = 'entry-9999';
@@ -66,16 +66,16 @@ export class Contracts extends Contract {
             
             const state = await iteration.next();
 
-            /*  sate.value.value := Buffer  */ 
+            //  sate.value.value := Buffer
             if(state.value !== undefined && state.value.value !== undefined){
                 const insert = JSON.parse(state.value.value.toString());
                 const key = state.value.key;
                 entries.push({ key, insert })
                 
             }
-
+            //  if iterator is done, the query has finished and the while loop ends
             if(state.done){
-                Logger.write(Prefix.NORMAL,'Query finished!')
+                Logger.write(Prefix.SUCCESS,'Query finished!')
                 working = false;
                 await iteration.close()
             }
@@ -84,7 +84,25 @@ export class Contracts extends Contract {
         return JSON.stringify(entries);
 
     }
-    public async changeEntries(context: Context){
-        /*TODO*/
+    public async changeEntries(context: Context, entryId: string, userId: string, travelId: string, positions: string ){
+        let bytes = await context.stub.getState(travelId);
+        // if the returned byte array is not empty overwrite it
+        if(bytes.length > 0){
+            let entry = new Asset();
+
+            entry.userId = userId;
+            entry.travelId = travelId;
+            entry.positions = positions;
+
+            context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));  
+
+            Logger.write(Prefix.SUCCESS, 'Asset Changed.');
+
+        }
+        // if the byte array has no content log ERROR 
+        else{
+            Logger.write(Prefix.ERROR, 'Asset does not exist.');
+
+        }
     }
 } 
