@@ -55,73 +55,37 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
-    public String read(String methodName) {
+    public String read(String id) {
         String data = "{}";
         try {
             if (gateway == null) {
                 gateway = connect(userName);
             }
-            // get the network and contract
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            data = new String(contract.evaluateTransaction(methodName));
+            data = new String(contract.evaluateTransaction("getTempEntry", id));
             return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return data;
+        return "Failed to get Data!";
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
-    public void writeTours(String ts) {
+   
+    public void writeTour(String id, String tour_string) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
             }
-            // get the network and contract
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("writeTours_BLOCKCHAIN",
-                    userName,
-                    ts);
+            contract.submitTransaction("saveTempEntry", id, tour_string);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
 
-    public void writeTour(String t) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writeTour_BLOCKCHAIN",
-                    userName,
-                    t);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writePosition(String p) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            // get the network and contract
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("writePosition_BLOCKCHAIN",
-            userName,
-            p);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
