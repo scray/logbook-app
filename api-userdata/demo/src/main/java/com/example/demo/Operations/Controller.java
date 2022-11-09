@@ -1,13 +1,11 @@
 package com.example.demo.Operations;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.google.common.eventbus.AllowConcurrentEvents;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/tour-app")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class Controller {
 
 	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
