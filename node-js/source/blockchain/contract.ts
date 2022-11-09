@@ -1,7 +1,7 @@
 import { Context, Contract } from 'fabric-contract-api';
 import { Logger } from '..';
 import { Prefix } from '../logger';
-import { Asset } from './asset';
+import { Asset, TemporaryAsset } from './asset';
 
 
 export class Contracts extends Contract {
@@ -62,8 +62,8 @@ export class Contracts extends Contract {
         let entries = [];
         const iteration = await context.stub.getStateByRange(begin, end);
 
-        while(working){
-            
+        while (working) {
+
             const state = await iteration.next();
 
             //  sate.value.value := Buffer
@@ -71,7 +71,7 @@ export class Contracts extends Contract {
                 const insert = JSON.parse(state.value.value.toString());
                 const key = state.value.key;
                 entries.push({ key, insert })
-                
+
             }
             //  if iterator is done, the query has finished and the while loop ends
             if(state.done){
@@ -104,5 +104,28 @@ export class Contracts extends Contract {
             Logger.write(Prefix.ERROR, 'Asset does not exist.');
 
         }
+    }
+
+    /* Temporary Transactions */
+    public async saveTempEntry(context: Context, entryId: string, data: string) {
+        Logger.write(Prefix.NORMAL, "Some data has been written to the blockchain. (" + entryId + ")");
+
+        let entry = new TemporaryAsset();
+        entry.data = data;
+
+        context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
+    }
+
+    public async getTempEntry(context: Context, entryId: string) {
+        Logger.write(Prefix.NORMAL, "Request entry with the id " + entryId + " from the blockchain.");
+
+        let bytes = await context.stub.getState(entryId);
+
+        if (bytes.length <= 0)
+            Logger.write(Prefix.ERROR, "The required entry with id " + entryId + " is not available.");
+        else
+            Logger.write(Prefix.SUCCESS, "Entry with id " + entryId + " has been found.");
+
+        return JSON.parse(bytes.toString());
     }
 } 

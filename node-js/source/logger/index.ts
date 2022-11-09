@@ -1,4 +1,6 @@
 import { appendFileSync } from "fs-extra";
+import { Discord } from "./discord";
+
 
 export enum Prefix {
     NORMAL,
@@ -49,9 +51,11 @@ export class LoggerPrefix {
 export class LoggerManager {
 
     prefixes: LoggerPrefix[] = [];
+    discord: Discord;
 
     constructor() {
         this.prefixes = [];
+        this.discord = new Discord();
     }
 
     register(name: string, id: number, color: Colors) {
@@ -67,6 +71,24 @@ export class LoggerManager {
         if (prefix) {
             appendFileSync("./logs/" + prefix.name.toLowerCase() + ".log", "[" + new Date().toDateString() + "] " + text + "\n")
             console.info(prefix.color + "[" + prefix.name + "] " + Colors.Reset + text);
+
+            // actually a bad fix, but working for now, colors need to be pre-defined
+            switch (id) {
+                case Prefix.NORMAL:
+                    this.discord.send(16777215, "NORMAL", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.ERROR:
+                    this.discord.send(16711680, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.SUCCESS:
+                    this.discord.send(3997440, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+                case Prefix.WARNING:
+                    this.discord.send(16767232, "LOG", "[" + prefix.name + "] " + text);
+                    break;
+            }
+
         }
     }
 }
+
