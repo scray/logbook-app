@@ -106,6 +106,25 @@ export class Contracts extends Contract {
         }
     }
 
+    // add waypoint
+    public async addWaypoint(context: Context, entryId: string, waypoint: string){
+        
+        let buffer = await context.stub.getState(entryId);
+        // if data to entryID exists convert and add the waypoint
+       if(buffer.length>0){
+            let objekt = JSON.parse(buffer.toString())
+            let positions = objekt.positions
+            positions.push(JSON.parse(waypoint)) // change the string to an objekt
+            objekt.positions = positions
+            context.stub.putState(entryId, Buffer.from(JSON.stringify(objekt)));
+            Logger.write(Prefix.SUCCESS,'Positions Updated.')
+       }
+       else{
+            Logger.write(Prefix.ERROR, 'EntryID does not exist.')
+       }
+    }
+
+
     /* Temporary Transactions */
     public async saveTempEntry(context: Context, entryId: string, data: string) {
         Logger.write(Prefix.NORMAL, "Some data has been written to the blockchain. (" + entryId + ")");
