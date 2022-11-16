@@ -12,7 +12,7 @@ export class Waypoint{
         this.timestamp = timestamp;
     }
 }
-
+// Asset = Tour
 export class Asset{
     userId : string;
     travelId : string;

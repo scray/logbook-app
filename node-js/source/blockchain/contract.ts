@@ -1,7 +1,7 @@
 import { Context, Contract } from 'fabric-contract-api';
 import { Logger } from '..';
 import { Prefix } from '../logger';
-import { Asset, TemporaryAsset } from './asset';
+import { Asset, TemporaryAsset, Waypoint } from './asset';
 
 
 export class Contracts extends Contract {
@@ -26,7 +26,7 @@ export class Contracts extends Contract {
         Logger.write(Prefix.SUCCESS, "Ledger has been put in final state.");
     }
 
-    public async createEntry(context: Context, entryId: string, userId: string, travelId: string, positions: string) {
+    public async createTour(context: Context, entryId: string, userId: string, travelId: string, positions: string) {
         /* Adding a new entry to the ledger with the given ID and details. */
         Logger.write(Prefix.NORMAL, "Added entry on id " + entryId + " to the chain.");
 
@@ -38,7 +38,7 @@ export class Contracts extends Contract {
         context.stub.putState(entryId, Buffer.from(JSON.stringify(entry)));
     }
 
-    public async getEntry(context: Context, entryId: string) {
+    public async getTour(context: Context, entryId: string): Promise<Asset> {
         /* Requesting entry on a given id and return the valid entry or throw error */
 
         Logger.write(Prefix.NORMAL, "Request entry with the id " + entryId + " from the blockchain.");
@@ -53,7 +53,7 @@ export class Contracts extends Contract {
         return JSON.parse(bytes.toString());
     }
 
-    public async getAllEntries(context : Context): Promise<string>
+    public async getTours(context : Context): Promise<Asset[]>
     {
         // iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html
         let working = true;
@@ -70,8 +70,8 @@ export class Contracts extends Contract {
             if(state.value !== undefined && state.value.value !== undefined){
                 const insert = JSON.parse(state.value.value.toString());
                 const key = state.value.key;
-                entries.push({ key, insert })
-
+                //entries.push({ key, insert }) entry consists of entryId and an Tour/Asset Objekt
+                entries.push(insert)
             }
             //  if iterator is done, the query has finished and the while loop ends
             if(state.done){
@@ -81,10 +81,10 @@ export class Contracts extends Contract {
             }
         }
 
-        return JSON.stringify(entries);
+        return entries;
 
     }
-    public async changeEntries(context: Context, entryId: string, userId: string, travelId: string, positions: string ){
+    public async changeEntries(context: Context, entryId: string, userId: string, travelId: string, positions: Waypoint[] ){
         let bytes = await context.stub.getState(travelId);
         // if the returned byte array is not empty overwrite it
         if(bytes.length > 0){
@@ -107,14 +107,14 @@ export class Contracts extends Contract {
     }
 
     // add waypoint
-    public async addWaypoint(context: Context, entryId: string, waypoint: string){
+    public async addWaypoint(context: Context, entryId: string, waypoint: Waypoint){
         
         let buffer = await context.stub.getState(entryId);
         // if data to entryID exists convert and add the waypoint
        if(buffer.length>0){
             let objekt = JSON.parse(buffer.toString())
             let positions = objekt.positions
-            positions.push(JSON.parse(waypoint)) // change the string to an objekt
+            positions.push(waypoint) // add waypoint to list
             objekt.positions = positions
             context.stub.putState(entryId, Buffer.from(JSON.stringify(objekt)));
             Logger.write(Prefix.SUCCESS,'Positions Updated.')
