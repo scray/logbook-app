@@ -12,6 +12,7 @@ import org.hyperledger.fabric.gateway.Wallet;
 import org.hyperledger.fabric.gateway.Wallets;
 
 import com.example.demo.Objects.Tour;
+import com.example.demo.Objects.Waypoint;
 
 public class BlockchainOperations {
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -69,7 +70,8 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            data = new String(contract.evaluateTransaction("getTour", id));
+            //TODO --> RETURN TOUR / TOUR[]
+            //data = new String(contract.evaluateTransaction("getTour", id));
             logger.info("Get succesful.");
             return data;
         } catch (Exception e) {
@@ -80,7 +82,7 @@ public class BlockchainOperations {
     }
 
     public Tour[] readTours(String id) {
-        Tour data = new Tour();
+        Tour[] data = null;
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -88,7 +90,8 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            data = new String(contract.evaluateTransaction("getTours", id));
+            //TODO --> RETURN TOUR[]
+            //data = new String(contract.evaluateTransaction("getTours", id));
             logger.info("Get succesful.");
             return data;
         } catch (Exception e) {
@@ -108,7 +111,8 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("createTour", tour);
+            //TODO --> Tour übergeben! Datentyp?
+            contract.submitTransaction("createTour", tour.toString());
             logger.info("Post succesful.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,7 +122,7 @@ public class BlockchainOperations {
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
    
-    public void updateTour(String id, String tour_string) {
+    public void updateTour(String id, Waypoint wp) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -126,7 +130,25 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("saveTempEntry", id, tour_string);
+            //TODO --> Übergabe 2 Parameter
+            //contract.submitTransaction("addWaypoint", id, wp);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
+    public void patchTour(String id, Boolean has_finished) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            //TODO --> Übergabe 2 Parameter
+            //contract.submitTransaction("addWaypoint", id, has_finished);
         } catch (Exception e) {
             e.printStackTrace();
 

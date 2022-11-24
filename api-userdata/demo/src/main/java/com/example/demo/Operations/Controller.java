@@ -1,7 +1,6 @@
 package com.example.demo.Operations;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,15 +35,15 @@ public class Controller {
 	@PutMapping("/tours/{id}")
     @ResponseBody
     public String update_tour(@PathVariable String id, @RequestBody Waypoint wp) {
-        //blockchainOperations.updateTour(wp);
+        blockchainOperations.updateTour(id ,wp);
         return "Data has been inserted!";
     }
 
 	// ------------------------------------ PATCH METHODS ------------------------------------ //
-	@PatchMapping("/tours/{id}")
+	@PutMapping("/tours/{id}")
     @ResponseBody
-    public String partial_update_tour(@PathVariable String id, @RequestBody Tour data) {
-        blockchainOperations.updateTour(id, data);
+    public String patch_tour(@PathVariable String id, @RequestBody Boolean has_finished) {
+        blockchainOperations.patchTour(id ,has_finished);
         return "Data has been inserted!";
     }
 
