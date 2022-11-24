@@ -1,10 +1,17 @@
 package com.example.demo.Operations;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.Objects.Tour;
+import com.example.demo.Objects.Waypoint;
 
 @RestController
 @RequestMapping(path = "/tour-app")
@@ -17,18 +24,39 @@ public class Controller {
 			"alice",
 			"./wallet");
 
-	// ------------------------------------ WRITE METHODS ------------------------------------ //
-	@GetMapping("/write/{id}/{data}")
-	@ResponseBody
-	public String getEmployeesById(@PathVariable String id, @PathVariable String data) {
-		blockchainOperations.writeTour(id, data);
-		return "Data has been inserted!";
+	// ------------------------------------ POST METHODS ------------------------------------ //
+	@PostMapping("/tours")
+    @ResponseBody
+    public String write_tour(@RequestBody Tour data) {
+        blockchainOperations.writeTour(data);
+        return "Data has been inserted!";
+    }
+
+	// ------------------------------------ PUT METHODS ------------------------------------ //
+	@PutMapping("/tours/{id}")
+    @ResponseBody
+    public String update_tour(@PathVariable String id, @RequestBody Waypoint wp) {
+        //blockchainOperations.updateTour(wp);
+        return "Data has been inserted!";
+    }
+
+	// ------------------------------------ PATCH METHODS ------------------------------------ //
+	@PatchMapping("/tours/{id}")
+    @ResponseBody
+    public String partial_update_tour(@PathVariable String id, @RequestBody Tour data) {
+        blockchainOperations.updateTour(id, data);
+        return "Data has been inserted!";
+    }
+
+	// ------------------------------------ GET METHODS ------------------------------------ //	
+	@GetMapping(path = "/tours/{id}", produces = "application/json")
+	public Tour get_tour(@PathVariable String id) {
+		return blockchainOperations.readTour( id);
 	}
 
-	// ------------------------------------ READ METHODS ------------------------------------ //	
-	@GetMapping(path = "/read/{id}", produces = "application/json")
-	public String test_function(@PathVariable String id) {
-		return blockchainOperations.read(id);
+	@GetMapping(path = "/tours/user/{id}", produces = "application/json")
+	public Tour[] get_tours(@PathVariable String id) {
+		return blockchainOperations.readTours(id);
 	}
 
 	/*private static String getName (JSONObject TOUR_JSON) {
