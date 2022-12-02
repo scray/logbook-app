@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Objects.Tour;
 import com.example.demo.Objects.Waypoint;
+import com.google.gson.Gson;
 
 @RestController
 @RequestMapping(path = "/tour-app")
 public class Controller {
+	Gson gson = new Gson();
 
 	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
 	private BlockchainOperations blockchainOperations = new BlockchainOperations(
@@ -26,16 +28,18 @@ public class Controller {
 	// ------------------------------------ POST METHODS ------------------------------------ //
 	@PostMapping("/tours")
     @ResponseBody
-    public String write_tour(@RequestBody Tour data) {
-        blockchainOperations.writeTour(data);
+	public String write_tour(@RequestBody Tour obj_tour) {
+		String json_tour = gson.toJson(obj_tour);
+        blockchainOperations.writeTour(json_tour);
         return "Data has been inserted!";
     }
 
 	// ------------------------------------ PUT METHODS ------------------------------------ //
 	@PutMapping("/tours/{id}")
     @ResponseBody
-    public String update_tour(@PathVariable String id, @RequestBody Waypoint wp) {
-        blockchainOperations.updateTour(id ,wp);
+	public String update_tour(@PathVariable String id, @RequestBody Waypoint obj_wp) {
+		String json_wp = gson.toJson(obj_wp);
+        blockchainOperations.updateTour(id ,json_wp);
         return "Data has been inserted!";
     }
 
@@ -50,12 +54,16 @@ public class Controller {
 	// ------------------------------------ GET METHODS ------------------------------------ //	
 	@GetMapping(path = "/tours/{id}", produces = "application/json")
 	public Tour get_tour(@PathVariable String id) {
-		return blockchainOperations.readTour( id);
+		String tour_as_json = blockchainOperations.readTour(id);
+		Tour obj_tour = gson.fromJson(tour_as_json, Tour.class);
+		return obj_tour;
 	}
 
 	@GetMapping(path = "/tours/user/{id}", produces = "application/json")
 	public Tour[] get_tours(@PathVariable String id) {
-		return blockchainOperations.readTours(id);
+		String tours_as_json = blockchainOperations.readTours(id);
+		Tour[] obj_tours = gson.fromJson(tours_as_json, Tour[].class);
+		return obj_tours;
 	}
 
 	/*private static String getName (JSONObject TOUR_JSON) {
