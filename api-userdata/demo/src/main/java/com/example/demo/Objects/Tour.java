@@ -29,8 +29,14 @@ public class Tour {
         this.waypoints = waypoints;
     }
 
-    public Tour(){
-        
+    public Tour() {
+
+    }
+    
+    public Tour (String userId, String tourId, Waypoint[] waypoints){
+        this.userId = userId;
+        this.tourId = tourId;
+        this.waypoints = waypoints;
     }
     
 }

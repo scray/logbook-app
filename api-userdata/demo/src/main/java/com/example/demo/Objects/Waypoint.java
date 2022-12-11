@@ -29,11 +29,13 @@ public class Waypoint {
         this.timestamp = timestamp;
     }
 
-    public Waypoint(){
-        
+    public Waypoint() {
+
     }
 
-    
-    
-
+    public Waypoint(float latitude,float longitude,long timestamp){
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.timestamp = timestamp;
+    }
 }
