@@ -31,19 +31,19 @@ export class Contracts extends Contract {
         Logger.write(Prefix.SUCCESS, "Ledger has been put in final state.");
     }
 
-    public async createTour(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: Waypoint[]) { //entryId not needed entryId = travelId
+    public async createTour(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: string) { //entryId not needed entryId = travelId
         /* Adding a new entry to the ledger with the given ID and details. */
         Logger.write(Prefix.NORMAL, "Added entry on id " + travelId + " to the chain.");  //entryId now travelId
 
         let entry = new Asset();
         entry.userId = userId;
         //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
-        entry.positions = positions;
+        entry.positions = JSON.parse(positions);
 
         context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));
     }
     //retrieve Asset from BC; add travelId to make it a Travel Object; return TravelObject
-    public async getTour(context: Context, travelId: string): Promise<Travel> {     //entryId now travelId
+    public async getTour(context: Context, travelId: string): Promise<String> {     //entryId now travelId
         /* Requesting entry on a given id and return the valid entry or throw error */
         let travel: Travel
         Logger.write(Prefix.NORMAL, "Request entry with the id " + travelId + " from the blockchain.");
@@ -57,10 +57,10 @@ export class Contracts extends Contract {
             let asset = JSON.parse(bytes.toString())
             travel = new Travel (travelId,asset.positions,asset.userId)
 
-        return travel;
+        return JSON.stringify(travel);
     }
 
-    public async getTours(context : Context): Promise<Travel[]>
+    public async getTours(context : Context): Promise<String>
     {
         // iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html
         let working = true;
@@ -89,10 +89,10 @@ export class Contracts extends Contract {
             }
         }
 
-        return entries;
+        return JSON.stringify(entries);
 
     }
-    public async changeEntries(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: Waypoint[] ){
+    public async changeEntries(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: string ){
         let bytes = await context.stub.getState(travelId);
         // if the returned byte array is not empty overwrite it
         if(bytes.length > 0){
@@ -100,7 +100,7 @@ export class Contracts extends Contract {
 
             entry.userId = userId;
             //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
-            entry.positions = positions;
+            entry.positions = JSON.parse(positions);
 
             context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));  
 
@@ -115,14 +115,14 @@ export class Contracts extends Contract {
     }
 
     // add waypoint
-    public async addWaypoint(context: Context, travelId: string, waypoint: Waypoint){ //travelId instead of entryId needed
+    public async addWaypoint(context: Context, travelId: string, waypoint: string){ //travelId instead of entryId needed
         
         let buffer = await context.stub.getState(travelId);
         // if data to entryID exists convert and add the waypoint
        if(buffer.length>0){
             let objekt = JSON.parse(buffer.toString())
             let positions = objekt.positions
-            positions.push(waypoint) // add waypoint to list
+            positions.push(JSON.parse(waypoint)) // add waypoint to list
             objekt.positions = positions
             context.stub.putState(travelId, Buffer.from(JSON.stringify(objekt)));
             Logger.write(Prefix.SUCCESS,'Positions Updated.')
@@ -154,6 +154,6 @@ export class Contracts extends Contract {
         else
             Logger.write(Prefix.SUCCESS, "Entry with id " + travelId + " has been found.");
 
-        return JSON.parse(bytes.toString());
+        return bytes.toString();
     }
 } 
