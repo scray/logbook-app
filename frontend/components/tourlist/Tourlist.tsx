@@ -1,6 +1,6 @@
 import {Button, StyleSheet, View, Text} from "react-native";
 import Tour from "../../model/Tour";
-import {tours} from "../../api/TourManagementAPI";
+import {tours} from "../../api/tourManagement";
 
 export default function Tourlist({
                                      currentTour,

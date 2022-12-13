@@ -1,5 +1,5 @@
 import {StyleSheet, View} from "react-native";
-import {createTour, createWaypoint, currentTour, saveTour, setCurrentTour} from "../../api/TourManagementAPI";
+import {createTour, createWaypoint, currentTour, setCurrentTour} from "../../api/tourManagement";
 import TourStartButton from "./TourStartButton";
 import {useEffect} from "react";
 import * as Location from "expo-location";
@@ -7,9 +7,10 @@ import * as Location from "expo-location";
 export default function TourManagementMenu() {
     function onButtonToggle(state: string) {
         if (state === "start") {
-            setCurrentTour(createTour("test"/*replace*/))
+            createTour("testUser").then((tour) => {
+                setCurrentTour(tour)
+            });
         } else if (currentTour) {
-            saveTour(currentTour);
             setCurrentTour(undefined);
         }
     }
