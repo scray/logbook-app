@@ -15,7 +15,8 @@ Run the app in the development mode:
 npm start --web # for web (This version does not support map features)
 npm start --android # for android (Runs on connected android devices or emulators)
 ```
-Build the app for production:
+Build the app for production: (IMPORTANT: Insert your own Google Maps API key in the app.js file)
+```bash
 ```bash
 npx expo run:ios # for ios
 npx expo run:android # for android
