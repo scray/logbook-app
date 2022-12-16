@@ -34,20 +34,25 @@ export default function Tourlist({
                     <Text> {"Time: " + new Date(currentTour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)} </Text>
                 </View>
             ) : (
-                tours.map((tour, index) => {
-                    let date1 = new Date(tour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options)
-                    let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)
-                    return (
-                        <Button
-                            key={index}
-                            title={date1 + " - " + date2}
-                            onPress={() => {
-                                LoadTour(tour)
-                            }}
-                        />
-                    )
+                <View>
+                    <Text style={styles.headline}>Tours: </Text>
+                    {
+                        tours.map((tour, index) => {
+                            let date1 = new Date(tour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options)
+                            let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)
+                            return (
+                                <Button
+                                    key={index}
+                                    title={date1 + " - " + date2}
+                                    onPress={() => {
+                                        LoadTour(tour)
+                                    }}
+                                />
+                            )
 
-                })
+                        })
+                    }
+                </View>
             )}
         </View>
     )
@@ -63,4 +68,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    headline: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    }
 });
