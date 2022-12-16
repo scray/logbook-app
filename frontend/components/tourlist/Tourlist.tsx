@@ -1,11 +1,13 @@
-import {Button, StyleSheet, View, Text} from "react-native";
+import {Button, StyleSheet, View, Text, ToastAndroid} from "react-native";
 import Tour from "../../model/Tour";
-import {tours} from "../../api/tourManagement";
+import {tours as tourList, updateTourList} from "../../api/tourManagement";
+import {useEffect, useState} from "react";
 
 export default function Tourlist({
                                      currentTour,
                                      setCurrentTour
                                  }: { currentTour: Tour | undefined, setCurrentTour: (tour: Tour | undefined) => void }) {
+    const [tours, setTours] = useState<Tour[]>(tourList);
 
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
@@ -14,6 +16,18 @@ export default function Tourlist({
         hour: "numeric",
         minute: "numeric"
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateTourList("testUser").then(r => {
+                ToastAndroid.show("Tourlist updated", ToastAndroid.SHORT);
+                setTours(tourList);
+            }).catch(error => {
+                ToastAndroid.show(error.message, ToastAndroid.SHORT);
+            });
+        }, 10000);
+        return () => clearInterval(interval);
+    },[]);
 
     function LoadTour(selectedTour: Tour) {//loads selected Tour after pressing the tourbutton
         setCurrentTour(selectedTour);
