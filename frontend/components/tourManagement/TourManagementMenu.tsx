@@ -40,7 +40,7 @@ export default function TourManagementMenu() {
                     console.log("If you are trying to get the location via the emulator or web, this is NOT possible!", error);
                 })
             }
-        }, 6000);
+        }, 60000);
         return () => clearInterval(interval);
     }, []);
 
