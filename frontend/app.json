@@ -18,13 +18,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+      }
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "de.anwentw.logbook"
     },
     "web": {
       "favicon": "./assets/favicon.png"
