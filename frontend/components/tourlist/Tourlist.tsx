@@ -64,7 +64,6 @@ export default function Tourlist({
 const styles = StyleSheet.create({
     tourlistContainer: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
     },

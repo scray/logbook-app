@@ -7,7 +7,6 @@ export default function TourStartButton({onPress}: { onPress: (state: string) =>
     let styles = StyleSheet.create({
         tourlistContainer: {
             flex: 1,
-            backgroundColor: '#fff',
             alignItems: 'center',
             justifyContent: 'center',
         },
