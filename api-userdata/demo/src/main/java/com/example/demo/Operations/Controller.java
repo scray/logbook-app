@@ -65,32 +65,4 @@ public class Controller {
 		Tour[] obj_tours = gson.fromJson(tours_as_json, Tour[].class);
 		return obj_tours;
 	}
-
-	/*private static String getName (JSONObject TOUR_JSON) {
-		try {
-			return TOUR_JSON.getString("name");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private static String getTour (JSONObject TOUR_JSON) {
-		try {
-			return TOUR_JSON.getString("tour");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private static String getPositions (JSONObject TOUR_JSON) {
-		try {
-			return TOUR_JSON.getString("positions");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}*/
-	
 }
