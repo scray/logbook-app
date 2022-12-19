@@ -94,5 +94,3 @@ public class Controller {
 	}*/
 	
 }
-
-// TODO --> Methoden um JSON zu zerlegen und geforderte Daten zurückzugeben
