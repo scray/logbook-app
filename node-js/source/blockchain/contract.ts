@@ -1,7 +1,7 @@
 import { Context, Contract } from 'fabric-contract-api';
 import { Logger } from '..';
 import { Prefix } from '../logger';
-import { Asset, TemporaryAsset, Tour, Waypoint } from './asset';
+import { Asset, TemporaryAsset, Travel, Waypoint } from './asset';
 
 
 export class Contracts extends Contract {
@@ -10,11 +10,6 @@ export class Contracts extends Contract {
         super("ContractsContract");
         Logger.write(Prefix.WARNING, "Contract has been started.");
     }
-
-    // NEW !!!
-    // entry is now tourId
-    // Asset-Object is now for saving on Blockchain 
-    // tour-Object is now for transfer to Backend
 
     public async Initialize(context: Context) {
         /* Set initialization paramters in this function and call it once the chaincode has been started. */
@@ -33,34 +28,35 @@ export class Contracts extends Contract {
 
     public async createTour(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: string) { //entryId not needed entryId = travelId
         /* Adding a new entry to the ledger with the given ID and details. */
-        Logger.write(Prefix.NORMAL, "Added entry on id " + tourId + " to the chain.");  //entryId now tourId
+        Logger.write(Prefix.NORMAL, "Added entry on id " + travelId + " to the chain.");  //entryId now tourId
 
         let entry = new Asset();
         entry.userId = userId;
         //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
         entry.positions = JSON.parse(positions);
 
-        context.stub.putState(tourId, Buffer.from(JSON.stringify(entry)));
+        context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));
     }
+    
     //retrieve Asset from BC; add travelId to make it a Travel Object; return TravelObject
-    public async getTour(context: Context, travelId: string): Promise<String> {     //entryId now travelId
+    public async getTour(context: Context, travelId: string) {     //entryId now travelId
         /* Requesting entry on a given id and return the valid entry or throw error */
-        let tour: Tour
-        Logger.write(Prefix.NORMAL, "Request entry with the id " + tourId + " from the blockchain.");
+        let tour: Travel;
+        Logger.write(Prefix.NORMAL, "Request entry with the id " + travelId + " from the blockchain.");
 
-        let bytes = await context.stub.getState(tourId);
+        let bytes = await context.stub.getState(travelId);
 
         if (bytes.length <= 0)
-            Logger.write(Prefix.ERROR, "The required entry with id " + tourId + " is not available.");
+            Logger.write(Prefix.ERROR, "The required entry with id " + travelId + " is not available.");
         else
-            Logger.write(Prefix.SUCCESS, "Entry with id " + tourId + " has been found.");
+            Logger.write(Prefix.SUCCESS, "Entry with id " + travelId + " has been found.");
             let asset = JSON.parse(bytes.toString())
-            tour = new Tour (tourId,asset.positions,asset.userId)
+            tour = new Travel (travelId,asset.positions,asset.userId)
 
-        return JSON.stringify(travel);
+        return JSON.stringify(travelId);
     }
 
-    public async getTours(context : Context): Promise<String>
+    public async getTours(context : Context)
     {
         // iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html
         let working = true;
@@ -78,7 +74,7 @@ export class Contracts extends Contract {
             if(state.value !== undefined && state.value.value !== undefined){
                 const asset = JSON.parse(state.value.value.toString());
                 const key = state.value.key;
-                const insert = new Tour(key, asset.positions, asset.userId)
+                const insert = new Travel(key, asset.positions, asset.userId)
                 entries.push(insert)
             }
             //  if iterator is done, the query has finished and the while loop ends
@@ -102,7 +98,7 @@ export class Contracts extends Contract {
             //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
             entry.positions = JSON.parse(positions);
 
-            context.stub.putState(tourID, Buffer.from(JSON.stringify(entry)));  
+            context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));  
 
             Logger.write(Prefix.SUCCESS, 'Asset Changed.');
 
@@ -117,14 +113,14 @@ export class Contracts extends Contract {
     // add waypoint
     public async addWaypoint(context: Context, travelId: string, waypoint: string){ //travelId instead of entryId needed
         
-        let buffer = await context.stub.getState(tourId);
+        let buffer = await context.stub.getState(travelId);
         // if data to entryID exists convert and add the waypoint
        if(buffer.length>0){
             let objekt = JSON.parse(buffer.toString())
             let positions = objekt.positions
             positions.push(JSON.parse(waypoint)) // add waypoint to list
             objekt.positions = positions
-            context.stub.putState(tourId, Buffer.from(JSON.stringify(objekt)));
+            context.stub.putState(travelId, Buffer.from(JSON.stringify(objekt)));
             Logger.write(Prefix.SUCCESS,'Positions Updated.')
        }
        else{
