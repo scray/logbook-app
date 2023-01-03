@@ -1,8 +1,8 @@
+import { ThreadAutoArchiveDuration } from 'discord.js';
 import { Context, Contract } from 'fabric-contract-api';
 import { Logger } from '..';
 import { Prefix } from '../logger';
-import { Asset, TemporaryAsset, Travel, Waypoint } from './asset';
-
+import { Tour, Waypoint, User } from './asset';
 
 export class Contracts extends Contract {
 
@@ -12,144 +12,70 @@ export class Contracts extends Contract {
     }
 
     public async Initialize(context: Context) {
-        /* Set initialization paramters in this function and call it once the chaincode has been started. */
+        /* Initializing an entry on user and tour id 0 / 0. With three different waypoints with non-real coordinates. */
 
         Logger.write(Prefix.NORMAL, "The ledger will be initialized.");
 
-        let entry = new Asset();
-        entry.userId = "user-0";
-        //entry.tourId = "tour-0";   //tourId only in the returned tour Object to backend
-        entry.positions = Waypoint[1];   //reworked to waypoint
+        let user = new User("0");
 
-        context.stub.putState("tour-0", Buffer.from(JSON.stringify(entry)));  //entry now tour
+        let waypoint = [];
 
-        Logger.write(Prefix.SUCCESS, "Ledger has been put in final state.");
+        waypoint.push(new Waypoint(1, 1, 100))
+        waypoint.push(new Waypoint(2, 2, 101));
+        waypoint.push(new Waypoint(3, 3, 103));
+
+        let entry = new Tour("0", "0");
+        entry.waypoints = waypoint;
+
+        user.tours.push(entry);
+
+        context.stub.putState(entry.userId, Buffer.from(JSON.stringify(user)));
+
+        Logger.write(Prefix.SUCCESS, "Ledger has been put in final state and has created an 0 id for tour and user.");
     }
 
-    public async createTour(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: string) { //entryId not needed entryId = travelId
-        /* Adding a new entry to the ledger with the given ID and details. */
-        Logger.write(Prefix.NORMAL, "Added entry on id " + travelId + " to the chain.");  //entryId now tourId
+    public async createTour(context: Context, userId: string, tourId: string) {
+        /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
-        let entry = new Asset();
-        entry.userId = userId;
-        //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
-        entry.positions = JSON.parse(positions);
+        let bytes = await context.stub.getState(userId);
 
-        context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));
+        if (bytes.length < 1)
+            return false;
+
+        let data: User = JSON.parse(bytes.toString());
+
+        let index = data.tours.findIndex(element => element.tourId == tourId);
+
+        if (index != -1)
+            data.tours[index] = new Tour(userId, tourId);
+        else
+            data.tours.push(new Tour(userId, tourId));
+
+        context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+        Logger.write(Prefix.NORMAL, "The tour " + tourId + " for user " + userId + " has been generated.");
     }
-    
-    //retrieve Asset from BC; add travelId to make it a Travel Object; return TravelObject
-    public async getTour(context: Context, travelId: string) {     //entryId now travelId
-        /* Requesting entry on a given id and return the valid entry or throw error */
-        let tour: Travel;
-        Logger.write(Prefix.NORMAL, "Request entry with the id " + travelId + " from the blockchain.");
 
-        let bytes = await context.stub.getState(travelId);
+    public async getTour(context: Context, userId: string, tourId: string) {
+        /* Request the tour with the given tourId from the given user with userId */
+
+        Logger.write(Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
+
+        let bytes = await context.stub.getState(userId);
 
         if (bytes.length <= 0)
-            Logger.write(Prefix.ERROR, "The required entry with id " + travelId + " is not available.");
-        else
-            Logger.write(Prefix.SUCCESS, "Entry with id " + travelId + " has been found.");
-            let asset = JSON.parse(bytes.toString())
-            tour = new Travel (travelId,asset.positions,asset.userId)
+            Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
+        else {
+            let data: User = JSON.parse(bytes.toString());
 
-        return JSON.stringify(travelId);
-    }
+            let found = data.tours.find(element => element.tourId == tourId);
 
-    public async getTours(context : Context)
-    {
-        // iterating thru StateQueryObject to get Buffer values -> https://hyperledger.github.io/fabric-chaincode-node/release-1.4/api/tutorial-using-iterators.html
-        let working = true;
-        const begin = 'tour-0';
-        const end = 'tour-9999';
-        let entries = [];
-        const iteration = await context.stub.getStateByRange(begin, end);
-
-        while (working) {
-
-            const state = await iteration.next();
-
-            //  sate.value.value := Buffer
-            //  make the Asset from BC to an tour, push and return the tourArray
-            if(state.value !== undefined && state.value.value !== undefined){
-                const asset = JSON.parse(state.value.value.toString());
-                const key = state.value.key;
-                const insert = new Travel(key, asset.positions, asset.userId)
-                entries.push(insert)
-            }
-            //  if iterator is done, the query has finished and the while loop ends
-            if(state.done){
-                Logger.write(Prefix.SUCCESS,'Query finished!')
-                working = false;
-                await iteration.close()
+            if (found) {
+                Logger.write(Prefix.SUCCESS, "Tour " + tourId + " for user " + userId + " has been found and sent to the requester.");
+                return JSON.stringify(found);
+            } else {
+                return false;
             }
         }
-
-        return JSON.stringify(entries);
-
-    }
-    public async changeEntries(context: Context, /*entryId: string,*/ userId: string, travelId: string, positions: string ){
-        let bytes = await context.stub.getState(travelId);
-        // if the returned byte array is not empty overwrite it
-        if(bytes.length > 0){
-            let entry = new Asset();
-
-            entry.userId = userId;
-            //entry.travelId = travelId;     //travelId only in the returned Travel Object to backend
-            entry.positions = JSON.parse(positions);
-
-            context.stub.putState(travelId, Buffer.from(JSON.stringify(entry)));  
-
-            Logger.write(Prefix.SUCCESS, 'Asset Changed.');
-
-        }
-        // if the byte array has no content log ERROR 
-        else{
-            Logger.write(Prefix.ERROR, 'Asset does not exist.');
-
-        }
-    }
-
-    // add waypoint
-    public async addWaypoint(context: Context, travelId: string, waypoint: string){ //travelId instead of entryId needed
-        
-        let buffer = await context.stub.getState(travelId);
-        // if data to entryID exists convert and add the waypoint
-       if(buffer.length>0){
-            let objekt = JSON.parse(buffer.toString())
-            let positions = objekt.positions
-            positions.push(JSON.parse(waypoint)) // add waypoint to list
-            objekt.positions = positions
-            context.stub.putState(travelId, Buffer.from(JSON.stringify(objekt)));
-            Logger.write(Prefix.SUCCESS,'Positions Updated.')
-       }
-       else{
-            Logger.write(Prefix.ERROR, 'The tourId does not exist.')
-       }
-    }
-
-
-    /* Temporary Transactions */        //entryId is now tourId
-    public async saveTempEntry(context: Context, tourId: string, data: string) {
-        Logger.write(Prefix.NORMAL, "Some data has been written to the blockchain. (" + tourId + ")");
-
-        let entry = new TemporaryAsset();
-        entry.data = data;
-
-        context.stub.putState(tourId, Buffer.from(JSON.stringify(entry)));
-    }
-
-                                        //entryId is now tourId
-    public async getTempEntry(context: Context, tourId: string) {
-        Logger.write(Prefix.NORMAL, "Request entry with the id " + tourId + " from the blockchain.");
-
-        let bytes = await context.stub.getState(tourId);
-
-        if (bytes.length <= 0)
-            Logger.write(Prefix.ERROR, "The required entry with id " + tourId + " is not available.");
-        else
-            Logger.write(Prefix.SUCCESS, "Entry with id " + tourId + " has been found.");
-
-        return bytes.toString();
     }
 } 

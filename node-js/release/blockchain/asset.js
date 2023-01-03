@@ -1,27 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Travel = exports.Asset = exports.Waypoint = exports.TemporaryAsset = void 0;
-class TemporaryAsset {
+exports.Tour = exports.Waypoint = exports.User = void 0;
+/*
+    Exact recreation of the object classes for the targeted blockchain operations.
+*/
+class User {
+    constructor(userId) {
+        this.tours = [];
+        this.userId = userId;
+    }
 }
-exports.TemporaryAsset = TemporaryAsset;
+exports.User = User;
 class Waypoint {
     constructor(longitude, latitude, timestamp) {
-        this.latitude = latitude;
         this.longitude = longitude;
+        this.latitude = latitude;
         this.timestamp = timestamp;
     }
 }
 exports.Waypoint = Waypoint;
-// Asset = Blockchain Object (without travelID)
-class Asset {
-}
-exports.Asset = Asset;
-// return for Backend (API)
-class Travel {
-    constructor(travelId, positions, userId) {
-        this.travelId = travelId;
-        this.positions = positions;
+class Tour {
+    constructor(userId, tourId) {
+        this.finish = false;
+        this.waypoints = [];
         this.userId = userId;
+        this.tourId = tourId;
     }
 }
-exports.Travel = Travel;
+exports.Tour = Tour;

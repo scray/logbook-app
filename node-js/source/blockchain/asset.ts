@@ -1,33 +1,38 @@
-export class TemporaryAsset{
-    data : string;
+import { time } from "console";
+
+/*
+    Exact recreation of the object classes for the targeted blockchain operations.
+*/
+export class User {
+    userId: string;
+    tours: Tour[] = [];
+
+    constructor(userId: string) {
+        this.userId = userId;
+    }
 }
 
-export class Waypoint{
-    longitude : number;
-    latitude : number;
-    timestamp : number;
+export class Waypoint {
+    longitude: number;
+    latitude: number;
+    timestamp: number;
 
-    constructor(longitude : number, latitude : number, timestamp : number){
-        this.latitude = latitude;
+    constructor(longitude: number, latitude: number, timestamp: number) {
         this.longitude = longitude;
+        this.latitude = latitude;
         this.timestamp = timestamp;
     }
 }
 
-// Asset = Blockchain Object (without travelID)
-export class Asset{
-    userId : string;
-    positions : Waypoint[];
-}
+export class Tour {
+    userId: string;
+    tourId: string;
+    finish: boolean = false;
+    waypoints: Waypoint[] = [];
 
-// return for Backend (API)
-export class Travel {
-    travelId: string // are now entries the travelId 
-    positions : Waypoint[];
-    userId : string;
-    constructor(travelId: string, positions: Waypoint[], userId: string){
-        this.travelId = travelId
-        this.positions = positions
-        this.userId = userId
+    constructor(userId: string, tourId: string) {
+        this.userId = userId;
+        this.tourId = tourId;
     }
 }
+
