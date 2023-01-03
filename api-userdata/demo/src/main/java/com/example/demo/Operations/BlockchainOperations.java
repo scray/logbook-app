@@ -116,7 +116,7 @@ public class BlockchainOperations {
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
    
-    public void updateTour(String id, String wp) {
+    public Boolean updateTour(String id, String wp) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -125,14 +125,16 @@ public class BlockchainOperations {
             Contract contract = network.getContract(smartContract);
 
             contract.submitTransaction("addWaypoint", id, wp);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
 
         }
     }
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
-    public void patchTour(String id, Boolean has_finished) {
+    public Boolean patchTour(String id, Boolean has_finished) {
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -140,10 +142,11 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("addWaypoint", id, Boolean.toString(has_finished));
+            contract.submitTransaction("finishTour", id, Boolean.toString(has_finished));
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-
+            return false;
         }
     }
 }

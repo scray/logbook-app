@@ -1,6 +1,7 @@
 package com.example.demo.Operations;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,18 @@ import com.google.gson.Gson;
 @RequestMapping(path = "/tour-app")
 public class Controller {
 	Gson gson = new Gson();
+
+	/*
+	 * TODO Delete
+	 */
+	@PutMapping(path = "/tours/{id}/{content}", produces = "application/json")
+	public String test(@PathVariable String id, @PathVariable String content) {
+		String tour_as_json = blockchainOperations.readTour(id);
+		return tour_as_json;
+	}
+	/*
+	 * 
+	 */
 
 	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
 	private BlockchainOperations blockchainOperations = new BlockchainOperations(
@@ -44,7 +57,7 @@ public class Controller {
     }
 
 	// ------------------------------------ PATCH METHODS ------------------------------------ //
-	@PutMapping("/tours/{id}")
+	@PatchMapping("/tours/{id}")
     @ResponseBody
     public String patch_tour(@PathVariable String id, @RequestBody Boolean has_finished) {
         blockchainOperations.patchTour(id ,has_finished);
