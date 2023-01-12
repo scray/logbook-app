@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 @RestController
 @RequestMapping(path = "/tour-app")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class Controller {
 	Gson gson = new Gson();
 
