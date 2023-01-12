@@ -5,7 +5,7 @@
  *
  * Copyright (c) SEEBURGER AG, Germany. All Rights Reserved.
  */
-package org.scray.dlt_logbook.client;
+package org.scray.hyperledger.fabric.example.app;
 
 
 import java.io.File;
@@ -57,13 +57,67 @@ public class BlockchainOperations
 
             contract.submitTransaction("CreateAsset",
                                        id,
-                                       value);
+                                       value
+                                       );
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
 
+    }
+
+    public void createEntry(String entryId, String userId,  String travelId, String positions)
+    {
+
+        try
+        {
+            if (gateway == null)
+            {
+                gateway = connect(userName);
+            }
+
+            // get the network and contract
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            contract.submitTransaction("createEntry",
+                                       entryId,
+                                       userId,
+                                       travelId,
+                                       positions
+                                       );
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public String getEntry(String id) {
+        String data = "{}";
+
+        try
+        {
+            if (gateway == null)
+            {
+                gateway = connect(userName);
+            }
+
+                        Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            data = new String(contract.evaluateTransaction("getEntry", id));
+
+            return data;
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 
 
