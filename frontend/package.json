@@ -19,6 +19,7 @@
     "react-native-geocoding": "^0.5.0",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-maps": "0.30.2",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-web": "0.17.7"
   },
   "devDependencies": {
