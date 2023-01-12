@@ -36,4 +36,4 @@ hs_err_pid*
 /chaincode/chaincode-validate-input/.vscode/
 
 #ignoring node modules which can be installed on each seperate system itself
-/node-js/node_modules
+/chaincode/node_modules
