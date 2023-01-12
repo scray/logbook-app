@@ -2,7 +2,7 @@ import * as React from 'react';
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import {StyleSheet, View, Dimensions} from 'react-native';
 import Tour from "../../model/Tour";
-import {getRegion} from "../../api/TourManagementAPI";
+import {getRegion} from "../../api/tourManagement";
 
 export default function Map({selectedTour}: { selectedTour: Tour | undefined }) {
     return (
@@ -60,7 +60,6 @@ export default function Map({selectedTour}: { selectedTour: Tour | undefined }) 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
     },

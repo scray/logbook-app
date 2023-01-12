@@ -7,7 +7,9 @@ export default function App() {
     return (
         <View style={styles.container}>
             <Overview/>
-            <BlockchainRestTestComponent/>
+            {
+                // <BlockchainRestTestComponent/>
+            }
             <StatusBar style="auto"/>
         </View>
     );

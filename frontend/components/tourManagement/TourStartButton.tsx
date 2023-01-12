@@ -1,30 +1,47 @@
-import { useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import {useEffect, useState} from "react";
+import {Pressable, StyleSheet, Text, View} from "react-native";
 
-export default function TourStartButton({onPress}:{onPress:(state:string)=>void}){
+export default function TourStartButton({onPress}: { onPress: (state: string) => Promise<boolean> }) {
     const [state, setState] = useState("start")
 
-    function toggleButton() {
-        if(state === "start") {
+    let styles = StyleSheet.create({
+        tourlistContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        startButton: {
+            backgroundColor: state === "start" ? "green" : "red",
+            padding: 10,
+            borderRadius: 5,
+            marginTop: 100,
+        },
+        startButtonText: {
+            color: state === "start" ? "white" : "black",
+            fontSize: 20,
+        }
+    });
+
+    function toggleButton(): Promise<boolean> {
+        if (state === "start") {
             setState("stop")
         } else {
             setState("start")
         }
-        onPress(state)
+        return onPress(state)
     }
 
-    return(
+    return (
         <View style={styles.tourlistContainer}>
-            <Button onPress={toggleButton} color={state === "start" ? "green" : "red"} title={state}/>
+            <Pressable style={styles.startButton} onPress={() => {
+                toggleButton().then((success) => {
+                    if (!success) {
+                        setState("start")
+                    }
+                })
+            }}>
+                <Text style={styles.startButtonText}>{state.toUpperCase()}</Text>
+            </Pressable>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-  tourlistContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
