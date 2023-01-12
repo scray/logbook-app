@@ -5,13 +5,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.*;
 
-import org.hyperledger.fabric.gateway.Contract;
-import org.hyperledger.fabric.gateway.Gateway;
-import org.hyperledger.fabric.gateway.Network;
-import org.hyperledger.fabric.gateway.Wallet;
-import org.hyperledger.fabric.gateway.Wallets;
+import com.google.gson.Gson;
+import org.hyperledger.fabric.gateway.*;
+import org.scray.logbookappApi.Data.Tour;
+import org.scray.logbookappApi.Objects.Waypoint;
 
 public class BlockchainOperations {
+    Gson gson = new Gson();
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     String channel = "mychannel";
@@ -23,8 +23,8 @@ public class BlockchainOperations {
     private final String userid = "0";
 
     // ------------------------------------ TEST METHOD (TO DELETE) ------------------------------------ //
-    public String readtest(int methode){
-        if (methode == 1){
+    public String readtest(int methode) {
+        if (methode == 1) {
             return "Returned from" + this.getClass().toString();
         } else {
             return "Wrong method!";
@@ -60,95 +60,62 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
-    public String readTour(String tourid) {
+    public String readTour(String userid, String tourid) throws Exception {
         String data = "";
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            data = new String(contract.evaluateTransaction("getTour", userid, tourid));
-            logger.info("Get succesful.");
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (gateway == null) {
+            gateway = connect(userName);
         }
-        logger.warning("Get failed.");
-        return null;
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        data = new String(contract.evaluateTransaction("getTour", userid, tourid));
+        logger.info("Get succesful.");
+        return data;
     }
 
-    public String readTours(String tourid) {
+    public String readTours(String userId) throws Exception {
         String data = "";
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            data = new String(contract.evaluateTransaction("getTours", userid, tourid));
-            logger.info("Get succesful.");
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (gateway == null) {
+            gateway = connect(userName);
         }
-        logger.warning("Get failed.");
-        return null;
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        data = new String(contract.evaluateTransaction("getTours", userid, userId));
+        logger.info("Get succesful.");
+        return data;
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
-   
-    public void writeTour(String tour) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("createTour", userid, tour);
-            logger.info("Post succesful.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.warning("Post failed.");
+    public void writeTour(String userid, Tour tour) throws Exception {
+        writeTour(userid, gson.toJson(tour));
+    }
+
+    private void writeTour(String userid, String tour) throws Exception {
+        if (gateway == null) {
+            gateway = connect(userName);
         }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        contract.submitTransaction("createTour", userid, tour);
+        logger.info("Post succesful.");
     }
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
-   
-    public Boolean updateTour(String tourid, String wp) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("addWaypoint", userid, tourid, wp);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-
-        }
+    public void updateTour(String userid, String tourid, Waypoint wp) throws Exception {
+        updateTour(userid, tourid, gson.toJson(wp));
     }
 
-    // ------------------------------------ PATCH BLOCKCHAIN REQUEST ------------------------------------ //
-    public Boolean patchTour(String tourid, Boolean has_finished) {
-        try {
-            if (gateway == null) {
-                gateway = connect(userName);
-            }
-            Network network = gateway.getNetwork(channel);
-            Contract contract = network.getContract(smartContract);
-
-            contract.submitTransaction("finishTour", userid, tourid, Boolean.toString(has_finished));
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    private void updateTour(String userid, String tourid, String wp) throws Exception {
+        if (gateway == null) {
+            gateway = connect(userName);
         }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        contract.submitTransaction("addWaypoint", userid, tourid, wp);
     }
 }
