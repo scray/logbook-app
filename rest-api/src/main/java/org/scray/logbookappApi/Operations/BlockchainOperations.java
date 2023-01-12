@@ -7,29 +7,18 @@ import java.util.logging.*;
 
 import com.google.gson.Gson;
 import org.hyperledger.fabric.gateway.*;
-import org.scray.logbookappApi.Data.Tour;
+import org.scray.logbookappApi.Objects.Tour;
 import org.scray.logbookappApi.Objects.Waypoint;
 
 public class BlockchainOperations {
     Gson gson = new Gson();
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    String channel = "mychannel";
-    String smartContract = "basic";
-    String walletPathString = "";
-    String userName = "";
+    String channel;
+    String smartContract;
+    String walletPathString;
+    String userName;
     Gateway gateway = null;
-
-    private final String userid = "0";
-
-    // ------------------------------------ TEST METHOD (TO DELETE) ------------------------------------ //
-    public String readtest(int methode) {
-        if (methode == 1) {
-            return "Returned from" + this.getClass().toString();
-        } else {
-            return "Wrong method!";
-        }
-    }
 
     // ------------------------------------ CONSTRUCTOR ------------------------------------ // 
     public BlockchainOperations(String channel, String smartContract, String userName, String walletPath) {
@@ -61,7 +50,7 @@ public class BlockchainOperations {
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
     public String readTour(String userid, String tourid) throws Exception {
-        String data = "";
+        String data;
         if (gateway == null) {
             gateway = connect(userName);
         }
@@ -74,13 +63,14 @@ public class BlockchainOperations {
     }
 
     public String readTours(String userId) throws Exception {
-        String data = "";
+        String data;
         if (gateway == null) {
             gateway = connect(userName);
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
 
+        String userid = "0";
         data = new String(contract.evaluateTransaction("getTours", userid, userId));
         logger.info("Get succesful.");
         return data;
