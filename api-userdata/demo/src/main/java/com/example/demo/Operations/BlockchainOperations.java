@@ -3,6 +3,7 @@ package com.example.demo.Operations;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.*;
 
 import org.hyperledger.fabric.gateway.Contract;
 import org.hyperledger.fabric.gateway.Gateway;
@@ -11,11 +12,15 @@ import org.hyperledger.fabric.gateway.Wallet;
 import org.hyperledger.fabric.gateway.Wallets;
 
 public class BlockchainOperations {
+    static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     String channel = "mychannel";
     String smartContract = "basic";
     String walletPathString = "";
     String userName = "";
     Gateway gateway = null;
+
+    private final String userid = "0";
 
     // ------------------------------------ TEST METHOD (TO DELETE) ------------------------------------ //
     public String readtest(int methode){
@@ -55,8 +60,8 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
-    public String read(String id) {
-        String data = "{}";
+    public String readTour(String tourid) {
+        String data = "";
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -64,17 +69,18 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            data = new String(contract.evaluateTransaction("getTempEntry", id));
+            data = new String(contract.evaluateTransaction("getTour", userid, tourid));
+            logger.info("Get succesful.");
             return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "Failed to get Data!";
+        logger.warning("Get failed.");
+        return null;
     }
 
-    // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
-   
-    public void writeTour(String id, String tour_string) {
+    public String readTours(String tourid) {
+        String data = "";
         try {
             if (gateway == null) {
                 gateway = connect(userName);
@@ -82,10 +88,67 @@ public class BlockchainOperations {
             Network network = gateway.getNetwork(channel);
             Contract contract = network.getContract(smartContract);
 
-            contract.submitTransaction("saveTempEntry", id, tour_string);
+            data = new String(contract.evaluateTransaction("getTours", userid, tourid));
+            logger.info("Get succesful.");
+            return data;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        logger.warning("Get failed.");
+        return null;
+    }
 
+    // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
+   
+    public void writeTour(String tour) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            contract.submitTransaction("createTour", userid, tour);
+            logger.info("Post succesful.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.warning("Post failed.");
+        }
+    }
+
+    // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
+   
+    public Boolean updateTour(String tourid, String wp) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            contract.submitTransaction("addWaypoint", userid, tourid, wp);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+
+        }
+    }
+
+    // ------------------------------------ PATCH BLOCKCHAIN REQUEST ------------------------------------ //
+    public Boolean patchTour(String tourid, Boolean has_finished) {
+        try {
+            if (gateway == null) {
+                gateway = connect(userName);
+            }
+            Network network = gateway.getNetwork(channel);
+            Contract contract = network.getContract(smartContract);
+
+            contract.submitTransaction("finishTour", userid, tourid, Boolean.toString(has_finished));
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
