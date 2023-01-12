@@ -8,7 +8,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.scray</groupId>
-	<artifactId>logbookapp-api</artifactId>
+	<artifactId>logbookappApi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>logbookappApi</name>
 	<properties>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20090211</version>
+			<version>20220924</version>
 		</dependency>
 		<!-- <<< DEPENDENCY FOR import org.json.JSONObject; -->
 
