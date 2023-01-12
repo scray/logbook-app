@@ -1,13 +1,15 @@
-FROM openjdk:19
+FROM maven:3.8.1-amazoncorretto-16 AS build
 
-#CMD ["mvn clean package"]
+COPY src /home/app/src
 
-COPY target/logbookapp-api-*.jar /logbookapp-api.jar
+COPY pom.xml /home/app
+
+RUN mvn -f /home/app/pom.xml clean package
+
+FROM amazoncorretto:16
+
+COPY --from=build /home/app/target/logbookapp-api-*.jar /usr/local/lib/logbookapp-api.jar
+
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar" , "/logbookapp-api.jar"]
-
-#docker build -t logbook_api_test .
-#docker run -d -p 8080:8080 logbook_api_test
-
-#TODO --> consult with Herr Obermeyer
-#maybe helpful: https://stackoverflow.com/questions/27767264/how-to-dockerize-maven-project-and-how-many-ways-to-accomplish-it
