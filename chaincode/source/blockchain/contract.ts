@@ -34,7 +34,7 @@ export class Contracts extends Contract {
         Logger.write(Prefix.SUCCESS, "Ledger has been put in final state and has created an 0 id for tour and user.");
     }
 
-    public async createTour(context: Context, userId: string, tourId: string) {
+    public async createTour(context: Context, userId: string, tour: Tour) {
         /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
         let bytes = await context.stub.getState(userId);
@@ -44,16 +44,37 @@ export class Contracts extends Contract {
 
         let data: User = JSON.parse(bytes.toString());
 
-        let index = data.tours.findIndex(element => element.tourId == tourId);
-
-        if (index != -1)
-            data.tours[index] = new Tour(userId, tourId);
-        else
-            data.tours.push(new Tour(userId, tourId));
+        data.tours.push(tour);
+        tour.tourId = data.tours.length.toString();
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
 
-        Logger.write(Prefix.NORMAL, "The tour " + tourId + " for user " + userId + " has been generated.");
+        Logger.write(Prefix.NORMAL, "The tour " + tour.tourId + " for user " + userId + " has been generated.");
+        return tour;
+    }
+
+    public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: Waypoint) {
+        /* Adding a waypoint to the given tourId from the given user with userId */
+
+        let bytes = await context.stub.getState(userId);
+
+        if (bytes.length < 1)
+            return false;
+
+        let data: User = JSON.parse(bytes.toString());
+
+        let found = data.tours.find(element => element.tourId == tourId);
+
+        if (found) {
+            found.waypoints.push(waypoint);
+
+            context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+            Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
+            return waypoint;
+        } else {
+            return false;
+        }
     }
 
     public async getTour(context: Context, userId: string, tourId: string) {
@@ -76,6 +97,23 @@ export class Contracts extends Contract {
             } else {
                 return false;
             }
+        }
+    }
+
+    public async getTours(context: Context, userId: string) {
+        /* Request all tours from the given user with userId */
+
+        Logger.write(Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
+
+        let bytes = await context.stub.getState(userId);
+
+        if (bytes.length <= 0)
+            Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
+        else {
+            let data: User = JSON.parse(bytes.toString());
+
+            Logger.write(Prefix.SUCCESS, "Tours for user " + userId + " has been found and sent to the requester.");
+            return JSON.stringify(data.tours);
         }
     }
 } 
