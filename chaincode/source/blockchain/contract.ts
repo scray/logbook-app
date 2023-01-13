@@ -43,14 +43,12 @@ export class Contracts extends Contract {
             return false;
 
         let data: User = JSON.parse(bytes.toString());
-
         let tour_data: Tour = JSON.parse(tour);
 
         data.tours.push(tour_data);
         tour_data.tourId = data.tours.length.toString();
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
-
         Logger.write(Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
 
         return JSON.stringify(tour);
@@ -65,18 +63,15 @@ export class Contracts extends Contract {
             return false;
 
         let data: User = JSON.parse(bytes.toString());
-
         let found = data.tours.find(element => element.tourId == tourId);
 
         if (!found)
             return false;
 
         let waypoint_data: Waypoint = JSON.parse(waypoint);
-
         found.waypoints.push(waypoint_data);
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
-
         Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
 
         return JSON.stringify(waypoint);
@@ -95,7 +90,6 @@ export class Contracts extends Contract {
         }
 
         let data: User = JSON.parse(bytes.toString());
-
         let found = data.tours.find(element => element.tourId == tourId);
 
         if (!found)
