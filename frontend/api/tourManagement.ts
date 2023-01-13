@@ -34,7 +34,7 @@ export async function createTour(userId: string): Promise<Tour> {
         tourId: "",
         waypoints: []
     }
-    let res = await httpRequests.post("", tour)
+    let res = await httpRequests.post("/" + userId, tour)
     tour.tourId = res.tourId
     return tour
 }
@@ -45,11 +45,11 @@ export async function createWaypoint(currentTour: Tour, location: LocationObject
         location.coords.longitude,
         location.timestamp
     );
-    await httpRequests.put("/" + currentTour.tourId, waypoint);
+    await httpRequests.put("/" + currentTour.userId + "/" + currentTour.tourId, waypoint);
 }
 
 export async function updateTourList(userId: string) {
-    tours = await httpRequests.get("/user/" + userId);
+    tours = await httpRequests.get("/" + userId);
 }
 
 export function getRegion(tour: Tour): Region {
