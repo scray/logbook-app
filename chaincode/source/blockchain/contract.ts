@@ -90,7 +90,6 @@ export class Contracts extends Contract {
         }
 
         let data: User = JSON.parse(bytes.toString());
-
         Logger.write(Prefix.SUCCESS, "Tours for user " + userId + " has been found and sent to the requester.");
 
         return JSON.stringify(data.tours);
