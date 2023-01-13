@@ -1,10 +1,16 @@
 import {StyleSheet, ToastAndroid, View} from "react-native";
 import {createTour, createWaypoint, currentTour, setCurrentTour} from "../../api/tourManagement";
+import Tourlist from "../tourlist/Tourlist";
 import TourStartButton from "./TourStartButton";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import * as Location from "expo-location";
+import Tour from "../../model/Tour";
+import Map from "../map/Map";
 
 export default function TourManagementMenu() {
+    
+    const [currentTour, setCurrentTour] = useState<Tour>();
+
     async function onButtonToggle(state: string): Promise<boolean> {
         if (state === "start") {
             return createTour("testUser").then((tour) => {
@@ -47,6 +53,8 @@ export default function TourManagementMenu() {
     return (
         <View style={styles.tourlistContainer}>
             <TourStartButton onPress={onButtonToggle}/>
+            <Tourlist currentTour={currentTour} setCurrentTour={setCurrentTour}/>
+            <Map selectedTour={currentTour}/>
         </View>
     )
 }

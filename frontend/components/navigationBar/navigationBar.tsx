@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons'; 
+import {useState} from "react";
 
 export default function NavigationBar(){
+
     return(
         <View style={styles.NavContainer}>
             <View style={styles.NavBar}>
