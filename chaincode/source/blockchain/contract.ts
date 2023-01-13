@@ -56,7 +56,7 @@ export class Contracts extends Contract {
         return JSON.stringify(tour);
     }
 
-    public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: Waypoint) {
+    public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: string) {
         /* Adding a waypoint to the given tourId from the given user with userId */
 
         let bytes = await context.stub.getState(userId);
@@ -71,7 +71,9 @@ export class Contracts extends Contract {
         if (!found)
             return false;
 
-        found.waypoints.push(waypoint);
+        let waypoint_data: Waypoint = JSON.parse(waypoint);
+
+        found.waypoints.push(waypoint_data);
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
 
