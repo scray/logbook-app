@@ -1,5 +1,6 @@
 package org.scray.logbookappApi.Operations;
 
+import com.google.gson.Gson;
 import org.scray.logbookappApi.Objects.Waypoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,7 @@ public class Controller {
     public ResponseEntity<String> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
         ResponseEntity<String> response;
         try {
-            blockchainOperations.writeTour(userid, obj_tour);
-            response = ResponseEntity.ok("id"); //TODO get id
+            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -38,8 +38,7 @@ public class Controller {
     public ResponseEntity<String> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
         ResponseEntity<String> response;
         try {
-            blockchainOperations.updateTour(userid, tourid, obj_wp);
-            response = ResponseEntity.ok("OK");
+            response = ResponseEntity.ok(blockchainOperations.updateTour(userid, tourid, obj_wp));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -48,6 +47,7 @@ public class Controller {
 
     // ------------------------------------ GET METHODS ------------------------------------ //
     @GetMapping(path = "/tours/{userid}/{tourid}", produces = "application/json")
+    @ResponseBody
     public ResponseEntity<String> get_tour(@PathVariable String userid, @PathVariable String tourid) {
         ResponseEntity<String> response;
         try {
@@ -59,6 +59,7 @@ public class Controller {
     }
 
     @GetMapping(path = "/tours/{userid}", produces = "application/json")
+    @ResponseBody
     public ResponseEntity<String> get_tours(@PathVariable String userid) {
         ResponseEntity<String> response;
         try {
