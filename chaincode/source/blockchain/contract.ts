@@ -34,7 +34,7 @@ export class Contracts extends Contract {
         Logger.write(Prefix.SUCCESS, "Ledger has been put in final state and has created an 0 id for tour and user.");
     }
 
-    public async createTour(context: Context, userId: string, tour: Tour) {
+    public async createTour(context: Context, userId: string, tour: string) {
         /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
         let bytes = await context.stub.getState(userId);
@@ -44,12 +44,14 @@ export class Contracts extends Contract {
 
         let data: User = JSON.parse(bytes.toString());
 
-        data.tours.push(tour);
-        tour.tourId = data.tours.length.toString();
+        let tour_data: Tour = JSON.parse(tour);
+
+        data.tours.push(tour_data);
+        tour_data.tourId = data.tours.length.toString();
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
 
-        Logger.write(Prefix.NORMAL, "The tour " + tour.tourId + " for user " + userId + " has been generated.");
+        Logger.write(Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
 
         return JSON.stringify(tour);
     }
@@ -117,7 +119,7 @@ export class Contracts extends Contract {
         let data: User = JSON.parse(bytes.toString());
 
         Logger.write(Prefix.SUCCESS, "Tours for user " + userId + " has been found and sent to the requester.");
-        
+
         return JSON.stringify(data.tours);
     }
 }
