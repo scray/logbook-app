@@ -11,29 +11,6 @@ export class Contracts extends Contract {
         Logger.write(Prefix.WARNING, "Contract has been started.");
     }
 
-    public async Initialize(context: Context) {
-        /* Initializing an entry on user and tour id 0 / 0. With three different waypoints with non-real coordinates. */
-
-        Logger.write(Prefix.NORMAL, "The ledger will be initialized.");
-
-        let user = new User("0");
-
-        let waypoint = [];
-
-        waypoint.push(new Waypoint(1, 1, 100))
-        waypoint.push(new Waypoint(2, 2, 101));
-        waypoint.push(new Waypoint(3, 3, 103));
-
-        let entry = new Tour("0", "0");
-        entry.waypoints = waypoint;
-
-        user.tours.push(entry);
-
-        context.stub.putState(entry.userId, Buffer.from(JSON.stringify(user)));
-
-        Logger.write(Prefix.SUCCESS, "Ledger has been put in final state and has created an 0 id for tour and user.");
-    }
-
     public async createTour(context: Context, userId: string, tour: string) {
         /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
