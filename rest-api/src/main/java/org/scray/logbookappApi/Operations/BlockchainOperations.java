@@ -30,7 +30,7 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ BUILD UP CONNECTION ------------------------------------ //
-    public Gateway connect(String userName)
+    public Gateway connect()
             throws Exception {
         // Load a file system based wallet for managing identities.
         Path walletPath = Paths.get(walletPathString);
@@ -52,7 +52,7 @@ public class BlockchainOperations {
     public String readTour(String userid, String tourid) throws Exception {
         String data;
         if (gateway == null) {
-            gateway = connect(userName);
+            gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
@@ -62,50 +62,51 @@ public class BlockchainOperations {
         return data;
     }
 
-    public String readTours(String userId) throws Exception {
+    public String readTours(String userid) throws Exception {
         String data;
         if (gateway == null) {
-            gateway = connect(userName);
+            gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
 
-        String userid = "0";
-        data = new String(contract.evaluateTransaction("getTours", userid, userId));
+        data = new String(contract.evaluateTransaction("getTours", userid));
         logger.info("Get succesful.");
         return data;
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public void writeTour(String userid, Tour tour) throws Exception {
-        writeTour(userid, gson.toJson(tour));
+    public String writeTour(String userid, Tour tour) throws Exception {
+        return writeTour(userid, gson.toJson(tour));
     }
 
-    private void writeTour(String userid, String tour) throws Exception {
+    private String writeTour(String userid, String tour) throws Exception {
+        String data;
         if (gateway == null) {
-            gateway = connect(userName);
+            gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
 
-        contract.submitTransaction("createTour", userid, tour);
+        data = new String(contract.submitTransaction("createTour", userid, tour));
         logger.info("Post succesful.");
+        return data;
     }
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public void updateTour(String userid, String tourid, Waypoint wp) throws Exception {
-        updateTour(userid, tourid, gson.toJson(wp));
+    public String updateTour(String userid, String tourid, Waypoint wp) throws Exception {
+        return updateTour(userid, tourid, gson.toJson(wp));
     }
 
-    private void updateTour(String userid, String tourid, String wp) throws Exception {
+    private String updateTour(String userid, String tourid, String wp) throws Exception {
         if (gateway == null) {
-            gateway = connect(userName);
+            gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
 
-        contract.submitTransaction("addWaypoint", userid, tourid, wp);
+        return new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
     }
 }
