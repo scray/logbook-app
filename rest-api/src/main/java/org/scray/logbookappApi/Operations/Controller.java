@@ -1,74 +1,72 @@
 package org.scray.logbookappApi.Operations;
 
+import com.google.gson.Gson;
 import org.scray.logbookappApi.Objects.Waypoint;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.scray.logbookappApi.Objects.Tour;
-import com.google.gson.Gson;
 
 @RestController
 @RequestMapping(path = "/tour-app")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class Controller {
-	Gson gson = new Gson();
 
-	/*
-	 * TODO Delete
-	 */
-	@PutMapping(path = "/tours/{id}/{content}", produces = "application/json")
-	public String test(@PathVariable String id, @PathVariable String content) {
-		String tour_as_json = blockchainOperations.readTour(id);
-		return tour_as_json;
-	}
-	/*
-	 * 
-	 */
+    // ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
+    private final BlockchainOperations blockchainOperations = new BlockchainOperations(
+            "channel-t",
+            "basic",
+            "alice",
+            "./wallet");
 
-	// ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
-	private BlockchainOperations blockchainOperations = new BlockchainOperations(
-			"channel-t",
-			"basic",
-			"alice",
-			"./wallet");
-
-	// ------------------------------------ POST METHODS ------------------------------------ //
-	@PostMapping("/tours")
+    // ------------------------------------ POST METHODS ------------------------------------ //
+    @PostMapping("/tours/{userid}")
     @ResponseBody
-	public String write_tour(@RequestBody Tour obj_tour) {
-		String json_tour = gson.toJson(obj_tour);
-        blockchainOperations.writeTour(json_tour);
-        return "Data has been inserted!";
+    public ResponseEntity<String> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
+        ResponseEntity<String> response;
+        try {
+            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return response;
     }
 
-	// ------------------------------------ PUT METHODS ------------------------------------ //
-	@PutMapping("/tours/{id}")
+    // ------------------------------------ PUT METHODS ------------------------------------ //
+    @PutMapping("/tours/{userid}/{tourid}")
     @ResponseBody
-	public String update_tour(@PathVariable String id, @RequestBody Waypoint obj_wp) {
-		String json_wp = gson.toJson(obj_wp);
-        blockchainOperations.updateTour(id ,json_wp);
-        return "Data has been inserted!";
+    public ResponseEntity<String> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
+        ResponseEntity<String> response;
+        try {
+            response = ResponseEntity.ok(blockchainOperations.updateTour(userid, tourid, obj_wp));
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return response;
     }
 
-	// ------------------------------------ PATCH METHODS ------------------------------------ //
-	@PatchMapping("/tours/{id}")
+    // ------------------------------------ GET METHODS ------------------------------------ //
+    @GetMapping(path = "/tours/{userid}/{tourid}", produces = "application/json")
     @ResponseBody
-    public String patch_tour(@PathVariable String id, @RequestBody Boolean has_finished) {
-        blockchainOperations.patchTour(id ,has_finished);
-        return "Data has been inserted!";
+    public ResponseEntity<String> get_tour(@PathVariable String userid, @PathVariable String tourid) {
+        ResponseEntity<String> response;
+        try {
+            response = ResponseEntity.ok(blockchainOperations.readTour(userid, tourid));
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return response;
     }
 
-	// ------------------------------------ GET METHODS ------------------------------------ //	
-	@GetMapping(path = "/tours/{id}", produces = "application/json")
-	public Tour get_tour(@PathVariable String id) {
-		String tour_as_json = blockchainOperations.readTour(id);
-		Tour obj_tour = gson.fromJson(tour_as_json, Tour.class);
-		return obj_tour;
-	}
-
-	@GetMapping(path = "/tours/user/{id}", produces = "application/json")
-	public Tour[] get_tours(@PathVariable String id) {
-		String tours_as_json = blockchainOperations.readTours(id);
-		Tour[] obj_tours = gson.fromJson(tours_as_json, Tour[].class);
-		return obj_tours;
-	}
+    @GetMapping(path = "/tours/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> get_tours(@PathVariable String userid) {
+        ResponseEntity<String> response;
+        try {
+            response = ResponseEntity.ok(blockchainOperations.readTours(userid));
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return response;
+    }
 }

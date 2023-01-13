@@ -50,6 +50,12 @@
 		</dependency>
 		<!-- <<< DEPENDENCY FOR org.hyperledger.fabric.gateway -->
 
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<!-- REPOSITORY FOR org.hyperledger.fabric.gateway >>> -->
