@@ -50,7 +50,8 @@ export class Contracts extends Contract {
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
 
         Logger.write(Prefix.NORMAL, "The tour " + tour.tourId + " for user " + userId + " has been generated.");
-        return tour;
+
+        return JSON.stringify(tour);
     }
 
     public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: Waypoint) {
@@ -65,16 +66,16 @@ export class Contracts extends Contract {
 
         let found = data.tours.find(element => element.tourId == tourId);
 
-        if (found) {
-            found.waypoints.push(waypoint);
-
-            context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
-
-            Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
-            return waypoint;
-        } else {
+        if (!found)
             return false;
-        }
+
+        found.waypoints.push(waypoint);
+
+        context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+        Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
+
+        return JSON.stringify(waypoint);
     }
 
     public async getTour(context: Context, userId: string, tourId: string) {
@@ -84,20 +85,21 @@ export class Contracts extends Contract {
 
         let bytes = await context.stub.getState(userId);
 
-        if (bytes.length <= 0)
+        if (bytes.length <= 0) {
             Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
-        else {
-            let data: User = JSON.parse(bytes.toString());
-
-            let found = data.tours.find(element => element.tourId == tourId);
-
-            if (found) {
-                Logger.write(Prefix.SUCCESS, "Tour " + tourId + " for user " + userId + " has been found and sent to the requester.");
-                return JSON.stringify(found);
-            } else {
-                return false;
-            }
+            return false;
         }
+
+        let data: User = JSON.parse(bytes.toString());
+
+        let found = data.tours.find(element => element.tourId == tourId);
+
+        if (!found)
+            return false;
+
+        Logger.write(Prefix.SUCCESS, "Tour " + tourId + " for user " + userId + " has been found and sent to the requester.");
+
+        return JSON.stringify(found);
     }
 
     public async getTours(context: Context, userId: string) {
@@ -107,13 +109,15 @@ export class Contracts extends Contract {
 
         let bytes = await context.stub.getState(userId);
 
-        if (bytes.length <= 0)
+        if (bytes.length <= 0) {
             Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
-        else {
-            let data: User = JSON.parse(bytes.toString());
-
-            Logger.write(Prefix.SUCCESS, "Tours for user " + userId + " has been found and sent to the requester.");
-            return JSON.stringify(data.tours);
+            return false;
         }
+
+        let data: User = JSON.parse(bytes.toString());
+
+        Logger.write(Prefix.SUCCESS, "Tours for user " + userId + " has been found and sent to the requester.");
+        
+        return JSON.stringify(data.tours);
     }
 }
