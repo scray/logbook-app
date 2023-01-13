@@ -116,4 +116,4 @@ export class Contracts extends Contract {
             return JSON.stringify(data.tours);
         }
     }
-} 
+}
