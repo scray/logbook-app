@@ -2,6 +2,7 @@ import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, View} from 'react-native';
 import Overview from './pages/Overview';
 import BlockchainRestTestComponent from "./components/BlockchainRestTestComponent";
+import NavigationBar from './components/navigationBar/navigationBar';
 
 export default function App() {
     return (
@@ -11,6 +12,7 @@ export default function App() {
                 // <BlockchainRestTestComponent/>
             }
             <StatusBar style="auto"/>
+            <NavigationBar></NavigationBar>
         </View>
     );
 }
