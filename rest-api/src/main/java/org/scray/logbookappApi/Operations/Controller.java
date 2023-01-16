@@ -1,6 +1,5 @@
 package org.scray.logbookappApi.Operations;
 
-import com.google.gson.Gson;
 import org.scray.logbookappApi.Objects.Waypoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ import org.scray.logbookappApi.Objects.Tour;
 public class Controller {
 
     // ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
-    private final BlockchainOperations blockchainOperations = new BlockchainOperations(
+    public static final BlockchainOperations blockchainOperations = new BlockchainOperations(
             "channel-t",
             "basic",
             "alice",
