@@ -22,6 +22,9 @@ export class Contracts extends Contract {
             return false;
 
         let data: User = JSON.parse(bytes.toString());
+
+        Logger.write(Prefix.WARNING, tour);
+
         let tour_data: Tour = JSON.parse(tour);
 
         data.tours.push(tour_data);
