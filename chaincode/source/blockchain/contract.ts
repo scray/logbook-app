@@ -14,6 +14,8 @@ export class Contracts extends Contract {
     public async createTour(context: Context, userId: string, tour: string) {
         /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
+        Logger.write(Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
+
         let bytes = await context.stub.getState(userId);
 
         if (bytes.length < 1)
