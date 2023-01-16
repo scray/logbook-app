@@ -1,4 +1,3 @@
-import { ThreadAutoArchiveDuration } from 'discord.js';
 import { Context, Contract } from 'fabric-contract-api';
 import { Logger } from '..';
 import { Prefix } from '../logger';
@@ -30,10 +29,9 @@ export class Contracts extends Contract {
         }
         catch (e) {
             Logger.write(Prefix.WARNING, "User (" + userId + ") does not exist. Creating a new user.");
+            Logger.write(Prefix.ERROR, "Exception catched: " + e + ".");
             data = new User(userId);
         }
-
-        Logger.write(Prefix.WARNING, tour);
 
         let tour_data: Tour = JSON.parse(tour);
 

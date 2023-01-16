@@ -1,8 +1,7 @@
-import { time } from "console";
-
 /*
     Exact recreation of the object classes for the targeted blockchain operations.
 */
+
 export class User {
     userId: string;
     tours: Tour[] = [];
