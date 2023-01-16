@@ -14,6 +14,8 @@ export class Contracts extends Contract {
     public async createTour(context: Context, userId: string, tour: string) {
         /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
 
+        let data: User;
+
         Logger.write(Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
 
         let bytes = await context.stub.getState(userId);
@@ -21,7 +23,13 @@ export class Contracts extends Contract {
         if (bytes.length < 1)
             return false;
 
-        let data: User = JSON.parse(bytes.toString());
+        try {
+            data = JSON.parse(bytes.toString());
+        }
+        catch (e) {
+            Logger.write(Prefix.WARNING, "User (" + userId + ") does not exist. Creating a new user.");
+            data = new User(userId);
+        }
 
         Logger.write(Prefix.WARNING, tour);
 
