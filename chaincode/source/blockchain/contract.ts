@@ -20,8 +20,10 @@ export class Contracts extends Contract {
 
         let bytes = await context.stub.getState(userId);
 
-        if (bytes.length < 1)
-            return false;
+        if (bytes.length < 1) {
+            data = new User(userId);
+            Logger.write(Prefix.WARNING, "State data was empty on createTour, creating a new user instead and going on with procedure.");
+        }
 
         try {
             data = JSON.parse(bytes.toString());
