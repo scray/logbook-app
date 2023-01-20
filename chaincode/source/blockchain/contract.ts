@@ -35,13 +35,14 @@ export class Contracts extends Contract {
 
         let tour_data: Tour = JSON.parse(tour);
 
-        data.tours.push(tour_data);
         tour_data.tourId = data.tours.length.toString();
+
+        data.tours.push(tour_data);
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
         Logger.write(Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
 
-        return JSON.stringify(tour);
+        return JSON.stringify(tour_data);
     }
 
     public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: string) {
@@ -64,7 +65,7 @@ export class Contracts extends Contract {
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
         Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
 
-        return JSON.stringify(waypoint);
+        return JSON.stringify(waypoint_data);
     }
 
     public async getTour(context: Context, userId: string, tourId: string) {
