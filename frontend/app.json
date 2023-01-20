@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2a292b"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -31,7 +31,7 @@
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#2a292b"
       },
       "package": "de.anwentw.logbook"
     },

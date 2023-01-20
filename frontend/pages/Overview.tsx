@@ -1,18 +1,33 @@
 import {StyleSheet, View} from 'react-native';
-import Tourlist from '../components/tourlist/Tourlist';
 import TourManagementMenu from '../components/tourManagement/TourManagementMenu';
-import Map from "../components/map/Map";
+import Settings from './Settings';
+import Wallet from './Wallet';
+import StartTour from './StartTour';
+import NavigationBar from '../components/navigationBar/navigationBar';
 import {useState} from "react";
-import Tour from "../model/Tour";
 
 export default function Overview() {
-    const [currentTour, setCurrentTour] = useState<Tour>();
+    const [currentPage, setCurrentPage] = useState("tourmanagment");
+
+    const LoadPage = () =>{
+        switch(currentPage){
+            case "starttour":
+                return <StartTour/>;
+            case "tourmanagment":
+                return <TourManagementMenu/>;
+            case "wallet":
+                return <Wallet/>;
+            case "settings":
+                return <Settings/>;
+            default:
+                return <TourManagementMenu/>;
+        }
+    }
 
     return (
         <View style={styles.container}>
-            <TourManagementMenu/>
-            <Tourlist currentTour={currentTour} setCurrentTour={setCurrentTour}/>
-            <Map selectedTour={currentTour}/>
+            <LoadPage/>
+            <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
         </View>
     );
 }
