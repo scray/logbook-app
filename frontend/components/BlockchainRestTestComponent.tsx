@@ -5,16 +5,17 @@ export default function BlockchainRestTestComponent() {
     const [input, setInput] = useState("");
     const [blockchain, setBlockchain] = useState("");
 
-    function handleInput(event: any) {
-        setInput(event.target.value);
+    function handleInput(text: string) {
+        console.log(text);
+        setInput(text);
     }
 
     function post() {
-        fetch('http://localhost:8080/tour-app/write/test/' + input)
+        fetch('http://localhost:8080/tour-app/write/0/' + input)
     }
 
     function get() {
-        fetch('http://localhost:8080/tour-app/test')
+        fetch('http://localhost:8080/tour-app/0')
             .then(response => response.json())
             .then(data => setBlockchain(data))
     }
@@ -22,7 +23,7 @@ export default function BlockchainRestTestComponent() {
     return (
         <View style={styles.container}>
             <Text>{blockchain}</Text>
-            <TextInput onTextInput={handleInput} placeholder="Enter a test string"/>
+            <TextInput onChangeText={handleInput} placeholder="Enter a test string"/>
             <Button onPress={post} title={'Post to Blockchain'}/>
             <Button onPress={get} title={'Retrieve from Blockchain'}/>
         </View>
