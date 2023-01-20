@@ -92,7 +92,6 @@ public class BlockchainOperations {
         Contract contract = network.getContract(smartContract);
         contract.submitTransaction("createTour", userid, tour);
         data = new String(contract.submitTransaction("createTour", userid, tour));
-        data = data.substring(1, data.length() - 1);
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
