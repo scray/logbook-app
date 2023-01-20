@@ -7,6 +7,7 @@ import java.util.logging.*;
 
 import com.google.gson.Gson;
 import org.hyperledger.fabric.gateway.*;
+import org.scray.logbookappApi.Logging.DiscordHook;
 import org.scray.logbookappApi.Objects.Tour;
 import org.scray.logbookappApi.Objects.Waypoint;
 
@@ -71,6 +72,7 @@ public class BlockchainOperations {
         Contract contract = network.getContract(smartContract);
 
         data = new String(contract.evaluateTransaction("getTours", userid));
+        DiscordHook.send(data);
         logger.info("Get succesful.");
         return gson.fromJson(data, Tour[].class);
     }
@@ -88,9 +90,13 @@ public class BlockchainOperations {
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
-
+        contract.submitTransaction("createTour", userid, tour);
         data = new String(contract.submitTransaction("createTour", userid, tour));
-        logger.info("Post succesful.");
+        data = data.substring(1, data.length() - 1);
+        while(data.contains("\\\"")) {
+            data = data.replace("\\\"", "\"");
+        }
+        DiscordHook.send(data);
         return gson.fromJson(data, Tour.class);
     }
 
@@ -106,7 +112,12 @@ public class BlockchainOperations {
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
-
-        return gson.fromJson(new String(contract.submitTransaction("addWaypoint", userid, tourid, wp)), Waypoint.class);
+        String data = new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
+        data = data.substring(1, data.length() - 1);
+        while(data.contains("\\\"")) {
+            data = data.replace("\\\"", "\"");
+        }
+        DiscordHook.send(data);
+        return gson.fromJson(data, Waypoint.class);
     }
 }

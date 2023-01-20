@@ -13,12 +13,18 @@ public class LogbookApi {
 
 	public static void main(String[] args) throws Exception {
 		DiscordHook.send("Logbook API starting");
-		if (Controller.blockchainOperations.connect() != null) {
-			DiscordHook.send("Logbook API started");
-			SpringApplication.run(LogbookApi.class, args);
-		} else {
-			DiscordHook.send("Logbook API could not connect to blockchain");
-			logger.info("Error: Connection failed to build up.");
+		try {
+			if (Controller.blockchainOperations.connect() != null) {
+				DiscordHook.send("Logbook API started");
+				logger.info("Logbook API started");
+				SpringApplication.run(LogbookApi.class, args);
+			} else {
+				DiscordHook.send("Logbook API could not connect to blockchain");
+				logger.info("Error: Connection failed to build up.");
+			}
+		} catch (Exception e) {
+			DiscordHook.send(e.getMessage());
+			logger.info(e.getMessage());
 		}
 	}
 }

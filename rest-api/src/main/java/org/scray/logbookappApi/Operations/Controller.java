@@ -30,7 +30,8 @@ public class Controller {
         try {
             response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
         } catch (Exception e) {
-            response = ResponseEntity.badRequest().body(e.getMessage());
+            response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            e.printStackTrace();
         }
         DiscordHook.send("Response: " + response);
         return response;
@@ -46,6 +47,7 @@ public class Controller {
             response = ResponseEntity.ok(blockchainOperations.updateTour(userid, tourid, obj_wp));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
         }
         DiscordHook.send("Response: " + response);
         return response;
@@ -61,6 +63,7 @@ public class Controller {
             response = ResponseEntity.ok(blockchainOperations.readTour(userid, tourid));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
         }
         DiscordHook.send("Response: " + response);
         return response;
@@ -75,6 +78,7 @@ public class Controller {
             response = ResponseEntity.ok(blockchainOperations.readTours(userid));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
         }
         DiscordHook.send("Response: " + response);
         return response;
