@@ -96,7 +96,11 @@ public class BlockchainOperations {
             data = data.replace("\\\"", "\"");
         }
         DiscordHook.send(data);
-        return gson.fromJson(data, Tour.class);
+        try {
+            return gson.fromJson(data, Tour.class);
+        } catch (Exception e) {
+            return gson.fromJson(data.substring(1, data.length() - 1), Tour.class);
+        }
     }
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
@@ -117,6 +121,10 @@ public class BlockchainOperations {
             data = data.replace("\\\"", "\"");
         }
         DiscordHook.send(data);
-        return gson.fromJson(data, Waypoint.class);
+        try {
+            return gson.fromJson(data, Waypoint.class);
+        } catch (Exception e) {
+            return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
+        }
     }
 }
