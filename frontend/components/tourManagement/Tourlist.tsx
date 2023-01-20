@@ -19,7 +19,7 @@ export default function Tourlist({
 
     useEffect(() => {
         const interval = setInterval(() => {
-            updateTourList("testUser").then(r => {
+            updateTourList("Felix").then(r => {
                 ToastAndroid.show("Tourlist updated", ToastAndroid.SHORT);
                 setTours(tourList);
             }).catch(error => {
@@ -35,7 +35,7 @@ export default function Tourlist({
 
     return (
         <View style={styles.tourlistContainer}>
-            {currentTour ? (
+            {currentTour && currentTour.waypoints && currentTour.waypoints.length >= 1 ? (
                 <View>
                     <Button
                         title={"back"}
@@ -44,25 +44,29 @@ export default function Tourlist({
 
                     <Text> {"Tour ID: " + currentTour.tourId} </Text>
                     <Text> {"User ID: " + currentTour.userId} </Text>
-                    <Text> {"Coordinates: " + currentTour.waypoints[0].getLatitude() + ", " + currentTour.waypoints[0].getLongitude() + " - " + currentTour.waypoints[currentTour.waypoints.length - 1].getLatitude() + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].getLongitude()} </Text>
-                    <Text> {"Time: " + new Date(currentTour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)} </Text>
+                    <Text> {"Coordinates: " + currentTour.waypoints[0].latitude + ", " + currentTour.waypoints[0].longitude + " - " + currentTour.waypoints[currentTour.waypoints.length - 1].latitude + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].longitude} </Text>
+                    <Text> {"Time: " + new Date(currentTour.waypoints[0].timestamp).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)} </Text>
                 </View>
             ) : (
+                
                 <View>
                     <Text style={styles.headline}>Tours: </Text>
                     {
-                        tours.map((tour, index) => {
-                            let date1 = new Date(tour.waypoints[0].getTimestamp()).toLocaleDateString("de-DE", options)
-                            let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].getTimestamp()).toLocaleDateString("de-DE", options)
-                            return (
-                                <Button
-                                    key={index}
-                                    title={date1 + " - " + date2}
-                                    onPress={() => {
-                                        LoadTour(tour)
-                                    }}
-                                />
-                            )
+                        tours && tours.map((tour, index) => { 
+                            if(tour.waypoints && tour.waypoints.length >= 1){
+                                let date1 = new Date(tour.waypoints[0].timestamp).toLocaleDateString("de-DE", options)
+                                let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)
+                                return (
+                                    <Button
+                                        key={index}
+                                        title={date1 + " - " + date2}
+                                        onPress={() => {
+                                            LoadTour(tour)
+                                        }}
+                                    />
+                                )
+                            }
+                            
 
                         })
                     }
