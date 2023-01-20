@@ -49,7 +49,7 @@ public class BlockchainOperations {
     }
 
     // ------------------------------------ READ BLOCKCHAIN REQUEST ------------------------------------ //
-    public String readTour(String userid, String tourid) throws Exception {
+    public Tour readTour(String userid, String tourid) throws Exception {
         String data;
         if (gateway == null) {
             gateway = connect();
@@ -59,10 +59,10 @@ public class BlockchainOperations {
 
         data = new String(contract.evaluateTransaction("getTour", userid, tourid));
         logger.info("Get succesful.");
-        return data;
+        return gson.fromJson(data, Tour.class);
     }
 
-    public String readTours(String userid) throws Exception {
+    public Tour[] readTours(String userid) throws Exception {
         String data;
         if (gateway == null) {
             gateway = connect();
@@ -72,16 +72,16 @@ public class BlockchainOperations {
 
         data = new String(contract.evaluateTransaction("getTours", userid));
         logger.info("Get succesful.");
-        return data;
+        return gson.fromJson(data, Tour[].class);
     }
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public String writeTour(String userid, Tour tour) throws Exception {
+    public Tour writeTour(String userid, Tour tour) throws Exception {
         return writeTour(userid, gson.toJson(tour));
     }
 
-    private String writeTour(String userid, String tour) throws Exception {
+    private Tour writeTour(String userid, String tour) throws Exception {
         String data;
         if (gateway == null) {
             gateway = connect();
@@ -91,22 +91,22 @@ public class BlockchainOperations {
 
         data = new String(contract.submitTransaction("createTour", userid, tour));
         logger.info("Post succesful.");
-        return data;
+        return gson.fromJson(data, Tour.class);
     }
 
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public String updateTour(String userid, String tourid, Waypoint wp) throws Exception {
+    public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {
         return updateTour(userid, tourid, gson.toJson(wp));
     }
 
-    private String updateTour(String userid, String tourid, String wp) throws Exception {
+    private Waypoint updateTour(String userid, String tourid, String wp) throws Exception {
         if (gateway == null) {
             gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
 
-        return new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
+        return gson.fromJson(new String(contract.submitTransaction("addWaypoint", userid, tourid, wp)), Waypoint.class);
     }
 }

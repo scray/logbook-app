@@ -1,5 +1,6 @@
 package org.scray.logbookappApi.Operations;
 
+import com.google.gson.Gson;
 import org.scray.logbookappApi.Objects.Waypoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class Controller {
     // ------------------------------------ POST METHODS ------------------------------------ //
     @PostMapping("/tours/{userid}")
     @ResponseBody
-    public ResponseEntity<String> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
-        ResponseEntity<String> response;
+    public ResponseEntity<Object> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
+        ResponseEntity<Object> response;
         try {
             response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
         } catch (Exception e) {
@@ -34,8 +35,8 @@ public class Controller {
     // ------------------------------------ PUT METHODS ------------------------------------ //
     @PutMapping("/tours/{userid}/{tourid}")
     @ResponseBody
-    public ResponseEntity<String> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
-        ResponseEntity<String> response;
+    public ResponseEntity<Object> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
+        ResponseEntity<Object> response;
         try {
             response = ResponseEntity.ok(blockchainOperations.updateTour(userid, tourid, obj_wp));
         } catch (Exception e) {
@@ -47,8 +48,8 @@ public class Controller {
     // ------------------------------------ GET METHODS ------------------------------------ //
     @GetMapping(path = "/tours/{userid}/{tourid}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<String> get_tour(@PathVariable String userid, @PathVariable String tourid) {
-        ResponseEntity<String> response;
+    public ResponseEntity<Object> get_tour(@PathVariable String userid, @PathVariable String tourid) {
+        ResponseEntity<Object> response;
         try {
             response = ResponseEntity.ok(blockchainOperations.readTour(userid, tourid));
         } catch (Exception e) {
@@ -59,8 +60,8 @@ public class Controller {
 
     @GetMapping(path = "/tours/{userid}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<String> get_tours(@PathVariable String userid) {
-        ResponseEntity<String> response;
+    public ResponseEntity<Object> get_tours(@PathVariable String userid) {
+        ResponseEntity<Object> response;
         try {
             response = ResponseEntity.ok(blockchainOperations.readTours(userid));
         } catch (Exception e) {
