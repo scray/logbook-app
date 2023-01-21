@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@react-native-community/masked-view": "^0.1.11",
-    "fabric-shim": "^2.2.3",
-    "react-navigation-stack": "^2.10.4"
-  }
-}
