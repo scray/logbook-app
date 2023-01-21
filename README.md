@@ -9,12 +9,12 @@
 Made as a part of the course _Application Development_ with Prof. Dr. Michael Cebulla at the _[Hochschule Anhalt University of Applied Sciences](https://www.hs-anhalt.de/startseite.html)_ in cooperation with the company [_Seeburger AG_](https://www.seeburger.com/).
 
 Developers:
-- [Felix Beinßen](https://github.com/Chafficui)
-- [Tim Berend](https://github.com/timbx1)
-- [Philipp Irmscher](https://github.com/philirmscher)
-- [Jason Labrenz](https://github.com/jazonthemazon)
-- [Tristan Roesch](https://github.com/TristanRoesch)
-- [Dominik Stieberitz](https://github.com/dvGrab)
+- [Felix Beinßen](https://github.com/Chafficui) (Team Lead & Frontend)
+- [Tim Berend](https://github.com/timbx1) (Chaincode)
+- [Philipp Irmscher](https://github.com/philirmscher) (Frontend & Styling)
+- [Jason Labrenz](https://github.com/jazonthemazon) (Backend)
+- [Tristan Roesch](https://github.com/TristanRoesch) (Backend & Documentation)
+- [Dominik Stieberitz](https://github.com/dvGrab) (Chaincode)
 
 Under the supervision of:
 - [Stefan Obermeier](https://github.com/obermeier) (Seeburger AG)
