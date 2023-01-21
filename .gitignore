@@ -37,3 +37,5 @@ hs_err_pid*
 
 #ignoring node modules which can be installed on each seperate system itself
 /chaincode/node_modules
+
+/.expo
