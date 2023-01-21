@@ -14,6 +14,9 @@ cd frontend
 npm i
 ```
 
+### Using a different server address for the REST API
+If you want to use a different server address for the REST API, you can change it in the [httpRequests.ts](../frontend/api/httpRequests.ts) file.
+
 ### Running the App
 Run the app in the development mode:
 ```bash
