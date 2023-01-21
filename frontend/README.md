@@ -3,7 +3,11 @@
 ## Logbook App (Frontend)
 The frontend is an Expo App (React Native) that allows users to view and capture their tours.
 
+### Prerequisites
+Make sure to get a google maps api key ([documentation](https://developers.google.com/maps/documentation/javascript/get-api-key)) and add it to the [app.json](app.json) file.
+
 ### Getting Started
+
 Install the expo-cli globally
 ```bash
 npm install -g expo-cli
@@ -13,6 +17,9 @@ Navigate to the frontend directory and install the dependencies:
 cd frontend
 npm i
 ```
+
+### Using a different server address for the REST API
+If you want to use a different server address for the REST API, you can change it in the [httpRequests.ts](../frontend/api/httpRequests.ts) file.
 
 ### Running the App
 Run the app in the development mode:

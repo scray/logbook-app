@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 public class DiscordHook implements Runnable {
+    private final String webhookURL = "https://discord.com/api/webhooks/1066042572910370896/kGhTilwHA1gijT7iCxssmqmmDZW_bx1DmcsC-CmkLuhD5mTledQ_ior9L6hlU95jzEa3";
 
     public static void send(String message) {
         System.out.println(message);
@@ -22,7 +23,6 @@ public class DiscordHook implements Runnable {
 
     @Override
     public void run() {
-        final String webhookURL = "https://discord.com/api/webhooks/1066042572910370896/kGhTilwHA1gijT7iCxssmqmmDZW_bx1DmcsC-CmkLuhD5mTledQ_ior9L6hlU95jzEa3";
         try {
             final HttpsURLConnection connection = (HttpsURLConnection) new URL(webhookURL).openConnection();
             connection.setRequestMethod("POST");
