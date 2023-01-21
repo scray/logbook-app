@@ -60,6 +60,9 @@ public class BlockchainOperations {
 
         data = new String(contract.evaluateTransaction("getTour", userid, tourid));
         logger.info("Get succesful.");
+        if(data.equalsIgnoreCase("false")) {
+            throw new Exception("Tour with id " + tourid + " does not exist. Or user " + userid + " does not have access to it.");
+        }
         return gson.fromJson(data, Tour.class);
     }
 
@@ -74,6 +77,9 @@ public class BlockchainOperations {
         data = new String(contract.evaluateTransaction("getTours", userid));
         DiscordHook.send(data);
         logger.info("Get succesful.");
+        if(data.equalsIgnoreCase("false")){
+            throw new Exception("No tours found for user " + userid);
+        }
         return gson.fromJson(data, Tour[].class);
     }
 
@@ -96,6 +102,9 @@ public class BlockchainOperations {
             data = data.replace("\\\"", "\"");
         }
         DiscordHook.send(data);
+        if(data.equalsIgnoreCase("false")){
+            throw new Exception("Tour could not be created.");
+        }
         try {
             return gson.fromJson(data, Tour.class);
         } catch (Exception e) {
@@ -121,6 +130,9 @@ public class BlockchainOperations {
             data = data.replace("\\\"", "\"");
         }
         DiscordHook.send(data);
+        if(data.equalsIgnoreCase("false")){
+            throw new Exception("Waypoint could not be added.");
+        }
         try {
             return gson.fromJson(data, Waypoint.class);
         } catch (Exception e) {
