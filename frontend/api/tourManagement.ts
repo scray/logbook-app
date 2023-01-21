@@ -5,11 +5,6 @@ import {LocationObject} from "expo-location";
 import * as httpRequests from "./httpRequests";
 
 export let tours: Array<Tour> = [
-    {
-        userId: "Guenther69",
-        tourId: "tourid1",
-        waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
-    }
 ]
 
 export let currentTour: Tour | undefined
