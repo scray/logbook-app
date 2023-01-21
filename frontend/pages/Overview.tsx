@@ -5,6 +5,7 @@ import Wallet from './Wallet';
 import StartTour from './StartTour';
 import NavigationBar from '../components/navigationBar/navigationBar';
 import {useState} from "react";
+import { createStackNavigator } from 'react-navigation-stack';
 
 export default function Overview() {
     const [currentPage, setCurrentPage] = useState("tourmanagment");
