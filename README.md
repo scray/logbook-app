@@ -13,7 +13,7 @@ Developers:
 - [Tim Berend](https://github.com/timbx1) (Chaincode)
 - [Philipp Irmscher](https://github.com/philirmscher) (Frontend & Styling)
 - [Jason Labrenz](https://github.com/jazonthemazon) (Backend)
-- [Tristan Roesch](https://github.com/TristanRoesch) (Backend & Documentation)
+- [Tristan Roesch](https://github.com/TristanRoesch) (Backend & Organization)
 - [Dominik Stieberitz](https://github.com/dvGrab) (Chaincode)
 
 Under the supervision of:
