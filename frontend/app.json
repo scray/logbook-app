@@ -20,13 +20,14 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+        "googleMapsApiKey": "AIzaSyDWHmHeyozyMF5C6OssNa3M0FcMXkv1m1Y" //TODO: add your Google Maps API key here!
       }
     },
     "android": {
+      "permissions":["android.permission.ACCESS_BACKGROUND_LOCATION","android.permission.ACCESS_FINE_LOCATION","android.permission.ACCESS_COARSE_LOCATION" ],
       "config": {
         "googleMaps": {
-          "apiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+          "apiKey": "AIzaSyDWHmHeyozyMF5C6OssNa3M0FcMXkv1m1Y" //TODO: add your Google Maps API key here!
         }
       },
       "adaptiveIcon": {

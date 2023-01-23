@@ -1,4 +1,4 @@
-import {Button, StyleSheet, View, Text, ToastAndroid} from "react-native";
+import {Button, StyleSheet, View, Text, ToastAndroid, ScrollView, TouchableOpacity} from "react-native";
 import Tour from "../../model/Tour";
 import {tours as tourList, updateTourList} from "../../api/tourManagement";
 import {useEffect, useState} from "react";
@@ -49,27 +49,26 @@ export default function Tourlist({
                 </View>
             ) : (
                 
-                <View>
+                <View style={styles.tourlistContainer}>
                     <Text style={styles.headline}>Tours: </Text>
-                    {
-                        tours && tours.map((tour, index) => { 
-                            if(tour.waypoints && tour.waypoints.length >= 1){
-                                let date1 = new Date(tour.waypoints[0].timestamp).toLocaleDateString("de-DE", options)
-                                let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)
-                                return (
-                                    <Button
-                                        key={index}
-                                        title={date1 + " - " + date2}
-                                        onPress={() => {
-                                            LoadTour(tour)
-                                        }}
-                                    />
-                                )
-                            }
-                            
-
-                        })
-                    }
+                    <ScrollView style={styles.list}>
+                        {
+                            tours && tours.map((tour, index) => {
+                                if(tour.waypoints && tour.waypoints.length >= 1){
+                                    let date1 = new Date(tour.waypoints[0].timestamp).toLocaleDateString("de-DE", options)
+                                    let date2 = new Date(tour.waypoints[tour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)
+                                    return (
+                                        <TouchableOpacity 
+                                            key={index} 
+                                            style={styles.buttonContainer} 
+                                            onPress={() => { LoadTour(tour) }}>
+                                            <Text style={styles.buttonText}>{date1 + " - " + date2}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                }
+                            })
+                        }
+                    </ScrollView>
                 </View>
             )}
         </View>
@@ -82,11 +81,26 @@ export default function Tourlist({
 const styles = StyleSheet.create({
     tourlistContainer: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 20
     },
     headline: {
         fontSize: 20,
         fontWeight: 'bold',
-    }
+    },
+    list: {
+        flex: 1,
+        marginHorizontal: 20,
+    },
+    buttonContainer: {
+        backgroundColor: "lightblue",
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: "white",
+        fontWeight: "bold",
+    },
 });

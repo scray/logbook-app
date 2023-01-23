@@ -11,6 +11,7 @@ npm-debug.*
 *.orig.*
 web-build/
 app.json
+android
 
 # macOS
 .DS_Store

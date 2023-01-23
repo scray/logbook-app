@@ -12,15 +12,15 @@ export default function Overview() {
     const LoadPage = () =>{
         switch(currentPage){
             case "starttour":
-                return <StartTour/>;
+                return <TourManagementMenu loadPage= {currentPage} />;
             case "tourmanagment":
-                return <TourManagementMenu/>;
+                return <TourManagementMenu loadPage= {currentPage} />;
             case "wallet":
                 return <Wallet/>;
             case "settings":
                 return <Settings/>;
             default:
-                return <TourManagementMenu/>;
+                return <TourManagementMenu loadPage= {currentPage}/>;
         }
     }
 
