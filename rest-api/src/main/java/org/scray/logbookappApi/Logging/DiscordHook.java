@@ -39,7 +39,7 @@ public class DiscordHook implements Runnable {
             }
             connection.getInputStream();
         } catch (final IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to send message to Discord.");
         }
     }
 }

@@ -75,7 +75,6 @@ public class BlockchainOperations {
         Contract contract = network.getContract(smartContract);
 
         data = new String(contract.evaluateTransaction("getTours", userid));
-        DiscordHook.send(data);
         logger.info("Get succesful.");
         if(data.equalsIgnoreCase("false")){
             throw new Exception("No tours found for user " + userid);
@@ -101,7 +100,6 @@ public class BlockchainOperations {
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
-        DiscordHook.send(data);
         if(data.equalsIgnoreCase("false")){
             throw new Exception("Tour could not be created.");
         }

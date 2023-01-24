@@ -33,7 +33,7 @@ public class Controller {
             response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
             e.printStackTrace();
         }
-        DiscordHook.send("Response: " + response);
+        DiscordHook.send("Response: " + response.getBody());
         return response;
     }
 
@@ -49,7 +49,7 @@ public class Controller {
             response = ResponseEntity.badRequest().body(e.getMessage());
             e.printStackTrace();
         }
-        DiscordHook.send("Response: " + response);
+        DiscordHook.send("Response: " + response.getBody());
         return response;
     }
 
@@ -65,7 +65,7 @@ public class Controller {
             response = ResponseEntity.badRequest().body(e.getMessage());
             e.printStackTrace();
         }
-        DiscordHook.send("Response: " + response);
+        DiscordHook.send("Response: " + response.getBody());
         return response;
     }
 
@@ -80,7 +80,7 @@ public class Controller {
             response = ResponseEntity.badRequest().body(e.getMessage());
             e.printStackTrace();
         }
-        DiscordHook.send("Response: " + response);
+        DiscordHook.send("Response: " + response.getBody());
         return response;
     }
 }
