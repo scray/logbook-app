@@ -50,14 +50,18 @@ export class Contracts extends Contract {
 
         let bytes = await context.stub.getState(userId);
 
-        if (bytes.length < 1)
+        if (bytes.length < 1) {
+            Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
             return false;
+        }
 
         let data: User = JSON.parse(bytes.toString());
         let found = data.tours.find(element => element.tourId == tourId);
 
-        if (!found)
+        if (!found) {
+            Logger.write(Prefix.ERROR, "The required entry with id " + userId + " is not available.");
             return false;
+        }
 
         let waypoint_data: Waypoint = JSON.parse(waypoint);
         found.waypoints.push(waypoint_data);

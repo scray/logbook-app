@@ -70,6 +70,7 @@ export function setCurrentTour(tour: Tour | undefined) {
 }
 
 export async function createTour(userId: string): Promise<Tour> {
+    console.log("CREATING TOUR! " + userId)
     let tour = {
         userId: userId,
         tourId: "",

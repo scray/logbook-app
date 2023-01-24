@@ -1,26 +1,27 @@
 import { Button, StyleSheet, View, Text, ToastAndroid, ScrollView, TouchableOpacity } from "react-native";
 import Tour from "../../model/Tour";
 import { tours as tourList, updateTourList } from "../../api/tourManagement";
-import React, { useEffect, useState } from "react";
-import { userId } from "../../api/httpRequests";
+import React, { useContext, useEffect, useState } from "react";
 import Map from "../map/Map";
 import { Ionicons, Fontisto } from '@expo/vector-icons';
 import {theme} from "../../api/theme";
-
+import { Context } from "../profile/UserID";
 
 export default function Tourlist({
-    currentTour,
-    setCurrentTour
-}: { currentTour: Tour | undefined, setCurrentTour: (tour: Tour | undefined) => void }) {
-    const [tours, setTours] = useState<Tour[]>(tourList);
+        currentTour,
+        setCurrentTour
+    }: { currentTour: Tour | undefined, setCurrentTour: (tour: Tour | undefined) => void }) {
+        const [tours, setTours] = useState<Tour[]>(tourList);
 
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: "numeric",
-        minute: "numeric",
-    }
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: "numeric",
+            minute: "numeric",
+        }
+
+    const { userId, setUserId } = useContext(Context);
 
     useEffect(() => {
         refreshTourList();
@@ -29,13 +30,18 @@ export default function Tourlist({
         }, 10000);
         return () => clearInterval(interval);
     }, []);
+
     function refreshTourList() {
-        updateTourList(userId).then(r => {
-            ToastAndroid.show("Tourlist updated", ToastAndroid.SHORT);
-            setTours(tourList);
-        }).catch(error => {
-            ToastAndroid.show(error.message, ToastAndroid.SHORT);
-        });
+        if(userId){
+            updateTourList(userId).then(r => {
+                ToastAndroid.show("Tourlist updated for User ID " + userId, ToastAndroid.SHORT);
+                setTours(tourList);
+            }).catch(error => {
+                ToastAndroid.show(error.message, ToastAndroid.SHORT);
+            });
+        }else{
+            ToastAndroid.show("No User ID provided! " + userId, ToastAndroid.SHORT);
+        }
     }
 
 

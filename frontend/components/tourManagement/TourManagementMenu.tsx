@@ -2,30 +2,31 @@ import { Platform, StyleSheet, ToastAndroid, View, Text } from "react-native";
 import { createTour, createWaypoint } from "../../api/tourManagement";
 import Tourlist from "./Tourlist";
 import TourStartButton from "./TourStartButton";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import * as Location from "expo-location";
 import Tour from "../../model/Tour";
-import { userId } from "../../api/httpRequests";
 import {theme} from "../../api/theme";
+import { Context } from "../profile/UserID";
 
 export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
 
     const [currentTour, setCurrentTour] = useState<Tour>();
     const [runningTour, setRunningTour] = useState<Tour>();
+    const { userId, setUserId } = useContext(Context);
     let permissionGranted = false;
 
     async function onButtonToggle(state: string): Promise<boolean> {
-        if (state === "start" && permissionGranted) {
+        if (state === "start" && permissionGranted && userId) {
             return createTour(userId).then((tour) => {
                 setRunningTour(tour)
-
+                ToastAndroid.show("Created new tour for " + userId, ToastAndroid.SHORT);
                 return true
             }).catch((error) => {
                 ToastAndroid.show(error.message, ToastAndroid.SHORT);
                 setRunningTour(undefined)
                 return false
             });
-        } else if (currentTour) {
+        } else if (runningTour) {
             setRunningTour(undefined);
         }
         return new Promise((resolve) => {

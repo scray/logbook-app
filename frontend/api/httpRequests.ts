@@ -1,5 +1,4 @@
-const url = "http://192.168.178.52:8080/tour-app/tours";//"http://194.163.169.207:8080/tour-app/tours"
-export let userId = "Felix";
+const url = "http://194.163.169.207:8080/tour-app/tours";//"http://194.163.169.207:8080/tour-app/tours"
 
 export async function post(path: string, body: any) {
     let response = await fetch(url + path, {

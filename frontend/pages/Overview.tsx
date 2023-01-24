@@ -7,7 +7,7 @@ import {useState} from "react";
 import {Theme} from "../api/theme";
 
 export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) {
-    const [currentPage, setCurrentPage] = useState("tourmanagment");
+    const [currentPage, setCurrentPage] = useState("starttour");
 
     const LoadPage = () =>{
         switch(currentPage){

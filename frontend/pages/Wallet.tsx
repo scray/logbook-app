@@ -1,50 +1,43 @@
-import {Pressable, StyleSheet, Text, TextInput, View} from "react-native";
+import {Pressable, StyleSheet, Text, TextInput, ToastAndroid, View} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useLayoutEffect, useState} from "react";
+import {useContext, useEffect, useLayoutEffect, useState} from "react";
 import ProfilePicture from "../components/profile/ProfilePicture";
 import {theme} from "../api/theme";
+import { Context, storeUserId, getUserId} from "../components/profile/UserID";
 
 export default function Wallet() {
-
-    useLayoutEffect(() => {
-        (async() => {
-            const value = await getData("userId")
-            value && setUserId(value);
-        })()
-    }, []);
-    
-    const storeData = async (storagekey: string,value: string) => {//save Data to asyncStorage
-        try {
-          await AsyncStorage.setItem(storagekey, value);
-          console.log("User ID " + userId + " has been saved!");
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    const getData = async (storagekey: string) => {//get Data from asyncStorage
-        try {
-            return await AsyncStorage.getItem(storagekey)
-        } catch(e) {
-            console.error(e);
-            return "";
-        }
-    }
-
-    const [userId, setUserId] = useState("");
+    const { userId, setUserId } = useContext(Context);
+    const [inputValue, setInputValue] = useState(userId);
     const handleTextChange = (text:string) => {
-        setUserId(text);
+        setInputValue(text);
     }
+    useEffect(() => {
+        const loadData = async () => {
+            await getUserId().then((id)=>{
+                
+                if(id){ 
+                    setInputValue(id);
+                }
+            });
+        }
+        loadData();
 
+    }, []);
+
+    function saveUserId(){
+        if(inputValue){
+            storeUserId(inputValue);
+            setUserId(inputValue);
+        }
+    }
     return (
         <View style={styles.container}>
             <Text style={styles.title}>YOUR PROFILE</Text>
             <ProfilePicture></ProfilePicture>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Enter User ID:</Text>
-                <TextInput style={styles.input} placeholder="Enter User ID" onChangeText={handleTextChange} value={userId}/>
+                <TextInput style={styles.input} placeholder="Enter User ID" onChangeText={handleTextChange} value={inputValue}/>
             </View>
-            <Pressable style={styles.saveButton} onPress={()=>{storeData("userId",userId)}}>
+            <Pressable style={styles.saveButton} onPress={()=>{saveUserId() }}>
                 <Text style={styles.saveButtonTitle}>Save</Text>
             </Pressable>
 
