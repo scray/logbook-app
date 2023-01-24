@@ -1,16 +1,34 @@
 import React, { useEffect } from 'react';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, {MAP_TYPES, Marker, Polyline} from 'react-native-maps';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import Tour from "../../model/Tour";
 import { getRegion } from "../../api/tourManagement";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Map({ selectedTour }: { selectedTour: Tour | undefined }) {
-    const [mapStyle, setMapStyle] = React.useState("standard");
+    const [mapStyle, setMapStyle] = React.useState(MAP_TYPES.STANDARD);
 
     useEffect(() => {
         AsyncStorage.getItem('mapStyle').then((value) => {
-            setMapStyle(value || "standard");
+            switch (value) {
+                case "standard":
+                    setMapStyle(MAP_TYPES.STANDARD);
+                    break;
+                case "satellite":
+                    setMapStyle(MAP_TYPES.SATELLITE);
+                    break;
+                case "hybrid":
+                    setMapStyle(MAP_TYPES.HYBRID);
+                    break;
+                case "terrain":
+                    setMapStyle(MAP_TYPES.TERRAIN);
+                    break;
+                case "none":
+                    setMapStyle(MAP_TYPES.NONE);
+                    break;
+                default:
+                    setMapStyle(MAP_TYPES.STANDARD);
+            }
         });
     }, []);
 
@@ -21,6 +39,7 @@ export default function Map({ selectedTour }: { selectedTour: Tour | undefined }
                     <MapView
                         style={styles.map}
                         provider="google"
+                        mapType={mapStyle}
                         loadingEnabled={true}
                         loadingIndicatorColor="#666666"
                         loadingBackgroundColor="#eeeeee"

@@ -1,5 +1,5 @@
-import { View, Text, Switch, StyleSheet } from "react-native";
-import React, { useEffect, useState } from "react";
+import {View, Text, Switch, StyleSheet} from "react-native";
+import React, {useEffect, useState} from "react";
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -30,24 +30,26 @@ const Settings = () => {
     return (
         <View style={styles.container}>
             <View style={styles.settingsContainer}>
-                <Text style={{ fontSize: 24, marginBottom: 20 }}>Settings</Text>
+                <Text style={{fontSize: 24, marginBottom: 20}}>Settings</Text>
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Dark Mode</Text>
-                    <Switch value={isDarkMode} onValueChange={setIsDarkMode} />
+                    <Switch value={isDarkMode} onValueChange={setIsDarkMode}/>
                 </View>
 
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Push Notifications</Text>
-                    <Switch value={isPushNotificationsEnabled} onValueChange={setIsPushNotificationsEnabled} />
+                    <Switch value={isPushNotificationsEnabled} onValueChange={setIsPushNotificationsEnabled}/>
                 </View>
 
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Map Style</Text>
                     <DropDownPicker
                         items={[
-                            { label: "Standard", value: "standard" },
-                            { label: "Satellite", value: "satellite" },
-                            { label: "Hybrid", value: "hybrid" },
+                            {label: "Standard", value: "standard"},
+                            {label: "Satellite", value: "satellite"},
+                            {label: "Hybrid", value: "hybrid"},
+                            {label: "Terrain", value: "terrain"},
+                            {label: "None", value: "none"}
                         ]}
                         containerStyle={styles.picker}
                         setValue={setMapStyle}
