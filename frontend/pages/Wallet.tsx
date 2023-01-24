@@ -2,6 +2,7 @@
 import {Platform, StyleSheet, ToastAndroid, View, Text, Pressable, TextInput} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLayoutEffect, useState, createContext } from "react";
+import ProfilePicture from "../components/profile/ProfilePicture";
 
 const UserIdContext = createContext("");
 
@@ -40,9 +41,10 @@ export default function Wallet() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Wallet</Text>
+            <Text style={styles.title}>YOUR PROFILE</Text>
+            <ProfilePicture></ProfilePicture>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>User ID:</Text>
+                <Text style={styles.label}>Enter User ID:</Text>
                 <TextInput style={styles.input} placeholder="Enter User ID" onChangeText={handleTextChange} value={userId}/>
             </View>
             <Pressable style={styles.saveButton}onPress={()=>{storeData("userId",userId)}}>
