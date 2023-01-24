@@ -43,8 +43,8 @@ export default function NavigationBar({currentPage, setCurrentPage}: {currentPag
                 <Pressable onPress={() => {setCurrentPage("tourmanagment") }}>
                     <MaterialIcons style={styles.btn2} name="tour" size={32} color="white" />
                 </Pressable>
-                <Pressable onPress={() => {setCurrentPage("account-circle") }}>
-                    <Ionicons style={styles.btn3} name="wallet" size={32} color="white" />
+                <Pressable onPress={() => {setCurrentPage("wallet") }}>
+                    <MaterialIcons style={styles.btn3} name="account-circle" size={32} color="white" />
                 </Pressable>
                 <Pressable onPress={() => {setCurrentPage("settings") }}>
                     <Ionicons style={styles.btn4} name="settings-outline" size={32} color="white" />
