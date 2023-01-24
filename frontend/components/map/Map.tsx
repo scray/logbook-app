@@ -1,17 +1,25 @@
-import * as React from 'react';
-import MapView, {Marker, Polyline} from 'react-native-maps';
-import {StyleSheet, View, Dimensions} from 'react-native';
+import React, { useEffect } from 'react';
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import Tour from "../../model/Tour";
-import {getRegion} from "../../api/tourManagement";
+import { getRegion } from "../../api/tourManagement";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Map({selectedTour}: { selectedTour: Tour | undefined }) {
+export default function Map({ selectedTour }: { selectedTour: Tour | undefined }) {
+    const [mapStyle, setMapStyle] = React.useState("standard");
+
+    useEffect(() => {
+        AsyncStorage.getItem('mapStyle').then((value) => {
+            setMapStyle(value || "standard");
+        });
+    }, []);
+
     return (
         <View style={styles.container}>
             {
                 selectedTour && (
                     <MapView
                         style={styles.map}
-                        showsPointsOfInterest={false}
                         provider="google"
                         loadingEnabled={true}
                         loadingIndicatorColor="#666666"
@@ -23,10 +31,10 @@ export default function Map({selectedTour}: { selectedTour: Tour | undefined }) 
                         showsIndoorLevelPicker={false}
                         region={getRegion(selectedTour)}
                         moveOnMarkerPress={false}
-                        zoomEnabled={false}
-                        rotateEnabled={false}
-                        scrollEnabled={false}
-                        pitchEnabled={false}
+                        zoomEnabled={true}
+                        rotateEnabled={true}
+                        scrollEnabled={true}
+                        pitchEnabled={true}
                     >
                         <View>
                             {
@@ -65,6 +73,6 @@ const styles = StyleSheet.create({
     },
     map: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height / 2,
+        height: Dimensions.get('window').height / 2.29,
     },
 });

@@ -46,3 +46,4 @@ package-lock.json
 yarn.lock
 *.iml
 >>>>>>> a379a13e28b83fc7fa02b558543d5bcd5a8cf41a
+frontend/app.json

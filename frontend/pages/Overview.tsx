@@ -26,8 +26,10 @@ export default function Overview() {
 
     return (
         <View style={styles.container}>
-            <LoadPage/>
             <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
+            <View style={styles.container}>
+                <LoadPage/>
+            </View>
         </View>
     );
 }

@@ -4,7 +4,63 @@ import {Region} from "react-native-maps";
 import {LocationObject} from "expo-location";
 import * as httpRequests from "./httpRequests";
 
-export let tours: Array<Tour> = [
+export let tours: Array<Tour> = [{
+    userId: "testuser",
+    tourId: "tourid1",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid2",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid3",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid4",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid5",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid6",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid7",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid8",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid9",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid10",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid11",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid12",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid13",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid14",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},
 ]
 
 export let currentTour: Tour | undefined
