@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 18,
         marginRight: 10,
-        color: '#666',
+        color: 'white',
     },
     input: {
         padding: 10,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flex: 1,
         fontSize: 16,
-        color: '#333',
+        color: 'white',
     },
     saveButton: {
         backgroundColor: '#f44336',

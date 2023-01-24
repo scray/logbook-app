@@ -54,7 +54,7 @@ export default function Tourlist({
                     <View style={styles.detailContainer}>
                         <Text style={styles.detailText}> {"Tour ID: " + currentTour.tourId} </Text>
                         <Text style={styles.detailText}> {"User ID: " + currentTour.userId} </Text>
-                        <Text style={styles.detailText}> {currentTour.waypoints[0].latitude + ", " + currentTour.waypoints[0].longitude} </Text>
+                        <Text style={styles.detailText}> {currentTour.waypoints[0].latitude + ", " + currentTour.waypoints[0].longitude + " - " + currentTour.waypoints[currentTour.waypoints.length - 1].latitude + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].longitude} </Text>
                         <Text style={styles.detailText}> {currentTour.waypoints[currentTour.waypoints.length - 1].latitude + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].longitude} </Text>
                         <Text style={styles.detailText}> {"Time: " + new Date(currentTour.waypoints[0].timestamp).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)} </Text>
                     </View>
@@ -64,7 +64,7 @@ export default function Tourlist({
 
                 <View style={styles.tourlistContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.headline}>Tours: </Text>
+                        <Text style={[styles.headline,styles.text]}>Tours: </Text>
                         <TouchableOpacity onPress={() => { refreshTourList() }} style={styles.refreshButtonContainer}>
                             <Ionicons name="ios-refresh" size={28} color="#fff" />
                         </TouchableOpacity>
@@ -80,11 +80,12 @@ export default function Tourlist({
                                             key={index}
                                             style={styles.buttonContainer}
                                             onPress={() => { LoadTour(tour) }}>
-                                            <View>
-                                                <Text style={styles.buttonText}>{date1}</Text>
-                                                <Text style={styles.buttonText}>{date2}</Text>
-                                            </View>
-                                            <Fontisto name="arrow-v" size={28} color="black" />
+                                                <Text style={[styles.tourId,styles.text]}> { tour.tourId }</Text>
+                                                <View>
+                                                    <Text style={[styles.buttonText,styles.text]}>{date1}</Text>
+                                                    <Text style={[styles.buttonText,styles.text]}>{date2}</Text>
+                                                </View>
+                                            <Fontisto style={styles.text}name="arrow-v" size={28} color="black" />
                                         </TouchableOpacity>
                                     )
                                 }
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         padding: 10,
-        backgroundColor: '#f2f2f2',
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 2,
@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: '100%',
         padding: 10,
-        backgroundColor: '#f2f2f2',
         marginVertical: 5,
         alignItems: 'center',
         borderRadius: 10,
@@ -163,5 +162,15 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         borderBottomWidth: 1,
         paddingBottom: 5
+    },
+    tourId:{
+        fontSize: 20,
+        borderRightWidth: 1,
+        paddingRight: 2,
+        marginRight: 10,
+        fontWeight: 'bold',
+    },
+    text:{
+        color: "white",
     }
 });
