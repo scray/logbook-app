@@ -1,11 +1,12 @@
-import { Platform, StyleSheet, ToastAndroid, View, Text, Button, TextInput } from "react-native";
-import { createTour, createWaypoint, currentTour, setCurrentTour } from "../../api/tourManagement";
+import { Platform, StyleSheet, ToastAndroid, View, Text } from "react-native";
+import { createTour, createWaypoint } from "../../api/tourManagement";
 import Tourlist from "./Tourlist";
 import TourStartButton from "./TourStartButton";
 import { useEffect, useLayoutEffect, useState } from "react";
 import * as Location from "expo-location";
 import Tour from "../../model/Tour";
 import { userId } from "../../api/httpRequests";
+import {theme} from "../../api/theme";
 
 export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
 
@@ -105,5 +106,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
+        color: theme.fontColor
     },
 });

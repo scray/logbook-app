@@ -2,8 +2,9 @@ import {View, Text, Switch, StyleSheet} from "react-native";
 import React, {useEffect, useState} from "react";
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {darkTheme, lightTheme, Theme, theme} from "../api/theme";
 
-const Settings = () => {
+const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isPushNotificationsEnabled, setIsPushNotificationsEnabled] = useState(false);
     const [mapStyle, setMapStyle] = useState("standard");
@@ -13,6 +14,7 @@ const Settings = () => {
         AsyncStorage.setItem("isDarkMode", isDarkMode.toString());
         AsyncStorage.setItem("isPushNotificationsEnabled", isPushNotificationsEnabled.toString());
         AsyncStorage.setItem("mapStyle", mapStyle);
+        setCurrentTheme(isDarkMode ? darkTheme : lightTheme);
     }, [isDarkMode, isPushNotificationsEnabled, mapStyle]);
 
     useEffect(() => {
@@ -27,10 +29,35 @@ const Settings = () => {
         });
     }, []);
 
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        settingsContainer: {
+            width: "80%",
+            padding: 20,
+        },
+        settingRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginVertical: 10,
+        },
+        settingText: {
+            color: isDarkMode ? darkTheme.titleColor : lightTheme.titleColor,
+            fontSize: 18,
+        },
+        picker: {
+            width: "50%",
+        },
+    });
+
     return (
         <View style={styles.container}>
             <View style={styles.settingsContainer}>
-                <Text style={{fontSize: 24, marginBottom: 20}}>Settings</Text>
+                <Text style={{fontSize: 24, marginBottom: 20, color:theme.titleColor}}>Settings</Text>
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Dark Mode</Text>
                     <Switch value={isDarkMode} onValueChange={setIsDarkMode}/>
@@ -62,29 +89,5 @@ const Settings = () => {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    settingsContainer: {
-        width: "80%",
-        padding: 20,
-    },
-    settingRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginVertical: 10,
-    },
-    settingText: {
-        fontSize: 18,
-    },
-    picker: {
-        width: "50%",
-    },
-});
 
 export default Settings;

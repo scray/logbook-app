@@ -9,7 +9,10 @@ export default function Map({ selectedTour }: { selectedTour: Tour | undefined }
     const [mapStyle, setMapStyle] = React.useState(MAP_TYPES.STANDARD);
 
     useEffect(() => {
-        AsyncStorage.getItem('mapStyle').then((value) => {
+        AsyncStorage.getItem('mapStyle').then((value: any) => {
+            if(!value) {
+                value = "standard";
+            }
             switch (value) {
                 case "standard":
                     setMapStyle(MAP_TYPES.STANDARD);

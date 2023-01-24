@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { userId } from "../../api/httpRequests";
 import Map from "../map/Map";
 import { Ionicons, Fontisto } from '@expo/vector-icons';
+import {theme} from "../../api/theme";
 
 
 export default function Tourlist({
@@ -85,7 +86,7 @@ export default function Tourlist({
                                                     <Text style={[styles.buttonText,styles.text]}>{date1}</Text>
                                                     <Text style={[styles.buttonText,styles.text]}>{date2}</Text>
                                                 </View>
-                                            <Fontisto style={styles.text}name="arrow-v" size={28} color="black" />
+                                            <Fontisto style={styles.text} name="arrow-v" size={28} color="black" />
                                         </TouchableOpacity>
                                     )
                                 }
@@ -135,9 +136,10 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 18,
+        color: theme.fontColor
     },
     refreshButtonContainer: {
-        backgroundColor: '#4285f4',
+        backgroundColor: theme.primary,
         borderRadius: 20,
         padding: 10,
         alignItems: 'center',
@@ -152,7 +154,6 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         padding: 10,
-        backgroundColor: '#f2f2f2',
         marginVertical: 5,
         alignItems: 'center',
         flexDirection: "column"
@@ -171,6 +172,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     text:{
-        color: "white",
+        color: theme.fontColor,
     }
 });

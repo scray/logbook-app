@@ -1,20 +1,22 @@
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, View} from 'react-native';
 import Overview from './pages/Overview';
-import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import {theme} from "./api/theme";
+import {useState} from "react";
 
 export default function App() {
+    const [currentTheme, setCurrentTheme] = useState(theme);
 
     return (
         <View style={styles.container}>
             <LinearGradient
-            colors={['#4c669f', '#3b5998', '#192f6a']}
+            colors={currentTheme.backgroundGradient}
             style={styles.gradient}
             start={[0, 0]}
             end={[1, 1]}
             >   
-                <Overview/>
+                <Overview setCurrentTheme={setCurrentTheme}/>
                 <StatusBar style="auto"/>
             </LinearGradient>
 

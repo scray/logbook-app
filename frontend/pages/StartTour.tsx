@@ -3,7 +3,7 @@ import {StyleSheet, View, Text} from 'react-native';
 export default function StartTour() {
     return (
         <View style={styles.container}>
-            <Text>Start Tour</Text>
+            <Text >Start Tour</Text>
         </View>
     );
 }

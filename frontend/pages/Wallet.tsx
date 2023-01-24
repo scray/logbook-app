@@ -1,10 +1,8 @@
-
-import {Platform, StyleSheet, ToastAndroid, View, Text, Pressable, TextInput} from "react-native";
+import {Pressable, StyleSheet, Text, TextInput, View} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLayoutEffect, useState, createContext } from "react";
+import {useLayoutEffect, useState} from "react";
 import ProfilePicture from "../components/profile/ProfilePicture";
-
-const UserIdContext = createContext("");
+import {theme} from "../api/theme";
 
 export default function Wallet() {
 
@@ -26,8 +24,7 @@ export default function Wallet() {
 
     const getData = async (storagekey: string) => {//get Data from asyncStorage
         try {
-            const value = await AsyncStorage.getItem(storagekey);
-            return value
+            return await AsyncStorage.getItem(storagekey)
         } catch(e) {
             console.error(e);
             return "";
@@ -47,7 +44,7 @@ export default function Wallet() {
                 <Text style={styles.label}>Enter User ID:</Text>
                 <TextInput style={styles.input} placeholder="Enter User ID" onChangeText={handleTextChange} value={userId}/>
             </View>
-            <Pressable style={styles.saveButton}onPress={()=>{storeData("userId",userId)}}>
+            <Pressable style={styles.saveButton} onPress={()=>{storeData("userId",userId)}}>
                 <Text style={styles.saveButtonTitle}>Save</Text>
             </Pressable>
 
@@ -66,7 +63,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 20,
         textAlign: 'center',
-        color: '#333',
+        color: theme.titleColor,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -76,26 +73,26 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 18,
         marginRight: 10,
-        color: 'white',
+        color: theme.fontColor,
     },
     input: {
         padding: 10,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: theme.tertiary,
         borderRadius: 5,
         flex: 1,
         fontSize: 16,
-        color: 'white',
+        color: theme.primary,
     },
     saveButton: {
-        backgroundColor: '#f44336',
+        backgroundColor: theme.secondary,
         marginTop: 20,
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 20,
     },
     saveButtonTitle: {
-        color: '#fff',
+        color: theme.fontColor,
         fontWeight: 'bold',
     }
 });

@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import {useState} from "react";
+import { MaterialIcons } from '@expo/vector-icons';
+import {theme} from "../../api/theme";
 
 export default function NavigationBar({currentPage, setCurrentPage}: {currentPage : String, setCurrentPage: React.Dispatch<React.SetStateAction<string>>}){
     
@@ -21,16 +21,16 @@ export default function NavigationBar({currentPage, setCurrentPage}: {currentPag
             borderColor: "#C1C1C1",
         },
         btn1:{
-            color: (currentPage === "starttour") ? ("white") : ("#C1C1C1"),
+            color: (currentPage === "starttour") ? (theme.fontColor) : ("#C1C1C1"),
         },
         btn2:{
-            color: (currentPage === "tourmanagment") ? ("white") : ("#C1C1C1"),
+            color: (currentPage === "tourmanagment") ? (theme.fontColor) : ("#C1C1C1"),
         },
         btn3:{
-            color: (currentPage === "wallet") ? ("white") : ("#C1C1C1"),
+            color: (currentPage === "wallet") ? (theme.fontColor) : ("#C1C1C1"),
         },
         btn4:{
-            color: (currentPage === "settings") ? ("white") : ("#C1C1C1"),
+            color: (currentPage === "settings") ? (theme.fontColor) : ("#C1C1C1"),
         }
     })
 

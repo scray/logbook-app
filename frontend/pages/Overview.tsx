@@ -2,11 +2,11 @@ import {StyleSheet, View} from 'react-native';
 import TourManagementMenu from '../components/tourManagement/TourManagementMenu';
 import Settings from './Settings';
 import Wallet from './Wallet';
-import StartTour from './StartTour';
 import NavigationBar from '../components/navigationBar/navigationBar';
 import {useState} from "react";
+import {Theme} from "../api/theme";
 
-export default function Overview() {
+export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) {
     const [currentPage, setCurrentPage] = useState("tourmanagment");
 
     const LoadPage = () =>{
@@ -18,7 +18,7 @@ export default function Overview() {
             case "wallet":
                 return <Wallet/>;
             case "settings":
-                return <Settings/>;
+                return <Settings setCurrentTheme={setCurrentTheme}/>;
             default:
                 return <TourManagementMenu loadPage= {currentPage}/>;
         }
