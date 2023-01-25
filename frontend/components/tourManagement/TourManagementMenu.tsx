@@ -44,19 +44,26 @@ export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
 
     useEffect(() => {
         if (!permissionGranted && Platform.OS === "android") {
+            let isMounted = true;
             Location.requestForegroundPermissionsAsync().then(({status}) => {
                 if (status === "granted") {
                     Location.requestBackgroundPermissionsAsync().then(({status}) => {
-                        if (status === "granted") {
+                        if(isMounted){
+                            if (status === "granted") {
                             setPermissionGranted(true);
-                        } else {
+                            } else {
                             console.log("Background Permission NOT granted!!!")
+                            }
                         }
                     })
                 } else {
                     console.log("Foreground Permission NOT granted!!!")
                 }
             })
+            return()=>{
+                isMounted= false;
+                setPermissionGranted(false);
+            }
         }
     }, []);
 

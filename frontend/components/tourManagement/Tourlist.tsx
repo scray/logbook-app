@@ -37,27 +37,39 @@ export default function Tourlist({
         }
 
     const { userId, setUserId, theme } = useContext(Context);
+    const [isMounted, setIsMounted] = useState(true);
+
+    useEffect(() => {
+        return () => setIsMounted(false);
+    }, []);
 
     useEffect(() => {
         refreshTourList();
         const interval = setInterval(() => {
             refreshTourList();
         }, 10000);
-        return () => clearInterval(interval);
+        return () => clearInterval(interval)
     }, []);
 
     function refreshTourList() {
-        if(userId){
-            updateTourList(userId).then(r => {
-                ToastAndroid.show("Tourlist updated for User ID " + userId, ToastAndroid.SHORT);
-                setTours(tourList.reverse());
-            }).catch(error => {
-                ToastAndroid.show(error.message, ToastAndroid.SHORT);
-            });
-        }else{
-            ToastAndroid.show("No User ID provided! " + userId, ToastAndroid.SHORT);
+        if(isMounted) {
+            if(userId){
+                updateTourList(userId).then(r => {
+                    ToastAndroid.show("Tourlist updated for User ID " + userId, ToastAndroid.SHORT);
+                    console.log("THe comp is mounted")
+                    setTours(tourList.reverse());
+                    console.log("The component IS STILL mounted")
+                }).catch(error => {
+                    ToastAndroid.show(error.message, ToastAndroid.SHORT);
+                });
+            }else{
+                ToastAndroid.show("No User ID provided! " + userId, ToastAndroid.SHORT);
+            }
         }
     }
+    
+    
+    
 
     const [startLocation,setStartLocation] = useState<location>();
     const [endLocation,setEndLocation] = useState<location>();
