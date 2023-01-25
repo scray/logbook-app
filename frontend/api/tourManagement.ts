@@ -81,18 +81,13 @@ export async function createTour(userId: string): Promise<Tour> {
     return tour
 }
 
-export async function createWaypoint(currentTour: Tour, location: LocationObject) {
-    let waypoint = new Coordinates(
-        location.coords.latitude,
-        location.coords.longitude,
-        location.timestamp
-    );
+export async function createWaypoint(currentTour: Tour, waypoint: Coordinates) {
     await httpRequests.put("/" + currentTour.userId + "/" + currentTour.tourId, waypoint);
+    return waypoint;
 }
 
 export async function updateTourList(userId: string) {
     tours = await httpRequests.get("/" + userId);
-    console.log("Tours:" + tours[tours.length-1].waypoints[0] + " + " + tours[tours.length-1].waypoints[1]);
 }
 
 export function getRegion(tour: Tour): Region {

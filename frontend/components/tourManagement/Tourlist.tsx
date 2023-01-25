@@ -1,11 +1,26 @@
-import { Button, StyleSheet, View, Text, ToastAndroid, ScrollView, TouchableOpacity } from "react-native";
+import { Button, StyleSheet, View, Text, ToastAndroid, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import Tour from "../../model/Tour";
 import { tours as tourList, updateTourList } from "../../api/tourManagement";
 import React, { useContext, useEffect, useState } from "react";
 import Map from "../map/Map";
 import { Ionicons, Fontisto } from '@expo/vector-icons';
-import {theme} from "../../api/theme";
 import { Context } from "../profile/UserID";
+import * as Location from 'expo-location';
+
+interface location {
+    "city": string | null;
+    "district": string | null;
+    "streetNumber": string | null;
+    "street": string | null;
+    "region": string | null;
+    "subregion": string | null;
+    "country": string | null;
+    "postalCode": string | null;
+    "name": string | null;
+    "isoCountryCode": string | null;
+    "timezone": string | null;
+}
+
 
 export default function Tourlist({
         currentTour,
@@ -21,7 +36,7 @@ export default function Tourlist({
             minute: "numeric",
         }
 
-    const { userId, setUserId } = useContext(Context);
+    const { userId, setUserId, theme } = useContext(Context);
 
     useEffect(() => {
         refreshTourList();
@@ -35,7 +50,7 @@ export default function Tourlist({
         if(userId){
             updateTourList(userId).then(r => {
                 ToastAndroid.show("Tourlist updated for User ID " + userId, ToastAndroid.SHORT);
-                setTours(tourList);
+                setTours(tourList.reverse());
             }).catch(error => {
                 ToastAndroid.show(error.message, ToastAndroid.SHORT);
             });
@@ -44,28 +59,111 @@ export default function Tourlist({
         }
     }
 
+    const [startLocation,setStartLocation] = useState<location>();
+    const [endLocation,setEndLocation] = useState<location>();
 
-    function LoadTour(selectedTour: Tour) {//loads selected Tour after pressing the tourbutton
+    async function LoadTour(selectedTour: Tour) {//loads selected Tour after pressing the tourbutton
         setCurrentTour(selectedTour);
+        const startLocation = await getLocation(selectedTour.waypoints[0].latitude, selectedTour.waypoints[0].longitude);
+        if(startLocation && startLocation[0])setStartLocation(startLocation[0])
+        const endLocation = await getLocation(selectedTour.waypoints[selectedTour.waypoints.length-1].latitude, selectedTour.waypoints[selectedTour.waypoints.length-1].longitude);
+        if(endLocation && endLocation[0])setEndLocation(endLocation[0])
     }
+
+    const getLocation = async(latitude:number,longitude:number)=>{
+        return await Location.reverseGeocodeAsync({"latitude": latitude, "longitude": longitude}).then((location)=>{
+            if(location) return location
+        });
+    }
+
+    const styles = StyleSheet.create({
+        tourlistContainer: {
+            flex: 1,
+            alignItems: 'center',
+            marginTop: 20,
+        },
+        container: {
+            flexDirection: "row",
+            padding: 10,
+            alignItems: 'center',
+            borderRadius: 10,
+            borderWidth: 2,
+            marginRight: "auto",
+        },
+        headline: {
+            fontSize: 30,
+        },
+        scrollView: {
+            flex: 1,
+            width: '100%',
+            maxHeight: '77%',
+        },
+        buttonContainer: {
+            flex: 1,
+            flexDirection: "row",
+            width: '100%',
+            padding: 10,
+            marginVertical: 5,
+            alignItems: 'center',
+            borderRadius: 10,
+            borderWidth: 2,
+        },
+        buttonText: {
+            fontSize: 18,
+            color: theme.fontColor
+        },
+        refreshButtonContainer: {
+            backgroundColor: theme.primary,
+            borderRadius: 20,
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        detailedTourContainer: { 
+            maxHeight: "100%",
+            maxWidth:"100%",
+            padding: 10,
+        },
+        detailContainer: {
+            maxWidth:"95%",
+        },
+        adressContainer:{
+            flex:1,
+            flexDirection: "row",
+        },
+        detailText: {
+            fontSize: 18,
+            borderBottomWidth: 1,
+            paddingBottom: 5,
+            paddingLeft: 2,
+        },
+        tourId:{
+            fontSize: 20,
+            borderRightWidth: 1,
+            paddingRight: 2,
+            marginRight: 10,
+            fontWeight: 'bold',
+        },
+        text:{
+            color: theme.fontColor,
+        }
+    });
+    
 
     return (
         <View style={styles.tourlistContainer}>
 
             {currentTour && currentTour.waypoints && currentTour.waypoints.length >= 1 ? (
                 <View style={styles.detailedTourContainer}>
-                    <Button
-                        title={"back"}
-                        onPress={() => setCurrentTour(undefined)}
-                    />
                     <View style={styles.detailContainer}>
+                        <TouchableOpacity onPress={() => setCurrentTour(undefined)}><Ionicons style={styles.text} name="backspace-outline" size={40} /></TouchableOpacity>
                         <Text style={styles.detailText}> {"Tour ID: " + currentTour.tourId} </Text>
                         <Text style={styles.detailText}> {"User ID: " + currentTour.userId} </Text>
-                        <Text style={styles.detailText}> {currentTour.waypoints[0].latitude + ", " + currentTour.waypoints[0].longitude + " - " + currentTour.waypoints[currentTour.waypoints.length - 1].latitude + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].longitude} </Text>
-                        <Text style={styles.detailText}> {currentTour.waypoints[currentTour.waypoints.length - 1].latitude + ", " + currentTour.waypoints[currentTour.waypoints.length - 1].longitude} </Text>
+                        <Text style={styles.detailText}> {startLocation?.street + " " + startLocation?.streetNumber + ", " + startLocation?.city + " " + startLocation?.country}</Text>
+                        <Text style={styles.detailText}> {endLocation?.street + " " + endLocation?.streetNumber + ", " + endLocation?.city + " " + endLocation?.country}</Text>
                         <Text style={styles.detailText}> {"Time: " + new Date(currentTour.waypoints[0].timestamp).toLocaleDateString("de-DE", options) + " - " + new Date(currentTour.waypoints[currentTour.waypoints.length - 1].timestamp).toLocaleDateString("de-DE", options)} </Text>
                     </View>
-                    <Map selectedTour={currentTour} />
+                    <Map selectedTour={currentTour} size={52} />
                 </View>
             ) : (
 
@@ -106,78 +204,3 @@ export default function Tourlist({
 
 
 }
-
-
-const styles = StyleSheet.create({
-    tourlistContainer: {
-        flex: 1,
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    container: {
-        flexDirection: "row",
-        padding: 10,
-        alignItems: 'center',
-        borderRadius: 10,
-        borderWidth: 2,
-        marginRight: "auto",
-    },
-    headline: {
-        fontSize: 30,
-    },
-    scrollView: {
-        flex: 1,
-        width: '100%',
-        maxHeight: '77%',
-    },
-    buttonContainer: {
-        flex: 1,
-        flexDirection: "row",
-        width: '100%',
-        padding: 10,
-        marginVertical: 5,
-        alignItems: 'center',
-        borderRadius: 10,
-        borderWidth: 2,
-    },
-    buttonText: {
-        fontSize: 18,
-        color: theme.fontColor
-    },
-    refreshButtonContainer: {
-        backgroundColor: theme.primary,
-        borderRadius: 20,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    detailedTourContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    detailContainer: {
-        borderWidth: 2,
-        borderRadius: 10,
-        padding: 10,
-        marginVertical: 5,
-        alignItems: 'center',
-        flexDirection: "column"
-    },
-    detailText: {
-        fontSize: 18,
-        marginVertical: 5,
-        borderBottomWidth: 1,
-        paddingBottom: 5
-    },
-    tourId:{
-        fontSize: 20,
-        borderRightWidth: 1,
-        paddingRight: 2,
-        marginRight: 10,
-        fontWeight: 'bold',
-    },
-    text:{
-        color: theme.fontColor,
-    }
-});

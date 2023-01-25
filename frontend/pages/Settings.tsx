@@ -1,21 +1,32 @@
 import {View, Text, Switch, StyleSheet} from "react-native";
-import React, {useEffect, useState} from "react";
-import DropDownPicker from 'react-native-dropdown-picker';
+import React, {useContext, useEffect, useState} from "react";
+import Picker from 'react-native-dropdown-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {darkTheme, lightTheme, Theme, theme} from "../api/theme";
+import {darkTheme, lightTheme, Theme} from "../api/theme";
+import { Context } from "../components/profile/UserID";
 
 const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isPushNotificationsEnabled, setIsPushNotificationsEnabled] = useState(false);
     const [mapStyle, setMapStyle] = useState("standard");
     const [open, setOpen] = useState(false);
+    const { theme } = useContext(Context);
 
-    useEffect(() => {
-        AsyncStorage.setItem("isDarkMode", isDarkMode.toString());
-        AsyncStorage.setItem("isPushNotificationsEnabled", isPushNotificationsEnabled.toString());
-        AsyncStorage.setItem("mapStyle", mapStyle);
-        setCurrentTheme(isDarkMode ? darkTheme : lightTheme);
-    }, [isDarkMode, isPushNotificationsEnabled, mapStyle]);
+    function FsetMapStyle(mStyle:string) {
+        AsyncStorage.setItem("mapStyle", mStyle);
+        setMapStyle(mStyle);
+    }
+
+    function FsetIsPushNotificationsEnabled(PushNotificationsEnabled:boolean) {
+        AsyncStorage.setItem("isPushNotificationsEnabled", PushNotificationsEnabled + "");
+        setIsPushNotificationsEnabled(PushNotificationsEnabled);
+    }
+
+    function FsetIsDarkMode(darkMode:boolean) {
+        AsyncStorage.setItem("isDarkMode", darkMode + "");
+        setIsDarkMode(darkMode);
+        setCurrentTheme(darkMode ? darkTheme : lightTheme);
+    }
 
     useEffect(() => {
         AsyncStorage.getItem("isDarkMode").then((value) => {
@@ -46,7 +57,7 @@ const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {
             marginVertical: 10,
         },
         settingText: {
-            color: isDarkMode ? darkTheme.titleColor : lightTheme.titleColor,
+            color: theme.titleColor,
             fontSize: 18,
         },
         picker: {
@@ -60,17 +71,17 @@ const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {
                 <Text style={{fontSize: 24, marginBottom: 20, color:theme.titleColor}}>Settings</Text>
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Dark Mode</Text>
-                    <Switch value={isDarkMode} onValueChange={setIsDarkMode}/>
+                    <Switch value={isDarkMode} onValueChange={FsetIsDarkMode}/>
                 </View>
 
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Push Notifications</Text>
-                    <Switch value={isPushNotificationsEnabled} onValueChange={setIsPushNotificationsEnabled}/>
+                    <Switch value={isPushNotificationsEnabled} onValueChange={FsetIsPushNotificationsEnabled}/>
                 </View>
 
                 <View style={styles.settingRow}>
                     <Text style={styles.settingText}>Map Style</Text>
-                    <DropDownPicker
+                    <Picker
                         items={[
                             {label: "Standard", value: "standard"},
                             {label: "Satellite", value: "satellite"},

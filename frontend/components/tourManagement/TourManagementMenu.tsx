@@ -5,21 +5,28 @@ import TourStartButton from "./TourStartButton";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import * as Location from "expo-location";
 import Tour from "../../model/Tour";
-import {theme} from "../../api/theme";
 import { Context } from "../profile/UserID";
+import * as TaskManager from "expo-task-manager";
+import Coordinates from "../../model/Coordinates";
+import Map from "../map/Map";
 
 export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
-
     const [currentTour, setCurrentTour] = useState<Tour>();
     const [runningTour, setRunningTour] = useState<Tour>();
-    const { userId, setUserId } = useContext(Context);
-    let permissionGranted = false;
+    const { userId, setUserId, theme } = useContext(Context);
+    const [permissionGranted, setPermissionGranted] = useState(false);
+    const [startTime, setStartTime] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
 
     async function onButtonToggle(state: string): Promise<boolean> {
+        console.log(state, permissionGranted, userId)
         if (state === "start" && permissionGranted && userId) {
+            console.log("Trying to start tour")
             return createTour(userId).then((tour) => {
                 setRunningTour(tour)
                 ToastAndroid.show("Created new tour for " + userId, ToastAndroid.SHORT);
+                captureWaypoint();
+                setStartTime(Date.now())
                 return true
             }).catch((error) => {
                 ToastAndroid.show(error.message, ToastAndroid.SHORT);
@@ -28,63 +35,116 @@ export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
             });
         } else if (runningTour) {
             setRunningTour(undefined);
+            return false;
         }
         return new Promise((resolve) => {
             resolve(true)
         })
     }
 
-    //create a waypoint every 10 seconds
-    useLayoutEffect(() => {
-        (async () => {
-
-            if (!permissionGranted && Platform.OS === "android") {
-                let { status } = await Location.requestForegroundPermissionsAsync();
+    useEffect(() => {
+        if (!permissionGranted && Platform.OS === "android") {
+            Location.requestForegroundPermissionsAsync().then(({status}) => {
                 if (status === "granted") {
-                    let { status } = await Location.requestBackgroundPermissionsAsync();
-                    if (status === "granted") {
-                        permissionGranted = true;
-                        console.log("Permission granted!!! Status:" + permissionGranted)
-                    } else {
-                        console.log("Background Permission NOT granted!!!")
-                    }
+                    Location.requestBackgroundPermissionsAsync().then(({status}) => {
+                        if (status === "granted") {
+                            setPermissionGranted(true);
+                        } else {
+                            console.log("Background Permission NOT granted!!!")
+                        }
+                    })
                 } else {
                     console.log("Foreground Permission NOT granted!!!")
                 }
-            }
-
-        })()
+            })
+        }
     }, []);
 
-    useEffect(() => {
-        function captureWaypoint() {
-            if (runningTour) {
-                console.log("Running Tour: " + JSON.stringify(runningTour) + " with userid: " + userId)
-                Location.getCurrentPositionAsync().then(location => {
-                    if (runningTour) {
-                        console.log("new waypoint: " + location.coords.latitude + ", " + location.coords.longitude);
-                        createWaypoint(runningTour, location).catch((error) => {
-                            ToastAndroid.show(error.message, ToastAndroid.SHORT);
-                        });
-                    }
-                }).catch(error => {
-                    console.log("If you are trying to get the location via the emulator or web, this is NOT possible!", error);
-                })
-            }
+    function captureWaypoint() {
+        if (runningTour) {
+            console.log("Running Tour: " + JSON.stringify(runningTour) + " with userid: " + userId)
+            Location.getCurrentPositionAsync().then(location => {
+                if (runningTour) {
+                    console.log("new waypoint: " + location.coords.latitude + ", " + location.coords.longitude);
+                    createWaypoint(runningTour, new Coordinates(
+                        location.coords.latitude,
+                        location.coords.longitude,
+                        location.timestamp
+                    )).then((wp) => {
+                        console.log(runningTour);
+                        runningTour.waypoints.push(wp);
+                        setRunningTour(runningTour);
+                    
+                    }).catch((error) => {
+                        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+                    });
+                }
+            }).catch(error => {
+                console.log("If you are trying to get the location via the emulator or web, this is NOT possible!", error);
+            })
         }
+    }
+
+    useEffect(() => {
         captureWaypoint();
         const interval = setInterval(() => {
             captureWaypoint();
         }, 10000);
         return () => clearInterval(interval);
     }, [runningTour])
+    
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(Date.now())
+        }, 100);
+        return () => clearInterval(interval);
+    }, []);
+
+    const styles = StyleSheet.create({
+        tourlistContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: "center",
+            padding: 10,
+        },
+        text: {
+            textAlign: 'center',
+            fontSize: 18,
+            fontWeight: 'bold',
+            color: theme.fontColor
+        },
+        mapContainer: {
+            padding: 30,
+            maxWidth:"95%",
+        }
+    });
+
+    function getFormattedTimeString(elapsedTime:number) {
+        const seconds = Math.floor((elapsedTime / 1000) % 60);
+        const minutes = Math.floor((elapsedTime / 1000 / 60) % 60);
+        const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+        const milliseconds = Math.floor((elapsedTime % 1000) / 100);
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
 
     return (
-
         <View style={styles.tourlistContainer}>
             {loadPage === "starttour" ? (
                 <View>
-                    <Text style={styles.text}> Press the button to either start or stop a tour.</Text>
+                    {
+                        runningTour && (
+                            <Text style={styles.text}>{getFormattedTimeString(currentTime-startTime)}</Text>
+                        )
+                    }
+                    <View style={styles.mapContainer}>
+                    {
+                        runningTour ? (
+                            <Map selectedTour={runningTour} size={50}/>
+                        ) : (
+                            <Text style={styles.text}> Press the button to either start or stop a tour.</Text>
+                        )
+                    }
+                    </View>
                     <TourStartButton onPress={onButtonToggle} />
                 </View>
             ) : (
@@ -95,18 +155,3 @@ export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
         </View>
     )
 }
-
-
-const styles = StyleSheet.create({
-    tourlistContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: "center",
-    },
-    text: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: theme.fontColor
-    },
-});

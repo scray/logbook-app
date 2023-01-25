@@ -2,12 +2,12 @@ import {Pressable, StyleSheet, Text, TextInput, ToastAndroid, View} from "react-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext, useEffect, useLayoutEffect, useState} from "react";
 import ProfilePicture from "../components/profile/ProfilePicture";
-import {theme} from "../api/theme";
 import { Context, storeUserId, getUserId} from "../components/profile/UserID";
 
 export default function Wallet() {
     const { userId, setUserId } = useContext(Context);
     const [inputValue, setInputValue] = useState(userId);
+    const { theme } = useContext(Context);
     const handleTextChange = (text:string) => {
         setInputValue(text);
     }
@@ -21,7 +21,6 @@ export default function Wallet() {
             });
         }
         loadData();
-
     }, []);
 
     function saveUserId(){
@@ -30,6 +29,52 @@ export default function Wallet() {
             setUserId(inputValue);
         }
     }
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+        },
+        title: {
+            fontSize: 24,
+            marginBottom: 20,
+            textAlign: 'center',
+            color: theme.titleColor,
+        },
+        inputContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginVertical: 10,
+        },
+        label: {
+            fontSize: 18,
+            marginRight: 10,
+            color: theme.fontColor,
+        },
+        input: {
+            padding: 10,
+            borderWidth: 1,
+            borderColor: theme.tertiary,
+            borderRadius: 5,
+            flex: 1,
+            fontSize: 16,
+            color: theme.fontColor,
+        },
+        saveButton: {
+            backgroundColor: theme.button1,
+            marginTop: 20,
+            borderRadius: 5,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+        },
+        saveButtonTitle: {
+            color: theme.fontColor,
+            fontWeight: 'bold',
+        }
+    });
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>YOUR PROFILE</Text>
@@ -44,48 +89,3 @@ export default function Wallet() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        marginBottom: 20,
-        textAlign: 'center',
-        color: theme.titleColor,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    label: {
-        fontSize: 18,
-        marginRight: 10,
-        color: theme.fontColor,
-    },
-    input: {
-        padding: 10,
-        borderWidth: 1,
-        borderColor: theme.tertiary,
-        borderRadius: 5,
-        flex: 1,
-        fontSize: 16,
-        color: theme.primary,
-    },
-    saveButton: {
-        backgroundColor: theme.secondary,
-        marginTop: 20,
-        borderRadius: 5,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
-    saveButtonTitle: {
-        color: theme.fontColor,
-        fontWeight: 'bold',
-    }
-});

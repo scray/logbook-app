@@ -2,17 +2,20 @@ import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, ToastAndroid, View} from 'react-native';
 import Overview from './pages/Overview';
 import { LinearGradient } from 'expo-linear-gradient';
-import {theme} from "./api/theme";
+import {darkTheme, lightTheme} from "./api/theme";
 import {createContext, useContext, useEffect, useLayoutEffect, useState} from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserContext from './api/userContext';
 import { Context, storeUserId, getUserId } from './components/profile/UserID';
 
 export default function App() {
-    const [currentTheme, setCurrentTheme] = useState(theme);
+    const [currentTheme, setCurrentTheme] = useState(lightTheme);
     const [userId, setUserId] = useState("");
 
     useEffect(() => {
+        AsyncStorage.getItem("isDarkMode").then((value) => {
+            setCurrentTheme(value ? darkTheme : lightTheme)
+        });
         (async() => {
             await getUserId().then((value)=>{ 
                 console.log("Loading user id " + value);
@@ -24,7 +27,7 @@ export default function App() {
     }, []);
 
     return (
-        <Context.Provider value={{userId, setUserId}}>
+        <Context.Provider value={{userId, setUserId, theme: currentTheme}}>
             <View style={styles.container}>
                 <LinearGradient
                 colors={currentTheme.backgroundGradient}

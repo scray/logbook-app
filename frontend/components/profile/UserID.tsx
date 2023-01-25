@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { ToastAndroid } from "react-native";
 import UserContext from "../../api/userContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { lightTheme } from "../../api/theme";
 
 export const storeUserId= async (value: string) => {//save Data to asyncStorage
     try {
@@ -25,4 +26,4 @@ export const getUserId = async () => {//get Data from asyncStorage
     }
 }
 
-export const Context = createContext<UserContext>({userId: "", setUserId: (value)=>{}});
+export const Context = createContext<UserContext>({userId: "", setUserId: (value)=>{}, theme: lightTheme});
