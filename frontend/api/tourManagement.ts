@@ -4,22 +4,63 @@ import {Region} from "react-native-maps";
 import {LocationObject} from "expo-location";
 import * as httpRequests from "./httpRequests";
 
-export let tours: Array<Tour> = [
-    {
-        userId: "Guenther69",
-        tourId: "tourid1",
-        waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
-    },
-    {
-        userId: "Guenther69",
-        tourId: "tourid2",
-        waypoints: [new Coordinates(1, 11, 4), new Coordinates(2, 11, 5), new Coordinates(3, 11, 6)]
-    },
-    {
-        userId: "Felix",
-        tourId: "tourid3",
-        waypoints: [new Coordinates(99, 11, 5), new Coordinates(98, 11, 40), new Coordinates(90, 11, 200)]
-    }
+export let tours: Array<Tour> = [{
+    userId: "testuser",
+    tourId: "tourid1",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid2",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid3",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid4",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid5",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid6",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid7",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid8",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid9",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid10",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid11",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid12",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid13",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},{
+    userId: "testuser",
+    tourId: "tourid14",
+    waypoints: [new Coordinates(51.1, 11, 1), new Coordinates(51.2, 11, 2), new Coordinates(51.3, 11, 3)]
+},
 ]
 
 export let currentTour: Tour | undefined
@@ -29,27 +70,24 @@ export function setCurrentTour(tour: Tour | undefined) {
 }
 
 export async function createTour(userId: string): Promise<Tour> {
+    console.log("CREATING TOUR! " + userId)
     let tour = {
         userId: userId,
         tourId: "",
         waypoints: []
     }
-    let res = await httpRequests.post("", tour)
+    let res = await httpRequests.post("/" + userId, tour)
     tour.tourId = res.tourId
     return tour
 }
 
-export async function createWaypoint(currentTour: Tour, location: LocationObject) {
-    let waypoint = new Coordinates(
-        location.coords.latitude,
-        location.coords.longitude,
-        location.timestamp
-    );
-    await httpRequests.put("/" + currentTour.tourId, waypoint);
+export async function createWaypoint(currentTour: Tour, waypoint: Coordinates) {
+    await httpRequests.put("/" + currentTour.userId + "/" + currentTour.tourId, waypoint);
+    return waypoint;
 }
 
 export async function updateTourList(userId: string) {
-    tours = await httpRequests.get("/user/" + userId);
+    tours = await httpRequests.get("/" + userId);
 }
 
 export function getRegion(tour: Tour): Region {

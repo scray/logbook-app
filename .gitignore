@@ -34,3 +34,16 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /chaincode/chaincode-validate-input/.vscode/
+
+#ignoring node modules which can be installed on each seperate system itself
+<<<<<<< HEAD
+/chaincode/node_modulesnode_modules/
+=======
+/chaincode/node_modules
+
+/.expo
+package-lock.json
+yarn.lock
+*.iml
+>>>>>>> a379a13e28b83fc7fa02b558543d5bcd5a8cf41a
+frontend/app.json

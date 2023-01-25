@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "LogBook",
+    "slug": "LogBook",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2a292b"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -20,23 +20,33 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+        "googleMapsApiKey": "AIzaSyDWHmHeyozyMF5C6OssNa3M0FcMXkv1m1Y"
       }
     },
     "android": {
+      "permissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
       "config": {
         "googleMaps": {
-          "apiKey": "INSERT_API_KEY_HERE" //TODO: add your Google Maps API key here!
+          "apiKey": "AIzaSyDWHmHeyozyMF5C6OssNa3M0FcMXkv1m1Y"
         }
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#2a292b"
       },
       "package": "de.anwentw.logbook"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0c284cf3-5f87-457e-835d-3791d4a6c286"
+      }
     }
   }
 }
