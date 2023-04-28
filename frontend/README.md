@@ -32,3 +32,11 @@ Build the app for production: (IMPORTANT: Insert your own Google Maps API key in
 npx expo run:ios # for ios
 npx expo run:android # for android
 ```
+
+Start in Windows CMD
+```
+set ANDROID_SDK_ROOT=%userprofile%\AppData\Local\Android\Sdk\
+set PATH=%PATH%;%userprofile%\AppData\Local\Android\Sdk\platform-tools
+
+npx expo start
+```
