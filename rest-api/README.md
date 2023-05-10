@@ -14,10 +14,10 @@ The REST API can send logs to a Discord channel. To do this, you need to create 
 ### Run and Build the REST API
 
 #### Docker
-Locate into the rest-api directory and (optionally) run the tests to check if a connection to the blockchain can be established:
+Locate into the rest-api directory and (optionally) run the integration tests to check if a connection to the blockchain can be established:
 ```bash
 cd rest-api
-mvn test
+mvn package -Pintegration-tests
 ```
 
 Build the docker image:

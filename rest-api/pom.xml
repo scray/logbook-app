@@ -13,6 +13,7 @@
 	<name>logbookappApi</name>
 	<properties>
 		<java.version>17</java.version>
+		<junit.test.exclude-tags>IntegrationTest</junit.test.exclude-tags>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -66,14 +67,28 @@
 		</repository>
 	</repositories>
 	<!-- <<< REPOSITORY FOR org.hyperledger.fabric.gateway -->
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>${junit.test.exclude-tags}</excludedGroups>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>integration-tests</id>
+			<properties>
+				<junit.test.exclude-tags></junit.test.exclude-tags>
+			</properties>
+		</profile>
+	</profiles>
 </project>
