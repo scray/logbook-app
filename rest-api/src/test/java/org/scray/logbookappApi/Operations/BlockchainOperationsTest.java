@@ -7,22 +7,13 @@ import org.scray.logbookappApi.Objects.Waypoint;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Tag;
+
 
 class BlockchainOperationsTest {
     Gson gson = new Gson();
-
-    Tour tour = new Tour(
-            "1",
-            "0",
-            new Waypoint[0]
-    );
-
-    Waypoint waypoint = new Waypoint(
-            .0f,
-            .0f,
-            0
-    );
 
     private final BlockchainOperations blockchainOperations = new BlockchainOperations(
             "channel-t",
@@ -64,8 +55,10 @@ class BlockchainOperationsTest {
     @Tag("IntegrationTest")
     void writeTour() {
         try {
-            assertEquals(gson.toJson(tour), blockchainOperations.writeTour("1", tour));
+        	Tour tour = this.getNewTour();
+            assertEquals(gson.toJson(tour), blockchainOperations.writeTour("alice", tour));
         } catch (Exception e) {
+        	e.printStackTrace();
             fail(e);
         }
     }
@@ -74,9 +67,21 @@ class BlockchainOperationsTest {
     @Tag("IntegrationTest")
     void updateTour() {
         try {
-            blockchainOperations.updateTour("1", "0", waypoint);
+            blockchainOperations.updateTour("1", "0", this.getNewWaypoint());
         } catch (Exception e) {
             fail(e);
         }
+    }
+
+    private Waypoint getNewWaypoint() {
+    	return new Waypoint(.0f, .0f, 0);
+    }
+
+    private Tour getNewTour() {
+        Waypoint waypoint = new Waypoint(.0f, .0f, 0);
+
+        Tour tour = new Tour("1", "0", Arrays.asList(waypoint));
+
+        return tour;
     }
 }

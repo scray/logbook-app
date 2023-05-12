@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = Controller.class)
 @WithMockUser
@@ -32,30 +34,19 @@ class ControllerTest {
     @MockBean
     private Controller controller;
 
-    Tour tour = new Tour(
-            "1",
-            "0",
-            new Waypoint[0]
-    );
-
-    Waypoint waypoint = new Waypoint(
-            .0f,
-            .0f,
-            0
-    );
 
     @Test
     void testWrite() throws Exception {
-        Mockito.when(controller.write_tour(Mockito.anyString(), Mockito.any(Tour.class))).thenReturn(ResponseEntity.ok(gson.toJson(tour)));
+        Mockito.when(controller.write_tour(Mockito.anyString(), Mockito.any(Tour.class))).thenReturn(ResponseEntity.ok(gson.toJson(this.getNewTour())));
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/tour-app/tours/1")
                 .accept(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(tour))
+                .content(gson.toJson(this.getNewTour()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        assertEquals(gson.toJson(tour), result.getResponse().getContentAsString());
+        assertEquals(gson.toJson(this.getNewTour()), result.getResponse().getContentAsString());
     }
 
     @Test
@@ -65,7 +56,7 @@ class ControllerTest {
                         "/tour-app/tours/1/0"
                 )
                 .accept(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(waypoint))
+                .content(gson.toJson(this.getNewWaypoint()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -75,25 +66,37 @@ class ControllerTest {
 
     @Test
     void testGetTour() throws Exception {
-        Mockito.when(controller.get_tour(Mockito.anyString(), Mockito.anyString())).thenReturn(ResponseEntity.ok(gson.toJson(tour)));
+        Mockito.when(controller.get_tour(Mockito.anyString(), Mockito.anyString())).thenReturn(ResponseEntity.ok(gson.toJson(this.getNewTour())));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get(
                 "/tour-app/tours/1/0"
         ).accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        assertEquals(gson.toJson(tour), result.getResponse().getContentAsString());
+        assertEquals(gson.toJson(this.getNewWaypoint()), result.getResponse().getContentAsString());
     }
 
     @Test
     void testGetTours() throws Exception {
-        Mockito.when(controller.get_tours(Mockito.anyString())).thenReturn(ResponseEntity.ok(gson.toJson(new Tour[]{tour})));
+        Mockito.when(controller.get_tours(Mockito.anyString())).thenReturn(ResponseEntity.ok(gson.toJson(new Tour[]{this.getNewTour()})));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get(
                 "/tour-app/tours/1"
         ).accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        assertEquals(gson.toJson(new Tour[]{tour}), result.getResponse().getContentAsString());
+        assertEquals(gson.toJson(new Tour[]{this.getNewTour()}), result.getResponse().getContentAsString());
+    }
+
+    private Waypoint getNewWaypoint() {
+    	return new Waypoint(.0f, .0f, 0);
+    }
+
+    private Tour getNewTour() {
+        Waypoint waypoint = new Waypoint(.0f, .0f, 0);
+
+        Tour tour = new Tour("1", "0", Arrays.asList(waypoint));
+
+        return tour;
     }
 }
