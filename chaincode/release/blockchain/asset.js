@@ -1,9 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tour = exports.Waypoint = exports.User = void 0;
 /*
     Exact recreation of the object classes for the targeted blockchain operations.
 */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tour = exports.Waypoint = exports.User = void 0;
 class User {
     constructor(userId) {
         this.tours = [];

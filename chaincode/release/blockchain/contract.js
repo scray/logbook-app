@@ -13,6 +13,7 @@ exports.Contracts = void 0;
 const fabric_contract_api_1 = require("fabric-contract-api");
 const __1 = require("..");
 const logger_1 = require("../logger");
+const asset_1 = require("./asset");
 class Contracts extends fabric_contract_api_1.Contract {
     constructor() {
         super("ContractsContract");
@@ -21,33 +22,51 @@ class Contracts extends fabric_contract_api_1.Contract {
     createTour(context, userId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
+            let data;
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
             let bytes = yield context.stub.getState(userId);
-            if (bytes.length < 1)
-                return false;
-            let data = JSON.parse(bytes.toString());
+            if (bytes.length < 1) {
+                data = new asset_1.User(userId);
+                __1.Logger.write(logger_1.Prefix.WARNING, "State data was empty on createTour, creating a new user instead and going on with procedure.");
+            }
+            try {
+                data = JSON.parse(bytes.toString());
+            }
+            catch (e) {
+                __1.Logger.write(logger_1.Prefix.WARNING, "User (" + userId + ") does not exist. Creating a new user.");
+                __1.Logger.write(logger_1.Prefix.ERROR, "Exception catched: " + e + ".");
+                data = new asset_1.User(userId);
+            }
             let tour_data = JSON.parse(tour);
-            data.tours.push(tour_data);
             tour_data.tourId = data.tours.length.toString();
+            data.tours.push(tour_data);
             context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
             __1.Logger.write(logger_1.Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
-            return JSON.stringify(tour);
+            __1.Logger.write(logger_1.Prefix.NORMAL, tour);
+            return JSON.stringify(tour_data);
         });
     }
     addWaypoint(context, userId, tourId, waypoint) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Adding a waypoint to the given tourId from the given user with userId */
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to add Waypoint");
             let bytes = yield context.stub.getState(userId);
-            if (bytes.length < 1)
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id" + userId);
                 return false;
+            }
             let data = JSON.parse(bytes.toString());
             let found = data.tours.find(element => element.tourId == tourId);
-            if (!found)
+            if (!found) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id" + tourId);
                 return false;
+            }
             let waypoint_data = JSON.parse(waypoint);
             found.waypoints.push(waypoint_data);
             context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
             __1.Logger.write(logger_1.Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
-            return JSON.stringify(waypoint);
+            __1.Logger.write(logger_1.Prefix.NORMAL, JSON.stringify(data));
+            return JSON.stringify(waypoint_data);
         });
     }
     getTour(context, userId, tourId) {

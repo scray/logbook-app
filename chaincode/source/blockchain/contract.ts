@@ -41,30 +41,34 @@ export class Contracts extends Contract {
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
         Logger.write(Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
-
+	Logger.write(Prefix.NORMAL, tour);
         return JSON.stringify(tour_data);
     }
 
     public async addWaypoint(context: Context, userId: string, tourId: string, waypoint: string) {
         /* Adding a waypoint to the given tourId from the given user with userId */
-
+	Logger.write(Prefix.NORMAL, "Trying to add Waypoint");
         let bytes = await context.stub.getState(userId);
-
-        if (bytes.length < 1)
-            return false;
+	
+        if (bytes.length < 1) {
+            Logger.write(Prefix.ERROR, "No such user with id" + userId);
+	    return false;
+	}
 
         let data: User = JSON.parse(bytes.toString());
         let found = data.tours.find(element => element.tourId == tourId);
 
-        if (!found)
+        if (!found) {
+	    Logger.write(Prefix.ERROR, "No such tour with id" + tourId);
             return false;
+	}
 
         let waypoint_data: Waypoint = JSON.parse(waypoint);
         found.waypoints.push(waypoint_data);
 
         context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
         Logger.write(Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
-
+	Logger.write(Prefix.NORMAL, JSON.stringify(data));
         return JSON.stringify(waypoint_data);
     }
 
