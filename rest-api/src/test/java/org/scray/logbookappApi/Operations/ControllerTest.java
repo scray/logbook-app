@@ -73,7 +73,7 @@ class ControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        assertEquals(gson.toJson(this.getNewWaypoint()), result.getResponse().getContentAsString());
+        assertEquals(gson.toJson(this.getNewTour()), result.getResponse().getContentAsString());
     }
 
     @Test
