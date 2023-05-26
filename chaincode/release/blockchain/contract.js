@@ -25,7 +25,8 @@ class Contracts extends fabric_contract_api_1.Contract {
             let data;
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
             let bytes = yield context.stub.getState(userId);
-            if (bytes.length < 1) {
+            
+	     if (bytes == undefined) {
                 data = new asset_1.User(userId);
                 __1.Logger.write(logger_1.Prefix.WARNING, "State data was empty on createTour, creating a new user instead and going on with procedure.");
             }
@@ -79,13 +80,17 @@ class Contracts extends fabric_contract_api_1.Contract {
                 return false;
             }
             let data = JSON.parse(bytes.toString());
-            let found = data.tours.find(element => element.tourId == tourId);
+            if(data.tour == undefined)
+               __1.Logger.write(logger_1.Prefix.WARNING, "No tour object read")
+              return false 
+	let found = data.tours.find(element => element.tourId == tourId);
             if (!found)
                 return false;
             __1.Logger.write(logger_1.Prefix.SUCCESS, "Tour " + tourId + " for user " + userId + " has been found and sent to the requester.");
             return JSON.stringify(found);
         });
     }
+
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Request all tours from the given user with userId */
