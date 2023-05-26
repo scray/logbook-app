@@ -38,4 +38,11 @@ public class Waypoint {
         this.latitude = latitude;
         this.timestamp = timestamp;
     }
+
+	@Override
+	public String toString() {
+		return "Waypoint [longitude=" + longitude + ", latitude=" + latitude + ", timestamp=" + timestamp + "]";
+	}
+
+
 }
