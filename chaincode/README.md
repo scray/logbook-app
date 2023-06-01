@@ -28,3 +28,25 @@ docker run logbook-app-chaincode
 ```
 
 You will have to open some ports to be able to communicate with the chaincode.
+
+## Debugging
+
+### Editing chaincode in container
+* Get pod with contains the chaincode:  
+  ```
+  CC_POD=$(kubectl get pod -l app=invoice-chaincode-external -o jsonpath="{.items[0].metadata.name}")
+  ```
+* Get console promt in chain code container  
+  ```
+  kubectl exec --stdin --tty $CC_POD  -- /bin/sh
+  ```
+* Edit chain code
+  ```
+   cd ~/logbook-app/chaincode
+   vi release/blockchain/contract.js
+  ```
+* Compiel and start chain code  
+   ```
+   npm install
+   npm start
+  ```
