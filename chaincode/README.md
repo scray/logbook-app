@@ -50,3 +50,19 @@ You will have to open some ports to be able to communicate with the chaincode.
    npm install
    npm start
   ```
+### Manualy start chaincode
+#### Start in background
+```
+nohup npm start > /var/log/chaincode/logbook-app.logs 2>&1 &
+```
+
+#### Terminate chaincode
+
+```
+kill $(ps -ef | pgrep -f fabric-chaincode-node)
+```
+
+#### Show logs
+```
+tail -f /var/log/chaincode/logbook-app.logs
+```
