@@ -19,6 +19,8 @@ class Contracts extends fabric_contract_api_1.Contract {
         super("ContractsContract");
         __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
+
+
     createTour(context, userId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
@@ -46,6 +48,11 @@ class Contracts extends fabric_contract_api_1.Contract {
             return JSON.stringify(tour_data);
         });
     }
+
+    calculateCF() {
+        __1.Logger.write(logger_1.Prefix.NORMAL, "Hi ");
+    }
+
     addWaypoint(context, userId, tourId, waypoint) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Adding a waypoint to the given tourId from the given user with userId */
