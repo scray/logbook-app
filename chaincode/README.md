@@ -19,7 +19,7 @@ cd chaincode
 
 Build the docker image:
 ```bash
-docker build -t logbook-app-chaincode .
+docker build -t scrayorg/logbook-app-chaincode:1.0 .
 ```
 
 Run the docker image:
@@ -29,12 +29,20 @@ docker run logbook-app-chaincode
 
 You will have to open some ports to be able to communicate with the chaincode.
 
+
+### Run it in local mikrok8s cluster
+```bash
+docker save scrayorg/logbook-app-chaincode:1.0 > logbook-app-chaincode:1.0.tar
+microk8s ctr image import logbook-app-chaincode:1.0.tar
+
+```
+
 ## Debugging
 
 ### Editing chaincode in container
 * Get pod with contains the chaincode:  
   ```
-  CC_POD=$(kubectl get pod -l app=invoice-chaincode-external -o jsonpath="{.items[0].metadata.name}")
+  CC_POD=$(kubectl get pod -l app=logbook-app-chaincode -o jsonpath="{.items[0].metadata.name}")
   ```
 * Get console promt in chain code container  
   ```
@@ -42,8 +50,8 @@ You will have to open some ports to be able to communicate with the chaincode.
   ```
 * Edit chain code
   ```
-   cd ~/logbook-app/chaincode
-   vi release/blockchain/contract.js
+   cd /usr/local/lib/chaincode/release
+   vi blockchain/contract.js
   ```
 * Compiel and start chain code  
    ```
