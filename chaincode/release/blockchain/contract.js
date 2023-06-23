@@ -14,6 +14,7 @@ const fabric_contract_api_1 = require("fabric-contract-api");
 const __1 = require("..");
 const logger_1 = require("../logger");
 const asset_1 = require("./asset");
+const haversineDistance = require("../../libs/cf-calculator/cf-calculation.js");
 class Contracts extends fabric_contract_api_1.Contract {
     constructor() {
         super("ContractsContract");
@@ -49,8 +50,33 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    //returns all trips, not one distance
     calculateCF() {
-        __1.Logger.write(logger_1.Prefix.NORMAL, "Hi ");
+        const T_Distances = [];
+            const waypoints = Tour.waypoints;
+            for (var i = 0; i < waypoints.length; i++){
+                if (waypoints[i+1] == null) break;
+                const lon1 = waypoints[i].longitude;
+                const lat1 = waypoints[i].latitude;
+                const time1 = waypoints[i].timestamp;
+
+                const lon2 = waypoints[i+1].longitude;
+                const lat2 = waypoints[i+1].latitude;
+                const time2 = waypoints[i+1].timestamp;
+
+                const distance = haversineDistance(lon1, lat1, lon2, lat2);
+
+                console.log(distance);
+                const time = time2 - time1;
+
+                T_Distances.push({ distance: distance, time: time });
+
+                __1.Logger.write(logger_1.Prefix.NORMAL, "Distance for " + Tour.tourId + " is:: " + distance);
+                __1.Logger.write(logger_1.Prefix.NORMAL, "Time for " + Tour.tourId + " is:: " + time);
+                //console.log("Distance for Tour " + Tour.tourId + " ride №" + (i+1) + " is:: " + distance);
+                //console.log("Time for Tour " + Tour.tourId + " ride №" + (i+1) + " is:: " + time);
+            }
+            return T_Distances;
     }
 
     addWaypoint(context, userId, tourId, waypoint) {
