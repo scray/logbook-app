@@ -11,12 +11,12 @@ organizations:
   peer201:
     mspid: "peer201MSP"
     peers:
-      - "peer201"
+    - "peer201"
     certificateAuthorities:
-      - "ca.org1.example.com"
+    - "ca.org1.example.com"
 peers:
   peer201:
-    url: "grpcs://peer0.peer201.kubernetes.research.dev.seeburger.de:30218"
+    url: "grpcs://localhost:30218"
     tlsCACerts:
       pem: |-
         -----BEGIN CERTIFICATE-----
@@ -37,8 +37,8 @@ peers:
         4Om69QrynMQZsayz8tc39JhyDF9Q8j1/
         -----END CERTIFICATE-----
 grpcOptions:
-  ssl-target-name-override: "peer0.peer201.kubernetes.research.dev.seeburger.de"
-  hostnameOverride: "peer0.peer201.kubernetes.research.dev.seeburger.de"
+  ssl-target-name-override: "peer201.kubernetes.research.dev.seeburger.de"
+  hostnameOverride: "peer201.kubernetes.research.dev.seeburger.de"
   allow-insecure: true
 orderers:
   orderer.example.com:

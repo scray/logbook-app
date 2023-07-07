@@ -17,8 +17,7 @@
   ],
   "author": "",
   "license": "Apache-2.0",
-  "devDependencies":
-  {
-   "jest": "^24.0.0"
+  "devDependencies": {
+    "jest": "^24.9.0"
   }
 }

@@ -6,6 +6,7 @@ public class Tour {
     private String userId;
     private  List<Waypoint> waypoints;
     private String tourId;
+	private Transport transport;
 
 	public Tour() {
 		super();
@@ -16,6 +17,13 @@ public class Tour {
 		this.userId = userId;
 		this.waypoints = waypoints;
 		this.tourId = tourId;
+	}
+
+	public Tour(String userId, List<Waypoint> waypoints, String tourId, Transport transport) {
+		this.userId = userId;
+		this.waypoints = waypoints;
+		this.tourId = tourId;
+		this.transport = transport;
 	}
 
 	public String getUserId() {
