@@ -29,6 +29,7 @@ The chaincode is a Hyperledger Fabric chaincode that manages the data of the tou
 ### Logbook App (Frontend)
 See the [frontend README](frontend/README.md) for more information.
 
+
 ### Logbook App (Backend)
 See the [backend README](rest-api/README.md) for more information.
 
