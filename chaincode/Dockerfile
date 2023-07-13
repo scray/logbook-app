@@ -4,7 +4,7 @@ RUN apk add --no-cache nodejs npm
 
 RUN mkdir /usr/local/lib/chaincode
 RUN mkdir /usr/local/lib/chaincode/logs
-RUN mkdir /var/log/chaincode/logbook-app.logs
+RUN mkdir /var/log/chaincode/
 
 COPY ./ /usr/local/lib/chaincode/
 
