@@ -31,10 +31,24 @@ You will have to open some ports to be able to communicate with the chaincode.
 
 
 ### Run it in local mikrok8s cluster
+
+#### Move image
 ```bash
 docker save scrayorg/logbook-app-chaincode:1.0 > logbook-app-chaincode:1.0.tar
 microk8s ctr image import logbook-app-chaincode:1.0.tar
 
+```
+
+### Start deployment and install chaincode
+```bash
+PKGID=basic_1.0:a50b6e6de3ac0a753193c6f36767ca26f2a09670542ed6a5ded0b1ac3efef923
+kubectl delete configmap invoice-chaincode-external
+kubectl create configmap invoice-chaincode-external \
+ --from-literal=chaincode_id=$PKGID
+
+
+
+kubectl apply -f k8s-deployment-descriptor.yaml
 ```
 
 ## Debugging
