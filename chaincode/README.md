@@ -88,3 +88,8 @@ kill $(ps -ef | pgrep -f fabric-chaincode-node)
 ```
 tail -f /var/log/chaincode/logbook-app.logs
 ```
+
+### Execute chaincode with CLI
+```
+peer chaincode query -C channel-1 -n basic -c '{"function":"getTours","Args":[""]}'
+```
