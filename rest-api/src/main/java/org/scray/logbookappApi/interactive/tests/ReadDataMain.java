@@ -16,7 +16,7 @@ public class ReadDataMain {
 	public static void main(String[] args) {
 		try {
 		 BlockchainOperations blockchainOperations = new BlockchainOperations(
-		            "channel-t",
+		            "test2",
 		            "basic",
 		            "alice",
 		            "C:\\Users\\medya\\OneDrive\\Desktop\\logbook-app\\rest-api\\wallet");
