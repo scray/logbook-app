@@ -1,0 +1,41 @@
+---
+name: "test-network-org1"
+version: "1.0.0"
+client:
+  organization: "peer400"
+  connection:
+    timeout:
+      peer:
+        endorser: "300"
+organizations:
+  peer400:
+    mspid: "peer400MSP"
+    peers:
+    - "peer400.see.ledger.s-node.de"
+peers:
+  peer400.see.ledger.s-node.de:
+    url: "grpcs://peer0.peer400.see.ledger.s-node.de:32752"
+    tlsCACerts:
+      pem: |-
+        -----BEGIN CERTIFICATE-----
+        MIICdDCCAhqgAwIBAgIRAKAfM8hKQqhWiUptpMBgzHUwCgYIKoZIzj0EAwIwgYMx
+        CzAJBgNVBAYTAkRFMQ4wDAYDVQQIEwVCYWRlbjEQMA4GA1UEBxMHQnJldHRlbjEl
+        MCMGA1UEChMccGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTErMCkGA1UEAxMi
+        dGxzY2EucGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTAeFw0yMzA3MTgxMzE3
+        MDBaFw0zMzA3MTUxMzE3MDBaMIGDMQswCQYDVQQGEwJERTEOMAwGA1UECBMFQmFk
+        ZW4xEDAOBgNVBAcTB0JyZXR0ZW4xJTAjBgNVBAoTHHBlZXI0MDAuc2VlLmxlZGdl
+        ci5zLW5vZGUuZGUxKzApBgNVBAMTInRsc2NhLnBlZXI0MDAuc2VlLmxlZGdlci5z
+        LW5vZGUuZGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATLqf1i18XcWWDHtyfY
+        48W0fLy6PlGC/Tjj6a/g4plmAMrGsQY2OK8+SJzdHaTpOiWmiTJvIuGzgyEyLHB9
+        q3RCo20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+        AQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEICy9cCAPdYjsv6Y9OgHX
+        l65zNOqAsVyejonoes1rDv5oMAoGCCqGSM49BAMCA0gAMEUCICkaVGwxD+oO3Caa
+        251wVdiFBvDR8QWBwXQ6nRvSXoPhAiEAtelZwHdmdbSYXLD5kTa9SqqohTHVPO34
+        /TbCIj38Gd4=
+        -----END CERTIFICATE-----
+grpcOptions:
+  ssl-target-name-override: "peer0.peer400.peer400.see.ledger.s-node.de"
+  hostnameOverride: "peer0.peer400.peer400.see.ledger.s-node.de"
+orderers:
+  orderer.example.com:
+    url: "grpc://orderer1.int.hsa.ledger.s-node.de:31944"

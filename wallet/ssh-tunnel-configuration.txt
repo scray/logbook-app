@@ -1,0 +1,6 @@
+SSH-Host:
+	194.163.169.207
+
+Port tunnels
+	32752 -> localhost:32752
+        31944 -> localhost:31944
