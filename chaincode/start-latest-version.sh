@@ -20,7 +20,7 @@ function updateChaincode() {
     tail -f /var/log/chaincode/logbook-app.logs
 }
 
-function parse-args() {
+function parseArgs() {
   while [ "$1" != "" ]; do
         case $1 in
             -b )   shift
@@ -31,7 +31,7 @@ function parse-args() {
   done
 }
 
-parse-args
+parseArgs
 
 if [ -z "$branch_name" ]
 then
