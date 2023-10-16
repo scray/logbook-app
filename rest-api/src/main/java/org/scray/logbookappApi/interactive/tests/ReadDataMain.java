@@ -16,10 +16,10 @@ public class ReadDataMain {
 	public static void main(String[] args) {
 		try {
 		 BlockchainOperations blockchainOperations = new BlockchainOperations(
-		            "test2",
+		            "stefan-43",
 		            "basic",
 		            "alice",
-		            "C:\\Users\\medya\\OneDrive\\Desktop\\logbook-app\\rest-api\\wallet");
+		            "C:\\Users\\st.obermeier\\git\\logbook-app\\rest-api\\wallet");
 
 
 			blockchainOperations.connect();

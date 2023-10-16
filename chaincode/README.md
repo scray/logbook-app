@@ -65,7 +65,7 @@ kubectl apply -f k8s-deployment-descriptor.yaml
 * Edit chain code
   ```
    cd /usr/local/lib/logbook-app/chaincode
-   vi blockchain/contract.js
+   vi release/blockchain/contract.js
   ```
 * Compiel and start chain code  
    ```
