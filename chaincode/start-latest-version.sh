@@ -31,7 +31,7 @@ function parseArgs() {
   done
 }
 
-parseArgs
+parseArgs "${@}"
 
 if [ -z "$branch_name" ]
 then
