@@ -107,7 +107,6 @@ class Contracts extends fabric_contract_api_1.Contract {
     getTour(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Request the tour with the given tourId from the given user with userId */
-            __1.Logger.write(logger_1.Prefix.NORMAL, " Test message of user test " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, " Request the tour with the given tourId from the given user with " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
             let bytes = yield context.stub.getState(userId);
@@ -126,6 +125,7 @@ class Contracts extends fabric_contract_api_1.Contract {
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Request all tours from the given user with userId */
+            __1.Logger.write(logger_1.Prefix.NORMAL, " Test message of user test " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
             let bytes = yield context.stub.getState(userId);
             if (bytes.length <= 0) {
