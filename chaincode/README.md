@@ -24,7 +24,7 @@ docker build -t scrayorg/logbook-app-chaincode:1.0 .
 
 Run the docker image:
 ```bash
-docker run logbook-app-chaincode
+docker run scrayorg/logbook-app-chaincode:1.0
 ```
 
 You will have to open some ports to be able to communicate with the chaincode.
@@ -65,7 +65,7 @@ kubectl apply -f k8s-deployment-descriptor.yaml
 * Edit chain code
   ```
    cd /usr/local/lib/logbook-app/chaincode
-   vi blockchain/contract.js
+   vi release/blockchain/contract.js
   ```
 * Compiel and start chain code  
    ```
