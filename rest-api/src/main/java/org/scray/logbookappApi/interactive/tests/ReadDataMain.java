@@ -16,7 +16,7 @@ public class ReadDataMain {
 	public static void main(String[] args) {
 		try {
 		 BlockchainOperations blockchainOperations = new BlockchainOperations(
-		            "stefan-43",
+		            "alice-dev",
 		            "basic",
 		            "alice",
 		            "C:\\Users\\st.obermeier\\git\\logbook-app\\rest-api\\wallet");
