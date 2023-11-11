@@ -16,7 +16,7 @@ public class Controller {
 
     // ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
     public static final BlockchainOperations blockchainOperations = new BlockchainOperations(
-            "stefan-43",
+            "alice-dev",
             "basic",
             "alice",
             "./wallet");
