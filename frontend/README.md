@@ -39,4 +39,14 @@ set ANDROID_SDK_ROOT=%userprofile%\AppData\Local\Android\Sdk\
 set PATH=%PATH%;%userprofile%\AppData\Local\Android\Sdk\platform-tools
 
 npx expo start
+
+
+
+npx eas build -p android --profile preview --clear-cache
+expo client:install:android
+
+Upgrade dependencies
+npx expo install --fix
+npx expo-doctor
 ```
+

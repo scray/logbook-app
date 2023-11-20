@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "LogBook",
-    "slug": "LogBook",
+    "slug": "logbook",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -38,15 +38,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2a292b"
       },
-      "package": "de.anwentw.logbook"
+      "package": "de.anwentw.logbook",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "0c284cf3-5f87-457e-835d-3791d4a6c286"
+        "projectId": "9e488f87-db06-4d92-81a3-d51b3f60ead9"
       }
-    }
+    },
+    "owner": "otto-homepage"
   }
 }
