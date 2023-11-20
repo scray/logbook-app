@@ -7,7 +7,6 @@ import java.util.logging.*;
 
 import com.google.gson.Gson;
 import org.hyperledger.fabric.gateway.*;
-import org.scray.logbookappApi.Logging.DiscordHook;
 import org.scray.logbookappApi.Objects.Tour;
 import org.scray.logbookappApi.Objects.Waypoint;
 
@@ -21,7 +20,7 @@ public class BlockchainOperations {
     String userName;
     Gateway gateway = null;
 
-    // ------------------------------------ CONSTRUCTOR ------------------------------------ // 
+    // ------------------------------------ CONSTRUCTOR ------------------------------------ //
     public BlockchainOperations(String channel, String smartContract, String userName, String walletPath) {
         super();
         this.channel = channel;
@@ -127,7 +126,6 @@ public class BlockchainOperations {
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
-        DiscordHook.send(data);
         if(data.equalsIgnoreCase("false")){
             throw new Exception("Waypoint could not be added.");
         }
