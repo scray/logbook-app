@@ -7,12 +7,15 @@ import java.util.logging.*;
 
 import com.google.gson.Gson;
 import org.hyperledger.fabric.gateway.*;
+import org.scray.logbookappApi.LogbookApi;
 import org.scray.logbookappApi.Objects.Tour;
 import org.scray.logbookappApi.Objects.Waypoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BlockchainOperations {
     Gson gson = new Gson();
-    static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static Logger logger = LoggerFactory.getLogger(LogbookApi.class);
 
     String channel;
     String smartContract;
@@ -122,7 +125,7 @@ public class BlockchainOperations {
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
         String data = new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
-        data = data.substring(1, data.length() - 1);
+        data = data.substring(data.length());
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
@@ -132,6 +135,7 @@ public class BlockchainOperations {
         try {
             return gson.fromJson(data, Waypoint.class);
         } catch (Exception e) {
+        	logger.error("Unable to parse waypint {} Exception: {}", data, e);
             return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
         }
     }
