@@ -1,7 +1,4 @@
 {
-  "cli": {
-    "version": ">= 3.4.1"
-  },
   "build": {
     "development": {
       "distribution": "internal",
@@ -14,9 +11,8 @@
       }
     },
     "preview": {
-      "distribution": "internal",
-      "ios": {
-        "resourceClass": "m1-medium"
+      "android": {
+        "buildType": "apk"
       }
     },
     "production": {

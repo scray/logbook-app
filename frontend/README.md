@@ -40,3 +40,20 @@ set PATH=%PATH%;%userprofile%\AppData\Local\Android\Sdk\platform-tools
 
 npx expo start
 ```
+
+
+### Check dependencies
+
+```agsl
+npx expo install --fix
+npx expo-doctor
+```
+
+### Build apk file on expo service
+
+```bash
+npx eas build -p android --profile preview --clear-cache
+```
+
+
+
