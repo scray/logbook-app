@@ -22,7 +22,7 @@ class Contracts extends fabric_contract_api_1.Contract {
     }
 
 
-    createTour(context, userId, tour) {
+    createTour(context, userId, vehicleId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
             let data;
@@ -42,6 +42,7 @@ class Contracts extends fabric_contract_api_1.Contract {
             }
             let tour_data = JSON.parse(tour);
             tour_data.tourId = data.tours.length.toString();
+            tour_data.vehicleId = vehicleId;
             data.tours.push(tour_data);
             context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
             __1.Logger.write(logger_1.Prefix.NORMAL, "The tour " + tour_data.tourId + " for user " + userId + " has been generated.");
@@ -53,7 +54,8 @@ class Contracts extends fabric_contract_api_1.Contract {
     }
 
     //returns all trips, not one distance
-    calculateCF() {
+    //need userId or TourId to be integrated
+    calculateDistances() {
         const T_Distances = [];
             const waypoints = Tour.waypoints;
             for (var i = 0; i < waypoints.length; i++){

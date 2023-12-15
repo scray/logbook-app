@@ -90,6 +90,7 @@ public class BlockchainOperations {
         return writeTour(userid, gson.toJson(tour));
     }
 
+    //add vehicle
     private Tour writeTour(String userid, String tour) throws Exception {
         String data;
         if (gateway == null) {
@@ -139,4 +140,14 @@ public class BlockchainOperations {
             return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
         }
     }
+
+    public int getTourCount(String userid) throws Exception {
+        Tour[] tours = readTours(userid);
+        return tours.length;
+    }
+
+    public int getCO2(String userid)throws Exception {
+        return 0;
+    }
+
 }

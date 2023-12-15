@@ -25,6 +25,9 @@ public class Controller {
             "./wallet");
 
     // ------------------------------------ POST METHODS ------------------------------------ //
+
+
+    //add vehicle
     @PostMapping("/tours/{userid}")
     @ResponseBody
     public ResponseEntity<Object> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
@@ -41,6 +44,8 @@ public class Controller {
     }
 
     // ------------------------------------ PUT METHODS ------------------------------------ //
+
+    //do we really need to add a vehicle here?
     @PutMapping("/tours/{userid}/{tourid}")
     @ResponseBody
     public ResponseEntity<Object> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
@@ -79,6 +84,22 @@ public class Controller {
         ResponseEntity<Object> response;
         try {
             response = ResponseEntity.ok(blockchainOperations.readTours(userid));
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+    @GetMapping(path = "/tours/count/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> getTourCount(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/count/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            int tourCount = blockchainOperations.getTourCount(userid);
+            response = ResponseEntity.ok("{\"count\": " + tourCount + "}");
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body(e.getMessage());
             e.printStackTrace();
