@@ -3,6 +3,7 @@ package org.scray.logbookappApi.Operations;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.*;
 
 import com.google.gson.Gson;
@@ -86,20 +87,19 @@ public class BlockchainOperations {
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public Tour writeTour(String userid, Tour tour) throws Exception {
-        return writeTour(userid, gson.toJson(tour));
+    public Tour writeTour(String userid, String vechicleId, Tour tour) throws Exception {
+        return writeTour(userid, vechicleId, gson.toJson(tour));
     }
 
-    //add vehicle
-    private Tour writeTour(String userid, String tour) throws Exception {
+    private Tour writeTour(String userid,  String vehicleId, String tour) throws Exception {
         String data;
         if (gateway == null) {
             gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
-        contract.submitTransaction("createTour", userid, tour);
-        data = new String(contract.submitTransaction("createTour", userid, tour));
+        contract.submitTransaction("createTour", userid, vehicleId, tour);
+        data = new String(contract.submitTransaction("createTour", userid, vehicleId, tour));
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
@@ -113,6 +113,20 @@ public class BlockchainOperations {
         }
     }
 
+    public void createTransport() throws Exception {
+
+        if (gateway == null) {
+            gateway = connect();
+        }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+        try {
+			contract.submitTransaction("createTransport", "");
+		} catch (ContractException | TimeoutException | InterruptedException e) {
+			logger.error("Error while creating a transport {}", e);
+			e.printStackTrace();
+		}
+    }
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
 
     public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {

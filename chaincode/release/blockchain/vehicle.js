@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.vehicle = void 0;
 
-class vehicle {
+class Vehicle {
     constructor(id, name, emissionPerKm) {
         this.id = id;
         this.name = name;
@@ -11,4 +11,4 @@ class vehicle {
     }
 }
 
-exports.vehicle = vehicle;
+exports.vehicle = Vehicle;

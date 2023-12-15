@@ -34,7 +34,7 @@ public class Controller {
         logger.debug("Request: POST /tours/" + userid + " " + gson.toJson(obj_tour));
         ResponseEntity<Object> response;
         try {
-            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
+            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour.getVehiceId(), obj_tour));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
             e.printStackTrace();

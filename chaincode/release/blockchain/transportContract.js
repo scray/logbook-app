@@ -15,7 +15,7 @@ const __1 = require("..");
 const asset_1 = require("./vehicle");
 const logger_1 = require("../logger");
 
-class TransportContract extends fabric_contract_api_1.Contract {
+class TransportContract {
     constructor() {
         super("TransportContract");
         __1.Logger.write(logger_1.Prefix.WARNING, "TransportContract has been started.");
@@ -27,7 +27,7 @@ class TransportContract extends fabric_contract_api_1.Contract {
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a transport with ID " + transport.id + ".");
             let bytes = yield context.stub.getState(transport.id);
             if (bytes.length < 1) {
-                data = new asset_1.Transport(transport.id, transport.name, transport.emissionPerKm);
+                data = new asset_1.Vehicle(transport.id, transport.name, transport.emissionPerKm);
             } else {
                 __1.Logger.write(logger_1.Prefix.WARNING, "Transport with ID " + transport.id + " already exists. Updating the data.");
                 data = JSON.parse(bytes.toString());
