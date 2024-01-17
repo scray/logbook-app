@@ -176,7 +176,7 @@ public class BlockchainOperations {
 
             return gson.fromJson(data, Double.class);
         } catch (Exception e) {
-            logger.error("Error while calculating total distance: {}", e);
+            logger.error("Error getting total distance: {}", e);
             throw new Exception("Error while calculating total distance.", e);
         }
     }
