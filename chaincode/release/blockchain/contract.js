@@ -52,7 +52,7 @@ class Contracts extends fabric_contract_api_1.Contract {
             return JSON.stringify(tour_data);
         });
 
-        
+
     }
 
     //returns all trips, not one distance
@@ -174,5 +174,45 @@ class Contracts extends fabric_contract_api_1.Contract {
                 return JSON.stringify(data);
             });
         }
+
+
+        calculateTotalDistance(context, userId) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
+
+                    let bytes = yield context.stub.getState(userId);
+                    if (bytes.length < 1) {
+                        __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                        return false;
+                    }
+
+                    let data = JSON.parse(bytes.toString());
+                    let totalDistance = 0;
+
+                    data.tours.forEach((tour) => {
+                        totalDistance += this.calculateTourDistance(tour);
+                    });
+
+                    __1.Logger.write(logger_1.Prefix.SUCCESS, "Total distance calculated for user " + userId + ": " + totalDistance);
+                    return totalDistance;
+                });
+            }
+
+        calculateTourDistance(tour) {
+            let tourDistance = 0;
+            const waypoints = tour.waypoints;
+
+            for (let i = 0; i < waypoints.length - 1; i++) {
+                const lon1 = waypoints[i].longitude;
+                const lat1 = waypoints[i].latitude;
+                const lon2 = waypoints[i + 1].longitude;
+                const lat2 = waypoints[i + 1].latitude;
+
+                tourDistance += haversineDistance(lon1, lat1, lon2, lat2);
+            }
+
+            return tourDistance;
+        }
+
 }
 exports.Contracts = Contracts;

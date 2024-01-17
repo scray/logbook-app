@@ -160,6 +160,27 @@ public class BlockchainOperations {
         return tours.length;
     }
 
+
+    public double calculateTotalDistance(String userId) throws Exception {
+        if (gateway == null) {
+            gateway = connect();
+        }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        try {
+            String data = new String(contract.evaluateTransaction("calculateTotalDistance", userId));
+            if (data.equalsIgnoreCase("false")) {
+                throw new Exception("Unable to calculate total distance.");
+            }
+
+            return gson.fromJson(data, Double.class);
+        } catch (Exception e) {
+            logger.error("Error while calculating total distance: {}", e);
+            throw new Exception("Error while calculating total distance.", e);
+        }
+    }
+
     public int getCO2(String userid)throws Exception {
         return 0;
     }

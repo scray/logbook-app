@@ -19,7 +19,7 @@ public class VehicleCrator {
 		            "alice-dev",
 		            "basic",
 		            "alice",
-		            "C:\\Users\\st.obermeier\\git\\logbook-app\\rest-api\\wallet");
+		            "E:\\logbook-app\\rest-api\\wallet");
 
 
 			blockchainOperations.connect();

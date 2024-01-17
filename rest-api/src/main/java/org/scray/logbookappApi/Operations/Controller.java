@@ -107,4 +107,23 @@ public class Controller {
         logger.debug("Response: " + response.getBody());
         return response;
     }
+
+    @GetMapping(path = "/tours/total-distance/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> calculateTotalDistance(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/total-distance/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            double totalDistance = blockchainOperations.calculateTotalDistance(userid);
+            response = ResponseEntity.ok("{\"totalDistance\": " + totalDistance + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+
+
 }
