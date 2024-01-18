@@ -116,13 +116,13 @@ export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
         },
         text: {
             textAlign: 'center',
-            fontSize: 18,
-            fontWeight: 'bold',
-            color: theme.fontColor
+            fontSize: 26,
+            fontWeight: '500',
+            color: '#1D1D1D'
         },
         mapContainer: {
             padding: 30,
-            maxWidth:"95%",
+
         }
     });
 
@@ -148,7 +148,7 @@ export default function TourManagementMenu({ loadPage }: { loadPage: string }) {
                         runningTour ? (
                             <Map selectedTour={runningTour} size={50}/>
                         ) : (
-                            <Text style={styles.text}> Press the button to either start or stop a tour.</Text>
+                            <Text style={styles.text} numberOfLines={1}> Press the button to either start or stop a tour</Text>
                         )
                     }
                     </View>

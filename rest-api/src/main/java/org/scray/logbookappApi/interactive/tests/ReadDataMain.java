@@ -13,7 +13,7 @@ public class ReadDataMain {
 		            "channel-t",
 		            "basic",
 		            "alice",
-		            "./wallet");
+		            "D:\\logobook-app\\wallet-02.11.2022");
 
 
 			blockchainOperations.connect();

@@ -7,17 +7,17 @@ import { View, Image, TouchableOpacity, Alert } from 'react-native';
 interface Props {}
 
 const ProfilePicture: React.FC<Props> = () => {
-    
+
     const [imageUri, setImageUri] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
-          const storedImage = await AsyncStorage.getItem('profileImage');
-          if (storedImage) {
-            setImageUri(storedImage);
-          }
+            const storedImage = await AsyncStorage.getItem('profileImage');
+            if (storedImage) {
+                setImageUri(storedImage);
+            }
         })();
-      }, []);
+    }, []);
 
     const handleChooseImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -44,7 +44,7 @@ const ProfilePicture: React.FC<Props> = () => {
                 ) : (
                     <Image
                         source={require('../../assets/icon.png')}
-                        style={{ width: 100, height: 100, borderRadius: 50 }}
+                        style={{ width: 160, height: 160, borderRadius: 200 }}
                     />
                 )}
             </TouchableOpacity>

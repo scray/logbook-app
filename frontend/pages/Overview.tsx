@@ -6,6 +6,7 @@ import NavigationBar from '../components/navigationBar/navigationBar';
 import {useState} from "react";
 import {Theme} from "../api/theme";
 
+
 export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) {
     const [currentPage, setCurrentPage] = useState("starttour");
 
@@ -37,7 +38,5 @@ export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
 });

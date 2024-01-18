@@ -13,14 +13,15 @@ export default function TourStartButton({onPress}: { onPress: (state: string) =>
             justifyContent: 'center',
         },
         startButton: {
-            backgroundColor: state === "start" ? theme.button1 : theme.button2,
+            backgroundColor: '#08AEA7',
             padding: 10,
-            borderRadius: 5,
-            width: "30%",
+            borderRadius: 100,
+            width: 280,
         },
         startButtonText: {
-            color: state === "start" ? theme.fontColor : theme.titleColor,
-            fontSize: 20,
+            color: '#FFFFFF',
+            fontSize: 16,
+            fontWeight: '600',
             textAlign: "center",
         }
     });

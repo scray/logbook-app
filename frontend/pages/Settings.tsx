@@ -43,11 +43,8 @@ const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
         },
         settingsContainer: {
-            width: "80%",
             padding: 20,
         },
         settingRow: {
