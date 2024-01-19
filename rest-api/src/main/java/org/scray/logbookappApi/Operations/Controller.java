@@ -124,6 +124,21 @@ public class Controller {
         return response;
     }
 
+    @GetMapping(path = "/tours/average-tour-time/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> calculateAverageTourTime(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/average-tour-time/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            double averageTourTime = blockchainOperations.calculateAverageTourTime(userid);
+            response = ResponseEntity.ok("{\"averageTourTime\": " + averageTourTime + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
 
 
 }

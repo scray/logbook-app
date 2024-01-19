@@ -57,32 +57,30 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     //returns all trips, not one distance
     //need userId or TourId to be integrated
-    calculateDistances() {
+    calculateDistances(tour) {
         const T_Distances = [];
-            const waypoints = Tour.waypoints;
-            for (var i = 0; i < waypoints.length; i++){
-                if (waypoints[i+1] == null) break;
-                const lon1 = waypoints[i].longitude;
-                const lat1 = waypoints[i].latitude;
-                const time1 = waypoints[i].timestamp;
+        const waypoints = tour.waypoints;
+        for (var i = 0; i < waypoints.length; i++){
+            if (waypoints[i+1] == null) break;
+            const lon1 = waypoints[i].longitude;
+            const lat1 = waypoints[i].latitude;
+            const time1 = waypoints[i].timestamp;
 
-                const lon2 = waypoints[i+1].longitude;
-                const lat2 = waypoints[i+1].latitude;
-                const time2 = waypoints[i+1].timestamp;
+            const lon2 = waypoints[i+1].longitude;
+            const lat2 = waypoints[i+1].latitude;
+            const time2 = waypoints[i+1].timestamp;
 
-                const distance = haversineDistance(lon1, lat1, lon2, lat2);
+            const distance = haversineDistance(lon1, lat1, lon2, lat2);
 
-                console.log(distance);
-                const time = time2 - time1;
+            console.log(distance);
+            const time = time2 - time1;
 
-                T_Distances.push({ distance: distance, time: time });
+            T_Distances.push({ distance: distance, time: time });
 
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Distance for " + Tour.tourId + " is:: " + distance);
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Time for " + Tour.tourId + " is:: " + time);
-                //console.log("Distance for Tour " + Tour.tourId + " ride №" + (i+1) + " is:: " + distance);
-                //console.log("Time for Tour " + Tour.tourId + " ride №" + (i+1) + " is:: " + time);
-            }
-            return T_Distances;
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Distance for " + Tour.tourId + " is:: " + distance);
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Time for " + Tour.tourId + " is:: " + time);
+        }
+        return T_Distances;
     }
 
     addWaypoint(context, userId, tourId, waypoint) {
@@ -108,6 +106,7 @@ class Contracts extends fabric_contract_api_1.Contract {
             return JSON.stringify(waypoint_data);
         });
     }
+
     getTour(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Request the tour with the given tourId from the given user with userId */
@@ -126,6 +125,7 @@ class Contracts extends fabric_contract_api_1.Contract {
             return JSON.stringify(found);
         });
     }
+
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             /* Request all tours from the given user with userId */
@@ -161,57 +161,99 @@ class Contracts extends fabric_contract_api_1.Contract {
             });
         }
 
-        getTransport(context, transportId) {
+    getTransport(context, transportId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            __1.Logger.write(logger_1.Prefix.NORMAL, " Requesting transport with ID " + transportId + " from the blockchain.");
+            let bytes = yield context.stub.getState(transportId);
+            if (bytes.length <= 0) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "The required transport with ID " + transportId + " is not available.");
+                return false;
+            }
+            let data = JSON.parse(bytes.toString());
+            __1.Logger.write(logger_1.Prefix.SUCCESS, "Transport with ID " + transportId + " has been found and sent to the requester.");
+            return JSON.stringify(data);
+        });
+    }
+
+    calculateTotalDistance(context, userId) {
             return __awaiter(this, void 0, void 0, function* () {
-                __1.Logger.write(logger_1.Prefix.NORMAL, " Requesting transport with ID " + transportId + " from the blockchain.");
-                let bytes = yield context.stub.getState(transportId);
-                if (bytes.length <= 0) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "The required transport with ID " + transportId + " is not available.");
+                __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
+
+                let bytes = yield context.stub.getState(userId);
+                if (bytes.length < 1) {
+                    __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
                     return false;
                 }
+
                 let data = JSON.parse(bytes.toString());
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Transport with ID " + transportId + " has been found and sent to the requester.");
-                return JSON.stringify(data);
+                let totalDistance = 0;
+
+                data.tours.forEach((tour) => {
+                    totalDistance += this.calculateTourDistance(tour);
+                });
+
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Total distance calculated for user " + userId + ": " + totalDistance);
+                return totalDistance;
             });
         }
 
+    calculateTourDistance(tour) {
+        let tourDistance = 0;
+        const waypoints = tour.waypoints;
 
-        calculateTotalDistance(context, userId) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
+        for (let i = 0; i < waypoints.length - 1; i++) {
+            const lon1 = waypoints[i].longitude;
+            const lat1 = waypoints[i].latitude;
+            const lon2 = waypoints[i + 1].longitude;
+            const lat2 = waypoints[i + 1].latitude;
 
-                    let bytes = yield context.stub.getState(userId);
-                    if (bytes.length < 1) {
-                        __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
-                        return false;
-                    }
+            tourDistance += haversineDistance(lon1, lat1, lon2, lat2);
+        }
 
-                    let data = JSON.parse(bytes.toString());
-                    let totalDistance = 0;
+        return tourDistance;
+    }
 
-                    data.tours.forEach((tour) => {
-                        totalDistance += this.calculateTourDistance(tour);
-                    });
+     calculateAverageTourTime(context, userId) {
+            return __awaiter(this, void 0, void 0, function* () {
+                __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
 
-                    __1.Logger.write(logger_1.Prefix.SUCCESS, "Total distance calculated for user " + userId + ": " + totalDistance);
-                    return totalDistance;
+                let bytes = yield context.stub.getState(userId);
+                if (bytes.length < 1) {
+                    __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                    return false;
+                }
+
+                let data = JSON.parse(bytes.toString());
+                let totalTourTime = 0;
+                let totalTours = data.tours.length;
+
+                data.tours.forEach((tour) => {
+                    totalTourTime += this.calculateTourTime(tour);
                 });
-            }
 
-        calculateTourDistance(tour) {
-            let tourDistance = 0;
+                if (totalTours === 0) {
+                    __1.Logger.write(logger_1.Prefix.ERROR, "No tours available for user " + userId);
+                    return false;
+                }
+
+                const averageTourTime = totalTourTime / totalTours;
+
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTime + " seconds");
+                return averageTourTime;
+            });
+        }
+
+        calculateTourTime(tour) {
             const waypoints = tour.waypoints;
-
-            for (let i = 0; i < waypoints.length - 1; i++) {
-                const lon1 = waypoints[i].longitude;
-                const lat1 = waypoints[i].latitude;
-                const lon2 = waypoints[i + 1].longitude;
-                const lat2 = waypoints[i + 1].latitude;
-
-                tourDistance += haversineDistance(lon1, lat1, lon2, lat2);
+            if (waypoints.length < 2) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "Tour " + tour.tourId + " has less than two waypoints. Unable to calculate tour time.");
+                return 0;
             }
 
-            return tourDistance;
+            const firstWaypointTime = waypoints[0].timestamp;
+            const lastWaypointTime = waypoints[waypoints.length - 1].timestamp;
+
+            return lastWaypointTime - firstWaypointTime;
         }
 
 }

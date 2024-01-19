@@ -181,6 +181,27 @@ public class BlockchainOperations {
         }
     }
 
+    public double calculateAverageTourTime(String userId) throws Exception {
+        if (gateway == null) {
+            gateway = connect();
+        }
+
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        try {
+            String data = new String(contract.evaluateTransaction("calculateAverageTourTime", userId));
+            if (data.equalsIgnoreCase("false")) {
+                throw new Exception("Unable to calculate average tour time.");
+            }
+
+            return gson.fromJson(data, Double.class);
+        } catch (Exception e) {
+            logger.error("Error getting average tour time: {}", e);
+            throw new Exception("Error while calculating average tour time.", e);
+        }
+    }
+
     public int getCO2(String userid)throws Exception {
         return 0;
     }
