@@ -241,7 +241,7 @@ class Contracts extends fabric_contract_api_1.Contract {
                 }
 
                 const averageTourTimeInSeconds = totalTourTime / totalTours;
-                const averageTourTimeInHours = averageTourTimeInSeconds / 3600;\
+                const averageTourTimeInHours = averageTourTimeInSeconds / 3600;
                 const roundedAverageTourTimeInHours = +averageTourTimeInHours.toFixed(2);
 
 
