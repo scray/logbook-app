@@ -213,35 +213,38 @@ class Contracts extends fabric_contract_api_1.Contract {
         return tourDistance;
     }
 
-     calculateAverageTourTime(context, userId) {
-            return __awaiter(this, void 0, void 0, function* () {
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
+     async calculateAverageTourTime(context: Context, userId: string): Promise<number> {
+         Logger.write(Prefix.NORMAL, "Calculating average tour time for user: " + userId);
 
-                let bytes = yield context.stub.getState(userId);
-                if (bytes.length < 1) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
-                    return false;
-                }
+         const bytes = await context.stub.getState(userId);
+         if (bytes.length < 1) {
+             Logger.write(Prefix.ERROR, "No such user with id " + userId);
+             return 0;
+         }
 
-                let data = JSON.parse(bytes.toString());
-                let totalTourTime = 0;
-                let totalTours = data.tours.length;
+         const data = JSON.parse(bytes.toString());
+         let totalTourTime = 0;
+         let totalTours = 0;
 
-                data.tours.forEach((tour) => {
-                    totalTourTime += this.calculateTourTime(tour);
-                });
+         data.tours.forEach((tour) => {
+             const tourTime = this.calculateTourTime(tour);
+             if (tourTime > 0) {
+                 totalTourTime += tourTime;
+                 totalTours++;
+             }
+         });
 
-                if (totalTours === 0) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "No tours available for user " + userId);
-                    return false;
-                }
+         if (totalTours === 0) {
+             Logger.write(Prefix.ERROR, "No non-zero tours available for user " + userId);
+             return 0;
+         }
 
-                const averageTourTime = totalTourTime / totalTours;
+         const averageTourTimeInSeconds = totalTourTime / totalTours;
 
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTime + " seconds");
-                return averageTourTime;
-            });
-        }
+         Logger.write(Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInSeconds + " seconds");
+         return averageTourTimeInSeconds;
+     }
+
 
         calculateTourTime(tour) {
             const waypoints = tour.waypoints;
