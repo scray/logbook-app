@@ -244,7 +244,7 @@ class Contracts extends fabric_contract_api_1.Contract {
                 const averageTourTimeInHours = averageTourTimeInSeconds / 3600;
 
 
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTime + " seconds");
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInHours + " seconds");
                 return averageTourTimeInHours;
             });
         }
