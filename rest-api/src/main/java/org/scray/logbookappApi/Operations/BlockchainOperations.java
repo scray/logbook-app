@@ -202,8 +202,26 @@ public class BlockchainOperations {
         }
     }
 
-    public int getCO2(String userid)throws Exception {
-        return 0;
+    public double calculateAverageCO2(String userId) throws Exception {
+        if (gateway == null) {
+            gateway = connect();
+        }
+
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        try {
+            String data = new String(contract.evaluateTransaction("calculateAverageCO2", userId));
+            if (data.equalsIgnoreCase("false")) {
+                throw new Exception("Unable to calculate average CO2.");
+            }
+
+            return gson.fromJson(data, Double.class);
+        } catch (Exception e) {
+            logger.error("Error getting average CO2: {}", e);
+            throw new Exception("Error while calculating average CO2.", e);
+        }
     }
+
 
 }

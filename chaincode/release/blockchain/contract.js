@@ -241,26 +241,83 @@ class Contracts extends fabric_contract_api_1.Contract {
                 }
 
                 const averageTourTimeInSeconds = totalTourTime / totalTours;
-                const averageTourTimeInHours = averageTourTimeInSeconds / 3600;
+                const averageTourTimeInHours = averageTourTimeInSeconds / 3600;\
+                const roundedAverageTourTimeInHours = +averageTourTimeInHours.toFixed(2);
 
 
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInHours + " seconds");
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInHours + " hours");
                 return averageTourTimeInHours;
             });
+    }
+
+    calculateTourTime(tour) {
+        const waypoints = tour.waypoints;
+        if (waypoints.length < 2) {
+            __1.Logger.write(logger_1.Prefix.ERROR, "Tour " + tour.tourId + " has less than two waypoints. Unable to calculate tour time.");
+            return 0;
         }
 
-        calculateTourTime(tour) {
-            const waypoints = tour.waypoints;
-            if (waypoints.length < 2) {
-                __1.Logger.write(logger_1.Prefix.ERROR, "Tour " + tour.tourId + " has less than two waypoints. Unable to calculate tour time.");
-                return 0;
+        const firstWaypointTime = waypoints[0].timestamp;
+        const lastWaypointTime = waypoints[waypoints.length - 1].timestamp;
+
+        return lastWaypointTime - firstWaypointTime;
+    }
+
+    calculateCO2(tour) {
+        const waypoints = tour.waypoints;
+        let totalCO2 = 0;
+
+        for (let i = 0; i < waypoints.length - 1; i++) {
+            const lon1 = waypoints[i].longitude;
+            const lat1 = waypoints[i].latitude;
+            const lon2 = waypoints[i + 1].longitude;
+            const lat2 = waypoints[i + 1].latitude;
+            const distance = haversineDistance(lon1, lat1, lon2, lat2);
+
+
+            const emissionPerKm = tour.vehicle.emissionPerKm;
+            const CO2ForSegment = distance * emissionPerKm;
+
+            totalCO2 += CO2ForSegment;
+        }
+
+        return totalCO2;
+    }
+
+    calculateAverageCO2(context, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average CO2 for user: " + userId);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
             }
 
-            const firstWaypointTime = waypoints[0].timestamp;
-            const lastWaypointTime = waypoints[waypoints.length - 1].timestamp;
+            let data = JSON.parse(bytes.toString());
+            let totalCO2 = 0;
+            let totalTours = 0;
 
-            return lastWaypointTime - firstWaypointTime;
-        }
+            data.tours.forEach((tour) => {
+                const CO2ForTour = this.calculateCO2(tour);
+                if (CO2ForTour > 0) {
+                    totalCO2 += CO2ForTour;
+                    totalTours++;
+                }
+            });
+
+            if (totalTours === 0) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No tours available for user " + userId);
+                return false;
+            }
+
+            const averageCO2 = totalCO2 / totalTours;
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS, "Average CO2 calculated for user " + userId + ": " + averageCO2);
+            return averageCO2;
+        });
+    }
+
 
 }
 exports.Contracts = Contracts;
