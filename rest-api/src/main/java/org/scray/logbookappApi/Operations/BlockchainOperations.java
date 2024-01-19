@@ -3,17 +3,20 @@ package org.scray.logbookappApi.Operations;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.*;
 
 import com.google.gson.Gson;
 import org.hyperledger.fabric.gateway.*;
-import org.scray.logbookappApi.Logging.DiscordHook;
+import org.scray.logbookappApi.LogbookApi;
 import org.scray.logbookappApi.Objects.Tour;
 import org.scray.logbookappApi.Objects.Waypoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BlockchainOperations {
     Gson gson = new Gson();
-    static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static Logger logger = LoggerFactory.getLogger(LogbookApi.class);
 
     String channel;
     String smartContract;
@@ -21,7 +24,7 @@ public class BlockchainOperations {
     String userName;
     Gateway gateway = null;
 
-    // ------------------------------------ CONSTRUCTOR ------------------------------------ // 
+    // ------------------------------------ CONSTRUCTOR ------------------------------------ //
     public BlockchainOperations(String channel, String smartContract, String userName, String walletPath) {
         super();
         this.channel = channel;
@@ -84,19 +87,19 @@ public class BlockchainOperations {
 
     // ------------------------------------ WRITE BLOCKCHAIN REQUEST ------------------------------------ //
 
-    public Tour writeTour(String userid, Tour tour) throws Exception {
-        return writeTour(userid, gson.toJson(tour));
+    public Tour writeTour(String userid, String vechicleId, Tour tour) throws Exception {
+        return writeTour(userid, vechicleId, gson.toJson(tour));
     }
 
-    private Tour writeTour(String userid, String tour) throws Exception {
+    private Tour writeTour(String userid,  String vehicleId, String tour) throws Exception {
         String data;
         if (gateway == null) {
             gateway = connect();
         }
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
-        contract.submitTransaction("createTour", userid, tour);
-        data = new String(contract.submitTransaction("createTour", userid, tour));
+        contract.submitTransaction("createTour", userid, vehicleId, tour);
+        data = new String(contract.submitTransaction("createTour", userid, vehicleId, tour));
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
@@ -110,6 +113,20 @@ public class BlockchainOperations {
         }
     }
 
+    public void createTransport() throws Exception {
+
+        if (gateway == null) {
+            gateway = connect();
+        }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+        try {
+			contract.submitTransaction("createTransport", "");
+		} catch (ContractException | TimeoutException | InterruptedException e) {
+			logger.error("Error while creating a transport {}", e);
+			e.printStackTrace();
+		}
+    }
     // ------------------------------------ UPDATE BLOCKCHAIN REQUEST ------------------------------------ //
 
     public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {
@@ -123,18 +140,49 @@ public class BlockchainOperations {
         Network network = gateway.getNetwork(channel);
         Contract contract = network.getContract(smartContract);
         String data = new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
-        data = data.substring(1, data.length() - 1);
+        data = data.substring(data.length());
         while(data.contains("\\\"")) {
             data = data.replace("\\\"", "\"");
         }
-        DiscordHook.send(data);
         if(data.equalsIgnoreCase("false")){
             throw new Exception("Waypoint could not be added.");
         }
         try {
             return gson.fromJson(data, Waypoint.class);
         } catch (Exception e) {
+        	logger.error("Unable to parse waypint {} Exception: {}", data, e);
             return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
         }
     }
+
+    public int getTourCount(String userid) throws Exception {
+        Tour[] tours = readTours(userid);
+        return tours.length;
+    }
+
+
+    public double calculateTotalDistance(String userId) throws Exception {
+        if (gateway == null) {
+            gateway = connect();
+        }
+        Network network = gateway.getNetwork(channel);
+        Contract contract = network.getContract(smartContract);
+
+        try {
+            String data = new String(contract.evaluateTransaction("calculateTotalDistance", userId));
+            if (data.equalsIgnoreCase("false")) {
+                throw new Exception("Unable to calculate total distance.");
+            }
+
+            return gson.fromJson(data, Double.class);
+        } catch (Exception e) {
+            logger.error("Error getting total distance: {}", e);
+            throw new Exception("Error while calculating total distance.", e);
+        }
+    }
+
+    public int getCO2(String userid)throws Exception {
+        return 0;
+    }
+
 }

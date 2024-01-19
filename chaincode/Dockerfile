@@ -2,12 +2,11 @@ FROM alpine:3.17
 
 RUN apk add --no-cache nodejs npm
 
-RUN mkdir /usr/local/lib/chaincode
-RUN mkdir /usr/local/lib/chaincode/logs
-RUN mkdir /var/log/chaincode/logbook-app.logs
+RUN mkdir -p /usr/local/lib/logbook-app/chaincode/logs
+RUN mkdir -p /var/log/chaincode/
 
-COPY ./ /usr/local/lib/chaincode/
+COPY ./ /usr/local/lib/logbook-app/chaincode
 
-WORKDIR /usr/local/lib/chaincode/
+WORKDIR /usr/local/lib/logbook-app/chaincode
 
 CMD ["sh", "-c", "npm install &&  npm start; tail -f /dev/null"]

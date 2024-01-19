@@ -2,67 +2,40 @@
 name: "test-network-org1"
 version: "1.0.0"
 client:
-  organization: "peer201"
+  organization: "peer400"
   connection:
     timeout:
       peer:
         endorser: "300"
 organizations:
-  peer201:
-    mspid: "peer201MSP"
+  peer400:
+    mspid: "peer400MSP"
     peers:
-      - "peer201"
-    certificateAuthorities:
-      - "ca.org1.example.com"
+    - "peer400.see.ledger.s-node.de"
 peers:
-  peer201:
-    url: "grpcs://peer0.peer201.kubernetes.research.dev.seeburger.de:30218"
+  peer400.see.ledger.s-node.de:
+    url: "grpcs://peer0.peer400.see.ledger.s-node.de:32752"
     tlsCACerts:
       pem: |-
         -----BEGIN CERTIFICATE-----
-        MIICtDCCAlmgAwIBAgIQdD4gvtow8cv60EUcUHKE5zAKBggqhkjOPQQDAjCBozEL
-        MAkGA1UEBhMCREUxDjAMBgNVBAgTBUJhZGVuMRAwDgYDVQQHEwdCcmV0dGVuMTUw
-        MwYDVQQKEyxwZWVyMjAxLmt1YmVybmV0ZXMucmVzZWFyY2guZGV2LnNlZWJ1cmdl
-        ci5kZTE7MDkGA1UEAxMydGxzY2EucGVlcjIwMS5rdWJlcm5ldGVzLnJlc2VhcmNo
-        LmRldi5zZWVidXJnZXIuZGUwHhcNMjIxMTAxMTczODAwWhcNMzIxMDI5MTczODAw
-        WjCBozELMAkGA1UEBhMCREUxDjAMBgNVBAgTBUJhZGVuMRAwDgYDVQQHEwdCcmV0
-        dGVuMTUwMwYDVQQKEyxwZWVyMjAxLmt1YmVybmV0ZXMucmVzZWFyY2guZGV2LnNl
-        ZWJ1cmdlci5kZTE7MDkGA1UEAxMydGxzY2EucGVlcjIwMS5rdWJlcm5ldGVzLnJl
-        c2VhcmNoLmRldi5zZWVidXJnZXIuZGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNC
-        AATnY/bODlOnWnt0S4CmHu1fYDXSCpHzq9TEUviRpW3TL/EV3F+k2WtfGiZRKkwN
-        ubD1QYm/dJnMxBdIE66L6ZNWo20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYw
-        FAYIKwYBBQUHAwIGCCsGAQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIE
-        IOuOdZ9WGVNVkqdBagyfqLzT8T6/Ng4qAKeOw5LlD65dMAoGCCqGSM49BAMCA0kA
-        MEYCIQCR8uGYxdXvWAizbmEVfHFGdXAB+wgLQTmDvglemLGt2gIhAP+6454zaU1Q
-        4Om69QrynMQZsayz8tc39JhyDF9Q8j1/
+        MIICdDCCAhqgAwIBAgIRAKAfM8hKQqhWiUptpMBgzHUwCgYIKoZIzj0EAwIwgYMx
+        CzAJBgNVBAYTAkRFMQ4wDAYDVQQIEwVCYWRlbjEQMA4GA1UEBxMHQnJldHRlbjEl
+        MCMGA1UEChMccGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTErMCkGA1UEAxMi
+        dGxzY2EucGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTAeFw0yMzA3MTgxMzE3
+        MDBaFw0zMzA3MTUxMzE3MDBaMIGDMQswCQYDVQQGEwJERTEOMAwGA1UECBMFQmFk
+        ZW4xEDAOBgNVBAcTB0JyZXR0ZW4xJTAjBgNVBAoTHHBlZXI0MDAuc2VlLmxlZGdl
+        ci5zLW5vZGUuZGUxKzApBgNVBAMTInRsc2NhLnBlZXI0MDAuc2VlLmxlZGdlci5z
+        LW5vZGUuZGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATLqf1i18XcWWDHtyfY
+        48W0fLy6PlGC/Tjj6a/g4plmAMrGsQY2OK8+SJzdHaTpOiWmiTJvIuGzgyEyLHB9
+        q3RCo20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
+        AQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEICy9cCAPdYjsv6Y9OgHX
+        l65zNOqAsVyejonoes1rDv5oMAoGCCqGSM49BAMCA0gAMEUCICkaVGwxD+oO3Caa
+        251wVdiFBvDR8QWBwXQ6nRvSXoPhAiEAtelZwHdmdbSYXLD5kTa9SqqohTHVPO34
+        /TbCIj38Gd4=
         -----END CERTIFICATE-----
 grpcOptions:
-  ssl-target-name-override: "peer0.peer201.kubernetes.research.dev.seeburger.de"
-  hostnameOverride: "peer0.peer201.kubernetes.research.dev.seeburger.de"
-  allow-insecure: true
+  ssl-target-name-override: "peer0.peer400.peer400.see.ledger.s-node.de"
+  hostnameOverride: "peer0.peer400.peer400.see.ledger.s-node.de"
 orderers:
   orderer.example.com:
-    url: "grpc://orderer.example.com:30081"
-certificateAuthorities:
-  ca.org1.example.com:
-    url: "https://tlsca.example.com:30081"
-    caName: "tlsca.example.com"
-    tlsCACerts:
-      pem: |-
-        -----BEGIN CERTIFICATE-----
-        MIICQzCCAeqgAwIBAgIRAMvp9O9kMQV7R0WJISWeqx0wCgYIKoZIzj0EAwIwbDEL
-        MAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG
-        cmFuY2lzY28xFDASBgNVBAoTC2V4YW1wbGUuY29tMRowGAYDVQQDExF0bHNjYS5l
-        eGFtcGxlLmNvbTAeFw0yMjA1MjAwMzA3MDBaFw0zMjA1MTcwMzA3MDBaMGwxCzAJ
-        BgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJh
-        bmNpc2NvMRQwEgYDVQQKEwtleGFtcGxlLmNvbTEaMBgGA1UEAxMRdGxzY2EuZXhh
-        bXBsZS5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQmhBjLVF//FIrNdHM7
-        XPgoLTFe6vudH6zXk8uIQ8fr2PLpqkTLftZpWPgOXNDzlsL4zpoyevx3yxm2igPb
-        c3Kio20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
-        AQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEIC0GncU1Ft1LseSPbzCL
-        JFu1zJkWT5Qf5x1mV5eABwuSMAoGCCqGSM49BAMCA0cAMEQCIFUD1rpknNE7Wl5E
-        V6KnXiYJpZlrTm19s3hXwEVYrXqkAiAhxW5hnOlz+mq1tioDlkV+Q6xchgE6a0oj
-        jZ3fDEc3iQ==
-        -----END CERTIFICATE-----
-    httpOptions:
-      verify: false
+    url: "grpc://orderer1.int.hsa.ledger.s-node.de:31944"

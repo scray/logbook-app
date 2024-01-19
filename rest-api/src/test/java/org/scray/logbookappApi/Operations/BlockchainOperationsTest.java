@@ -56,7 +56,7 @@ class BlockchainOperationsTest {
     void writeTour() {
         try {
         	Tour tour = this.getNewTour();
-            assertEquals(gson.toJson(tour), blockchainOperations.writeTour("alice", tour));
+            assertEquals(gson.toJson(tour), blockchainOperations.writeTour("alice", "v1",  tour));
         } catch (Exception e) {
         	e.printStackTrace();
             fail(e);
