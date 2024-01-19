@@ -245,7 +245,7 @@ class Contracts extends fabric_contract_api_1.Contract {
 
 
                 __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTime + " seconds");
-                return averageTourTime;
+                return averageTourTimeInHours;
             });
         }
 
