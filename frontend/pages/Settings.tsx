@@ -2,7 +2,7 @@ import {View, Text, Switch, StyleSheet} from "react-native";
 import React, {useContext, useEffect, useState} from "react";
 import Picker from 'react-native-dropdown-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {darkTheme, lightTheme, Theme} from "../api/theme";
+import {darkTheme, lightTheme, Theme} from "../styles/theme";
 import { Context } from "../components/profile/UserID";
 
 const Settings = ({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) => {

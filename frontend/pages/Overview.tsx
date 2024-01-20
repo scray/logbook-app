@@ -1,42 +1,41 @@
-import {StyleSheet, View} from 'react-native';
+// Import necessary modules and components
+import { View } from 'react-native';
 import TourManagementMenu from '../components/tourManagement/TourManagementMenu';
-import Settings from './Settings';
 import Wallet from './Wallet';
 import NavigationBar from '../components/navigationBar/navigationBar';
-import {useState} from "react";
-import {Theme} from "../api/theme";
+import { useContext, useState } from "react";
+import getStyles from '../styles/styles';
+import { Context } from '../components/profile/UserID';
 
+// Define the Overview component
+export default function Overview() {
+    // Initialize state variables for the current page and current theme
+    const [currentPage, setCurrentPage] = useState("starttour"); // Default page
+    const { theme } = useContext(Context);
 
-export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) {
-    const [currentPage, setCurrentPage] = useState("starttour");
+    // Get dynamic styles based on the current theme
+    const styles = getStyles(theme);
 
-    const LoadPage = () =>{
-        switch(currentPage){
+    // Function to render the appropriate page based on the current page state
+    const LoadPage = () => {
+        switch (currentPage) {
             case "starttour":
-                return <TourManagementMenu loadPage= {currentPage} />;
-            case "tourmanagment":
-                return <TourManagementMenu loadPage= {currentPage} />;
+            case "tourmanagement":
+                return <TourManagementMenu loadPage={currentPage} />; // Render TourManagementMenu for "starttour" and "tourmanagement" pages
             case "wallet":
-                return <Wallet/>;
-            case "settings":
-                return <Settings setCurrentTheme={setCurrentTheme}/>;
+                return <Wallet />; // Render Wallet for the "wallet" page
             default:
-                return <TourManagementMenu loadPage= {currentPage}/>;
+                return <TourManagementMenu loadPage={currentPage} />; // Default to TourManagementMenu for unknown pages
         }
     }
 
+    // Render the Overview component
     return (
-        <View style={styles.container}>
+        <View style={styles.overview_container}>
             <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
-            <View style={styles.container}>
+            <View style={styles.overview_containerInner}>
                 <LoadPage/>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});
