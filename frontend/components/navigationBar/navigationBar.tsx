@@ -21,7 +21,7 @@ export default function NavigationBar({ currentPage, setCurrentPage }: { current
                 <Ionicons name="play" size={32} style={styles.nav_btn1} />
                 <Text style={[styles.nav_btnText, styles.nav_btn1]}>Start tour</Text>
             </Pressable>
-            <Pressable style={styles.nav_navItem} onPress={() => setCurrentPage('tourmanagment')}>
+            <Pressable style={styles.nav_navItem} onPress={() => setCurrentPage('overview')}>
                 <MaterialIcons name="tour" size={32} style={styles.nav_btn2} />
                 <Text style={[styles.nav_btnText, styles.nav_btn2]}>Overview</Text>
             </Pressable>
