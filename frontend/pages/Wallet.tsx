@@ -82,7 +82,7 @@ const Wallet = () => {
             <Text style={[styles.wallet_title, {textAlign: 'center'}]}>YOUR PROFILE</Text>
             <View style={styles.wallet_containerInner}>
                 <View style={[styles.wallet_containerContent, {alignItems: 'center'}]}>
-                    <ProfilePicture ></ProfilePicture>
+                    <ProfilePicture></ProfilePicture>
                     <Text style={styles.wallet_userTitle}>{userId || 'Your UserID'}</Text>
                     <View style={styles.wallet_inputContainer}>
                         <TextInput style={styles.wallet_input} placeholder="Enter User ID" onChangeText={handleTextChange} value={inputValue}/>

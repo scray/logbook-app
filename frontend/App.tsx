@@ -1,16 +1,20 @@
 // Import necessary modules from external libraries and files
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
-import Overview from './pages/Overview';
 import { darkTheme, lightTheme, Theme } from "./styles/theme"; // Import Theme type
 import { useEffect, useState } from "react";
 import { Context, getUserId, getTheme, storeTheme } from './components/profile/UserID';
 import getStyles from './styles/styles';
+import Overview from './pages/Overview';
+import Wallet from './pages/Wallet';
+import NavigationBar from './components/navigationBar/navigationBar';
+import StartTour from './pages/StartTour';
 
 // Define the main function of the application
 export default function App() {
     // Initialize state variables for user ID and current theme
     const [userId, setUserId] = useState(""); // User ID
+    const [currentPage, setCurrentPage] = useState("starttour"); // Default page
     const [currentTheme, setCurrentTheme] = useState(lightTheme); // Current theme
     const styles = getStyles(currentTheme); // Get styles based on the current theme
 
@@ -42,11 +46,28 @@ export default function App() {
         setCurrentTheme(theme); // Set the current theme in the state
     };
 
+    // Function to render the appropriate page based on the current page state
+    const LoadPage = () => {
+        switch (currentPage) {
+            case "starttour":
+                return <StartTour/>; // Render StartTour for the "starttour" page
+            case "overview":
+                return <Overview/>; // Render overview for the "overview" page
+            case "wallet":
+                return <Wallet/>; // Render Wallet for the "wallet" page
+            default:
+                return <StartTour/>; // Default to TourManagementMenu for unknown pages
+        }
+    }
+
     // Return the main application structure
     return (
         <Context.Provider value={{ userId, setUserId, theme: currentTheme, setTheme }}>
                 <View style={styles.app_container}>
-                        <Overview/>
+                        <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
+                        <View style={styles.app_containerInner}>
+                            <LoadPage/>
+                        </View>
                         <StatusBar style="auto"/>
                 </View>
         </Context.Provider>

@@ -15,14 +15,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 			backgroundColor: theme.background,
 			color: theme.fontColor,
 		},
-		// Overview.tsx styles
-		overview_container: {
-			flex: 1,
-			width: "100%",
-			flexDirection: "row",
-			backgroundColor: theme.background,
-		},
-		overview_containerInner: {
+		app_containerInner: {
 			backgroundColor: theme.background,
 			flex: 1,
 			marginTop: 32,
@@ -33,6 +26,30 @@ const getStyles = (theme: Theme, page: string = "") =>
 			paddingRight: 32,
 			borderRadius: 25,
 			flexDirection: "row",
+		},
+
+		// Overview.tsx styles
+		overview_tourlistContainer: {
+			flex: 1,
+			alignItems: "center",
+			justifyContent: "center",
+			padding: 10,
+		},
+		// StartTour.tsx styles
+		starttour_container: {
+			flex: 1,
+			alignItems: "center",
+			justifyContent: "center",
+			padding: 10,
+		},
+		starttour_text: {
+			textAlign: "center",
+			fontSize: 26,
+			fontWeight: "500",
+			color: theme.fontColor,
+		},
+		starttour_mapContainer: {
+			padding: 30,
 		},
 		// Wallet.tsx styles
 		wallet_container: {
@@ -246,22 +263,6 @@ const getStyles = (theme: Theme, page: string = "") =>
 			paddingBottom: 5,
 			paddingLeft: 2,
 		},
-		// TourManagementMenu.tsx styles
-		tourmanagement_tourlistContainer: {
-			flex: 1,
-			alignItems: "center",
-			justifyContent: "center",
-			padding: 10,
-		},
-		tourmanagement_text: {
-			textAlign: "center",
-			fontSize: 26,
-			fontWeight: "500",
-			color: theme.fontColor,
-		},
-		tourmanagement_mapContainer: {
-			padding: 30,
-		},
 		// TourStartButton.tsx styles
 		tourstart_container: {
 			alignItems: "center",
@@ -318,7 +319,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 			color: page === "starttour" ? theme.primary : theme.navFontColor,
 		},
 		nav_btn2: {
-			color: page === "tourmanagment" ? theme.primary : theme.navFontColor,
+			color: page === "overview" ? theme.primary : theme.navFontColor,
 		},
 		nav_btn3: {
 			color: page === "wallet" ? theme.primary : theme.navFontColor,
