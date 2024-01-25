@@ -6,7 +6,7 @@ import { Theme } from "./theme";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 // Function to scale sizes based on screen width
-const scaleSize = (size: number) => (size * screenWidth) / 1920; // Base width of 1080
+const scaleSize = (size: number) => (size * screenWidth) / 1600; // Base width of 1080
 
 // Define getStyles function, which takes a theme and an optional page parameter
 const getStyles = (theme: Theme, page: string = "") =>
@@ -33,6 +33,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 			borderRadius: scaleSize(25),
 			flexDirection: "row",
 		},
+
 		// Overview.tsx styles
 		overview_tourlistContainer: {
 			flex: 1,
@@ -347,14 +348,14 @@ const getStyles = (theme: Theme, page: string = "") =>
 			justifyContent: "space-between",
 			padding: scaleSize(10),
 			marginVertical: scaleSize(8),
-			backgroundColor: theme.tertiary,
+			backgroundColor: theme.innerBackground,
 			borderRadius: scaleSize(5),
 			alignItems: "center",
 		},
 		vehicles_text: {
 			fontSize: scaleSize(16),
 			paddingRight: scaleSize(10),
-			color: theme.primary,
+			color: theme.textVehicle,
 			fontWeight: "700",
 		},
 		vehicles_buttonClose: {
@@ -403,7 +404,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 			textAlign: "center",
 		},
 		vehicles_formContainer: {
-			marginTop: scaleSize(80),
+			marginTop: scaleSize(40),
 			marginRight: scaleSize(100),
 			alignSelf: "flex-end",
 			justifyContent: "center",
@@ -411,7 +412,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 			backgroundColor: theme.contentBackground,
 			borderRadius: scaleSize(15),
 			width: scaleSize(350),
-			height: scaleSize(750),
+			height: scaleSize(680),
 			shadowOpacity: 0.1,
 			shadowOffset: { width: 1, height: 1 },
 			shadowRadius: scaleSize(5),

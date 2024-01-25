@@ -3,6 +3,7 @@ export interface Theme {
 	primary: string;
 	secondary: string;
 	tertiary: string;
+	textVehicle: string;
 	button1: string;
 	button2: string;
 	button3: string;
@@ -24,12 +25,13 @@ export const lightTheme: Theme = {
 	primary: "#08AEA7",
 	secondary: "#0092C8",
 	tertiary: "#ccc",
+	textVehicle: "#1D1D1D",
 	button1: "#00a897",
 	button2: "#FFFFFF",
 	button3: "#AD4109",
 	fontColor: "#1e1e1e",
 	navFontColor: "#C1BDBD",
-	titleColor: "#1e1e1e",
+	titleColor: "#1D1D1D",
 	backgroundGradient: ["#a3ffd6", "#ffffff", "#84dcc6"],
 	background: "#F6F6F6",
 	innerBackground: "#F0F4F3",
@@ -42,6 +44,7 @@ export const darkTheme: Theme = {
 	primary: "#08AEA7",
 	secondary: "#0092C8",
 	tertiary: "#ccc",
+	textVehicle: "#FFFFFF",
 	button1: "#2ec2b3",
 	button2: "#FFFFFF",
 	button3: "#AD4109",
