@@ -26,9 +26,9 @@ const Wallet = () => {
     const [mapStyle, setMapStyle] = useState("standard");
     const [open, setOpen] = useState(false);
 
-    const [totalDistance, setTotalDistance] = useState<number | null>(null);
-    const [totalTourCount, setCalculateTourCount] = useState<number | null>(null);
-    const [averageTourTime, setCalculateAverageTourTime] = useState<number | null>(null);
+    const [totalDistance, setTotalDistance] = useState<number>(0);
+    const [totalTourCount, setCalculateTourCount] = useState<number>(0);
+    const [averageTourTime, setCalculateAverageTourTime] = useState<number>(0);
 
     // Get dynamic styles based on the current theme
     const styles = getStyles(theme);
@@ -90,7 +90,7 @@ const Wallet = () => {
             setTotalDistance(result);
         } catch (error) {
             console.error(error);
-            setTotalDistance(null);
+            setTotalDistance(0);
         }
     };
 
@@ -101,7 +101,7 @@ const Wallet = () => {
             setCalculateTourCount(result);
         } catch (error) {
             console.error(error.config);
-            setCalculateTourCount(null);
+            setCalculateTourCount(0);
         }
     };
 
@@ -112,10 +112,12 @@ const Wallet = () => {
             setCalculateAverageTourTime(result);
         } catch (error) {
             console.error(error.config);
-            setCalculateAverageTourTime(null);
+            setCalculateAverageTourTime(0);
         }
     };
 
+    // Demo user
+    // TODO: Replace with userId in production
     const user = "alice";
 
     useEffect(() => {
@@ -153,14 +155,14 @@ const Wallet = () => {
                                 <Text style={styles.wallet_text}>Tours</Text>
                             </View>
                             <View style={[styles.wallet_containerInner2, {alignItems: 'center'}]}>
-                                <Text style={styles.wallet_numberStyle}>164</Text>
+                                <Text style={styles.wallet_numberStyle}>1952</Text>
                                 <View style={styles.wallet_horizontalLine}></View>
-                                <Text style={styles.wallet_text}>Gesamtmenge an CO2</Text>
+                                <Text style={styles.wallet_text}>Total CO2 emissions</Text>
                             </View>
                             <View style={[styles.wallet_containerInner2, {alignItems: 'center'}]}>
-                                <Text style={styles.wallet_numberStyle}>50</Text>
+                                <Text style={styles.wallet_numberStyle}>32</Text>
                                 <View style={styles.wallet_horizontalLine}></View>
-                                <Text style={styles.wallet_text}>CO2-Menge pro Fahrt</Text>
+                                <Text style={styles.wallet_text}>CO2 emissions per trip</Text>
                             </View>
                         </View>
                         <View style={[styles.wallet_innerContainerContent, {justifyContent: 'center'}, {marginLeft: 96}, {marginRight: 96}]}>

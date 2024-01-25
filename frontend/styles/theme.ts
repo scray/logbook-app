@@ -5,6 +5,7 @@ export interface Theme {
 	tertiary: string;
 	button1: string;
 	button2: string;
+	button3: string;
 	fontColor: string;
 	navFontColor: string;
 	titleColor: string;
@@ -25,6 +26,7 @@ export const lightTheme: Theme = {
 	tertiary: "#ccc",
 	button1: "#00a897",
 	button2: "#FFFFFF",
+	button3: "#AD4109",
 	fontColor: "#1e1e1e",
 	navFontColor: "#C1BDBD",
 	titleColor: "#1e1e1e",
@@ -42,6 +44,7 @@ export const darkTheme: Theme = {
 	tertiary: "#ccc",
 	button1: "#2ec2b3",
 	button2: "#FFFFFF",
+	button3: "#AD4109",
 	fontColor: "#C1BDBD",
 	navFontColor: "#C1BDBD",
 	titleColor: "#C1BDBD",
