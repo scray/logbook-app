@@ -10,6 +10,8 @@ import Wallet from './pages/Wallet';
 import NavigationBar from './components/navigationBar/navigationBar';
 import StartTour from './pages/StartTour';
 
+// TODO: ADD i18n to App with settings in Wallet
+
 // Define the main function of the application
 export default function App() {
     // Initialize state variables for user ID and current theme
