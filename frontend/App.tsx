@@ -1,64 +1,75 @@
+// Import necessary modules from external libraries and files
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ImageBackground } from 'react-native';
+import { View } from 'react-native';
+import { darkTheme, lightTheme, Theme } from "./styles/theme"; // Import Theme type
+import { useEffect, useState } from "react";
+import { Context, getUserId, getTheme, storeTheme } from './components/profile/UserID';
+import getStyles from './styles/styles';
 import Overview from './pages/Overview';
-import { LinearGradient } from 'expo-linear-gradient';
-import { darkTheme, lightTheme } from "./api/theme";
-import { createContext, useContext, useEffect, useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import UserContext from './api/userContext';
-import { Context, storeUserId, getUserId } from './components/profile/UserID';
-import NavigationBar from "./components/navigationBar/navigationBar";
+import Wallet from './pages/Wallet';
+import NavigationBar from './components/navigationBar/navigationBar';
+import StartTour from './pages/StartTour';
 
+// Define the main function of the application
 export default function App() {
-    const [currentTheme, setCurrentTheme] = useState(lightTheme);
-    const [userId, setUserId] = useState("");
+    // Initialize state variables for user ID and current theme
+    const [userId, setUserId] = useState(""); // User ID
+    const [currentPage, setCurrentPage] = useState("starttour"); // Default page
+    const [currentTheme, setCurrentTheme] = useState(lightTheme); // Current theme
+    const styles = getStyles(currentTheme); // Get styles based on the current theme
 
-
+    // Use the useEffect hook to run code after the component mounts
     useEffect(() => {
-        AsyncStorage.getItem("isDarkMode").then((value) => {
-            setCurrentTheme(value ? darkTheme : lightTheme)
-        });
+        // Create an asynchronous function to fetch user ID and theme
         (async () => {
+            // Fetch user ID from storage
             await getUserId().then((value) => {
-                console.log("Loading user id " + value);
+                console.log("Loading user id " + value); // Log user ID for debugging
                 if (value) {
-                    setUserId(value);
+                    setUserId(value); // Set the user ID in the state if it exists
                 }
+            })
+
+            // Fetch theme from storage
+            await getTheme().then((value) => {
+                console.log("Loading theme " + value + ""); // Log theme for debugging
+                // Set the current theme based on the stored value
+                setCurrentTheme(value === "darkTheme" ? darkTheme : lightTheme);
             })
         })()
     }, []);
 
+    // Define a function to set the theme
+    const setTheme = async (theme: Theme) => {
+        // Store the selected theme in AsyncStorage
+        await storeTheme(theme === darkTheme ? "darkTheme" : "lightTheme");
+        setCurrentTheme(theme); // Set the current theme in the state
+    };
+
+    // Function to render the appropriate page based on the current page state
+    const LoadPage = () => {
+        switch (currentPage) {
+            case "starttour":
+                return <StartTour/>; // Render StartTour for the "starttour" page
+            case "overview":
+                return <Overview/>; // Render overview for the "overview" page
+            case "wallet":
+                return <Wallet/>; // Render Wallet for the "wallet" page
+            default:
+                return <StartTour/>; // Default to TourManagementMenu for unknown pages
+        }
+    }
+
+    // Return the main application structure
     return (
-        <Context.Provider value={{ userId, setUserId, theme: currentTheme }}>
-            <ImageBackground source={require('./assets/background.png')} style={styles.background} >
-                <View style={styles.container}>
-                        {/*<LinearGradient*/}
-                        {/*    colors={currentTheme.backgroundGradient}*/}
-                        {/*    style={styles.gradient}*/}
-                        {/*    start={[0, 0]}*/}
-                        {/*    end={[1, 1]}*/}
-                        {/*>*/}
-                        <Overview setCurrentTheme={setCurrentTheme}/>
+        <Context.Provider value={{ userId, setUserId, theme: currentTheme, setTheme }}>
+                <View style={styles.app_container}>
+                        <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
+                        <View style={styles.app_containerInner}>
+                            <LoadPage/>
+                        </View>
                         <StatusBar style="auto"/>
-                        {/*</LinearGradient>*/}
                 </View>
-            </ImageBackground>
         </Context.Provider>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',
-        flexDirection: 'row',
-    },
-    gradient: {
-        flex: 1,
-        height: "100%",
-    },
-    background: {
-        flex: 1,
-        resizeMode: 'cover',
-    }
-});

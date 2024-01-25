@@ -1,52 +1,42 @@
-import {useContext, useEffect, useState} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import { darkTheme, lightTheme, Theme } from "../../api/theme";
+import {useContext, useState} from "react";
+import {Pressable, Text, View} from "react-native";
 import { Context } from "../profile/UserID";
+import getStyles from "../../styles/styles";
 
-export default function TourStartButton({onPress}: { onPress: (state: string) => Promise<boolean> }) {
-    const [state, setState] = useState("start")
+// Define a functional component named 'TourStartButton' that accepts 'onPress' as a prop
+export default function TourStartButton({ onPress }: { onPress: (state: string) => Promise<boolean> }) {
+    // Define a state variable 'state' initialized to "start"
+    const [state, setState] = useState("start");
+
+    // Access the 'theme' from the user context
     const { theme } = useContext(Context);
 
-    let styles = StyleSheet.create({
-        container: {
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        startButton: {
-            backgroundColor: '#08AEA7',
-            padding: 10,
-            borderRadius: 100,
-            width: 280,
-        },
-        startButtonText: {
-            color: '#FFFFFF',
-            fontSize: 16,
-            fontWeight: '600',
-            textAlign: "center",
-        }
-    });
+    // Get dynamic styles based on the current theme
+    const styles = getStyles(theme);
 
+    // Function to toggle the button state between "start" and "stop"
     function toggleButton(): Promise<boolean> {
         if (state === "start") {
-            setState("stop")
-            console.log("Start to record tour")
+            setState("stop");
+            console.log("Start to record tour");
         } else {
-            setState("start")
-            console.log("Stop to record tour")
+            setState("start");
+            console.log("Stop recording tour");
         }
-        return onPress(state)
+        // Call the 'onPress' function passed as a prop and return its result
+        return onPress(state);
     }
 
     return (
-        <View style={styles.container}>
-            <Pressable style={styles.startButton} onPress={() => {
+        <View style={styles.tourstart_container}>
+            <Pressable style={styles.tourstart_startButton} onPress={() => {
                 toggleButton().then((success) => {
                     if (!success) {
                         setState("start")
                     }
                 })
             }}>
-                <Text style={styles.startButtonText}>{state.toUpperCase()}</Text>
+                <Text style={styles.tourstart_startButtonText}>{state.toUpperCase()}</Text>
             </Pressable>
         </View>
     )

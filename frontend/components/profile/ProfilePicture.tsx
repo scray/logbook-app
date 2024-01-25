@@ -1,15 +1,24 @@
+// Import necessary modules and components
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { View, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 
+import { Context } from './UserID';
+import getStyles from '../../styles/styles';
 
+// Define the 'ProfilePicture' functional component
 interface Props {}
 
 const ProfilePicture: React.FC<Props> = () => {
+    // Initialize state variables
+    const [imageUri, setImageUri] = useState<string | null>(null); // Stores the URI of the selected profile image
+    const { theme, setTheme } = useContext(Context); // Access the 'theme' from the user context
 
-    const [imageUri, setImageUri] = useState<string | null>(null);
+    // Get dynamic styles based on the current theme
+    const styles = getStyles(theme);
 
+    // Use the useEffect hook to load the stored profile image from AsyncStorage
     useEffect(() => {
         (async () => {
             const storedImage = await AsyncStorage.getItem('profileImage');
@@ -19,6 +28,7 @@ const ProfilePicture: React.FC<Props> = () => {
         })();
     }, []);
 
+    // Function to handle the selection of a new profile image
     const handleChooseImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -28,8 +38,8 @@ const ProfilePicture: React.FC<Props> = () => {
         });
 
         if (!result.cancelled) {
-            setImageUri(result.uri);
-            await AsyncStorage.setItem('profileImage', result.uri); // save imageUri to permanent storage
+            setImageUri(result.uri); // Set the selected image URI
+            await AsyncStorage.setItem('profileImage', result.uri); // Save the image URI to permanent storage (AsyncStorage)
         }
     };
 
@@ -39,12 +49,12 @@ const ProfilePicture: React.FC<Props> = () => {
                 {imageUri ? (
                     <Image
                         source={{ uri: imageUri }}
-                        style={{ width: 100, height: 100, borderRadius: 50 }}
+                        style={styles.profile_image}
                     />
                 ) : (
                     <Image
                         source={require('../../assets/icon.png')}
-                        style={{ width: 160, height: 160, borderRadius: 200 }}
+                        style={styles.profile_image}
                     />
                 )}
             </TouchableOpacity>

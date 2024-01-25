@@ -1,42 +1,29 @@
-import {StyleSheet, View} from 'react-native';
-import TourManagementMenu from '../components/tourManagement/TourManagementMenu';
-import Settings from './Settings';
-import Wallet from './Wallet';
-import NavigationBar from '../components/navigationBar/navigationBar';
-import {useState} from "react";
-import {Theme} from "../api/theme";
+// Import necessary modules and components
+import React, { useContext, useState } from "react";
+import { View } from "react-native";
+import Tourlist from "../components/tourManagement/Tourlist"; // Importing the Tourlist component
+import Tour from "../model/Tour"; // Importing the Tour model
+import getStyles from "../styles/styles"; // Importing style-related functions
+import { Context } from "../components/profile/UserID"; // Importing the user context
 
+// Define the Overview component
+export default function Overview() {
+	// Access the current theme from the user context
+	const { theme } = useContext(Context);
 
-export default function Overview({setCurrentTheme}:{setCurrentTheme:(theme:Theme)=>void}) {
-    const [currentPage, setCurrentPage] = useState("starttour");
+	// Define a state variable to store the current tour being managed
+	const [currentTour, setCurrentTour] = useState<Tour>();
 
-    const LoadPage = () =>{
-        switch(currentPage){
-            case "starttour":
-                return <TourManagementMenu loadPage= {currentPage} />;
-            case "tourmanagment":
-                return <TourManagementMenu loadPage= {currentPage} />;
-            case "wallet":
-                return <Wallet/>;
-            case "settings":
-                return <Settings setCurrentTheme={setCurrentTheme}/>;
-            default:
-                return <TourManagementMenu loadPage= {currentPage}/>;
-        }
-    }
+	// Retrieve styles based on the current theme
+	const styles = getStyles(theme);
 
-    return (
-        <View style={styles.container}>
-            <NavigationBar currentPage = {currentPage} setCurrentPage = {setCurrentPage}/>
-            <View style={styles.container}>
-                <LoadPage/>
-            </View>
-        </View>
-    );
+    // Render the Overview view with styles applied
+	return (
+		<View style={styles.overview_tourlistContainer}>
+			<Tourlist
+				currentTour={currentTour}
+				setCurrentTour={setCurrentTour}
+			/>
+		</View>
+	);
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});

@@ -76,13 +76,8 @@ export async function createTour(userId: string): Promise<Tour> {
         tourId: "",
         waypoints: []
     }
-
-    try {
-        let res = await httpRequests.post("/" + userId, tour)
-        tour.tourId = res.tourId
-    } catch(error) {
-        console.log("Unable to get a new tour id" + error + " Leave tour id empty")
-    }
+    let res = await httpRequests.post("/" + userId, tour)
+    tour.tourId = res.tourId
     return tour
 }
 
