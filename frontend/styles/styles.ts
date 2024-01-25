@@ -56,14 +56,14 @@ const getStyles = (theme: Theme, page: string = "") =>
 			flex: 1,
 			width: "100%",
 			paddingLeft: 340,
-			paddingTop: 32,
+			// paddingTop: 32,
 		},
 		wallet_containerInner: {
 			backgroundColor: theme.innerBackground,
 			flex: 1,
 			marginTop: 32,
 			marginRight: 32,
-			marginBottom: 32,
+			// marginBottom: 32,
 			paddingLeft: 32,
 			paddingTop: 32,
 			paddingRight: 32,
@@ -283,7 +283,7 @@ const getStyles = (theme: Theme, page: string = "") =>
 		// navigationBar.tsx styles
 		nav_container: {
 			width: 300,
-			backgroundColor: theme.innerBackground,
+			backgroundColor: theme.contentBackground,
 			position: "absolute",
 			left: 0,
 			top: 0,
