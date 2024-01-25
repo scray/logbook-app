@@ -9,6 +9,9 @@ import ProfilePicture from "../components/profile/ProfilePicture";
 import { Context, storeUserId, getUserId } from "../components/profile/UserID";
 import { darkTheme, lightTheme } from "../styles/theme";
 import getStyles from '../styles/styles';
+import axios from 'axios';
+
+const server = "http://localhost:8080/tour-app";
 
 // Define the Wallet component
 const Wallet = () => {
@@ -22,6 +25,10 @@ const Wallet = () => {
     const [isPushNotificationsEnabled, setIsPushNotificationsEnabled] = useState(false);
     const [mapStyle, setMapStyle] = useState("standard");
     const [open, setOpen] = useState(false);
+
+    const [totalDistance, setTotalDistance] = useState<number | null>(null);
+    const [totalTourCount, setCalculateTourCount] = useState<number | null>(null);
+    const [averageTourTime, setCalculateAverageTourTime] = useState<number | null>(null);
 
     // Get dynamic styles based on the current theme
     const styles = getStyles(theme);
@@ -76,6 +83,48 @@ const Wallet = () => {
         setTheme(newTheme); // Update the theme in the state
     }, []);
 
+    const calculateTotalDistance = async (user: string) => {
+        try {
+            const response = await axios.get(`${server}/tours/total-distance/${user}`);
+            const result = parseInt(response.data.totalDistance);
+            setTotalDistance(result);
+        } catch (error) {
+            console.error(error);
+            setTotalDistance(null);
+        }
+    };
+
+    const calculateTourCount = async (user: string) => {
+        try {
+            const response = await axios.get(`${server}/tours/count/${user}`);
+            const result = response.data.count;
+            setCalculateTourCount(result);
+        } catch (error) {
+            console.error(error.config);
+            setCalculateTourCount(null);
+        }
+    };
+
+    const calculateAverageTourTime = async (user: string) => {
+        try {
+            const response = await axios.get(`${server}/tours/average-tour-time/${user}`);
+            const result = parseInt(response.data.averageTourTime);
+            setCalculateAverageTourTime(result);
+        } catch (error) {
+            console.error(error.config);
+            setCalculateAverageTourTime(null);
+        }
+    };
+
+    const user = "alice";
+
+    useEffect(() => {
+        calculateTotalDistance(user);
+        calculateTourCount(user);
+        calculateAverageTourTime(user);
+    }, []);
+
+
     // Render the Wallet component
     return (
         <View style={styles.wallet_container}>
@@ -99,7 +148,7 @@ const Wallet = () => {
                         </View>
                         <View style={[styles.wallet_innerContainerContent, {alignItems: 'center'}]}>
                             <View style={[styles.wallet_containerInner2, {alignItems: 'center'}]}>
-                                <Text style={styles.wallet_numberStyle}>40</Text>
+                                <Text style={styles.wallet_numberStyle}>{totalTourCount}</Text>
                                 <View style={styles.wallet_horizontalLine}></View>
                                 <Text style={styles.wallet_text}>Tours</Text>
                             </View>
@@ -116,14 +165,14 @@ const Wallet = () => {
                         </View>
                         <View style={[styles.wallet_innerContainerContent, {justifyContent: 'center'}, {marginLeft: 96}, {marginRight: 96}]}>
                             <View style={[styles.wallet_containerInner2, {alignItems: 'center'}]}>
-                                <Text style={styles.wallet_numberStyle}>6</Text>
+                                <Text style={styles.wallet_numberStyle}>{averageTourTime}</Text>
                                 <View style={styles.wallet_horizontalLine}></View>
                                 <Text style={styles.wallet_text}>Average travel time</Text>
                             </View>
                             <View style={[styles.wallet_containerInner2, {alignItems: 'center'}]}>
-                                <Text style={styles.wallet_numberStyle}>105</Text>
+                                <Text style={styles.wallet_numberStyle}>{totalDistance}</Text>
                                 <View style={styles.wallet_horizontalLine}></View>
-                                <Text style={styles.wallet_text}>Kilometers pro Fahrt</Text>
+                                <Text style={styles.wallet_text}>Total Distance</Text>
                             </View>
                         </View>
                     </View>

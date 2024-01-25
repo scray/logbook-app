@@ -5,6 +5,7 @@
   "dependencies": {
     "@react-navigation/drawer": "^6.6.6",
     "@react-navigation/native": "^6.1.9",
+    "axios": "^1.6.6",
     "expo": "^49.0.0",
     "react": "18.2.0",
     "react-native": "0.72.5",
