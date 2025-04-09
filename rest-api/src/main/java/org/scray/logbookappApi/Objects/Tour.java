@@ -9,7 +9,8 @@ public class Tour {
     private  List<Waypoint> waypoints;
     private String tourId;
 	private String vehiceId = "vehice1";
-
+	private long startTime;
+	private long endTime;
 
 	public Tour() {
 		super();
@@ -20,6 +21,17 @@ public class Tour {
 		this.userId = userId;
 		this.waypoints = waypoints;
 		this.tourId = tourId;
+
+        this.startTime = waypoints.stream()
+                .mapToLong(Waypoint::getTimestamp)
+                .min()
+                .orElse(0);
+
+        this.endTime = waypoints.stream()
+                .mapToLong(Waypoint::getTimestamp)
+                .max()
+                .orElse(0);
+
 	}
 
 	public Tour(String userId, List<Waypoint> waypoints, String tourId, Transport transport) {
@@ -63,5 +75,21 @@ public class Tour {
 	@Override
 	public String toString() {
 		return "Tour [userId=" + userId + ", waypoints=" + waypoints + ", tourId=" + tourId + "]";
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 }
