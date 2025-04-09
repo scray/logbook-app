@@ -25,13 +25,16 @@ public class Controller {
             "./wallet");
 
     // ------------------------------------ POST METHODS ------------------------------------ //
+
+
+    //add vehicle
     @PostMapping("/tours/{userid}")
     @ResponseBody
     public ResponseEntity<Object> write_tour(@PathVariable String userid, @RequestBody Tour obj_tour) {
         logger.debug("Request: POST /tours/" + userid + " " + gson.toJson(obj_tour));
         ResponseEntity<Object> response;
         try {
-            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour));
+            response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour.getVehiceId(), obj_tour));
         } catch (Exception e) {
             response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
             e.printStackTrace();
@@ -41,6 +44,8 @@ public class Controller {
     }
 
     // ------------------------------------ PUT METHODS ------------------------------------ //
+
+    //do we really need to add a vehicle here?
     @PutMapping("/tours/{userid}/{tourid}")
     @ResponseBody
     public ResponseEntity<Object> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
@@ -60,6 +65,7 @@ public class Controller {
     @GetMapping(path = "/tours/{userid}/{tourid}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Object> get_tour(@PathVariable String userid, @PathVariable String tourid) {
+    	
         logger.debug("Request: GET /tours/" + userid + "/" + tourid);
         ResponseEntity<Object> response;
         try {
@@ -86,4 +92,71 @@ public class Controller {
         logger.debug("Response: " + response.getBody());
         return response;
     }
+
+    @GetMapping(path = "/tours/count/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> getTourCount(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/count/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            int tourCount = blockchainOperations.getTourCount(userid);
+            response = ResponseEntity.ok("{\"count\": " + tourCount + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+    @GetMapping(path = "/tours/total-distance/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> calculateTotalDistance(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/total-distance/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            double totalDistance = blockchainOperations.calculateTotalDistance(userid);
+            response = ResponseEntity.ok("{\"totalDistance\": " + totalDistance + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+    @GetMapping(path = "/tours/average-tour-time/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> calculateAverageTourTime(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/average-tour-time/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            double averageTourTime = blockchainOperations.calculateAverageTourTime(userid);
+            response = ResponseEntity.ok("{\"averageTourTime\": " + averageTourTime + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+    @GetMapping(path = "/tours/average-co2/{userid}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Object> calculateAverageCO2(@PathVariable String userid) {
+        logger.debug("Request: GET /tours/average-co2/" + userid);
+        ResponseEntity<Object> response;
+        try {
+            double averageCO2 = blockchainOperations.calculateAverageCO2(userid);
+            response = ResponseEntity.ok("{\"averageCO2\": " + averageCO2 + "}");
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace();
+        }
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
+
+
+
 }

@@ -31,7 +31,7 @@ public class ReadDataMain {
 
 			Tour newTour = new Tour("alice", Arrays.asList(waypoint1, waypoint2, waypoint3), "28", transport);
 
-			blockchainOperations.writeTour("alice", newTour);
+			blockchainOperations.writeTour("alice", "v42",  newTour);
 
 			System.out.println("New tour created successfully!");
 

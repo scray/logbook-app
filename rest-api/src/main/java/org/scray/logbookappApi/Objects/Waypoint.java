@@ -2,6 +2,7 @@ package org.scray.logbookappApi.Objects;
 
 public class Waypoint {
     private float longitude;
+
     public float getLongitude() {
         return longitude;
     }

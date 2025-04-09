@@ -20,11 +20,12 @@ class Waypoint {
 }
 exports.Waypoint = Waypoint;
 class Tour {
-    constructor(userId, tourId) {
+    constructor(userId, tourId, vehicleId) {
         this.finish = false;
         this.waypoints = [];
         this.userId = userId;
         this.tourId = tourId;
+        this.vehicleId = vehicleId;
     }
 }
 exports.Tour = Tour;

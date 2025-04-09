@@ -1,4 +1,4 @@
-# logbook-app
+ logbook-app
 
 ## Logbook App (REST API)
 The REST API is made in Java with SpringBoot. It is used to communicate with the blockchain running either on the same or another system.
@@ -7,9 +7,6 @@ The REST API is made in Java with SpringBoot. It is used to communicate with the
 #### Chaincode authorization
 Even though there is already a running instance of the chaincode which can be accessed with the files in the `wallet` folder, if you want to use your own chaincode, remember to change the `wallet/connection.yml` and `wallet/alice.id` files to point to your own kubernetes cluster.
 More on this in the [chaincode](../chaincode/README.md) folder.
-
-#### Discord Logger
-The REST API can send logs to a Discord channel. To do this, you need to create a Discord Webhook and change the Discord webhook url `webhookURL` in the [DiscordHook](src/main/java/org/scray/logbookappApi/Logging/DiscordHook.java) file.
 
 ### Run and Build the REST API
 
@@ -43,3 +40,14 @@ mvn spring-boot:run
 ```
 
 Make sure that the `wallet` folder is in the root directory of the project.
+
+
+
+### Run in mock mode
+
+```bash
+java -Ddummy.mode=true -jar target/logbookappApi-0.0.1-SNAPSHOT.jar
+```
+
+### Get tours
+	```http://localhost:8080/tour-app/tours/allice/```
