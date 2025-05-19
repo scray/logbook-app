@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class BlockchainOperations {
 
 	@Value("${mock-mode:false}")
-	private boolean mockMode = true;
+	private boolean mockMode = false;
 
 	Gson gson = new Gson();
 	private static Logger logger = LoggerFactory.getLogger(LogbookApi.class);

@@ -19,7 +19,7 @@ public class Controller {
 
     // ------------------------------------ SET PARAMETERS FOR CONNECTION ------------------------------------ //
     public static final BlockchainOperations blockchainOperations = new BlockchainOperations(
-            "alice-dev",
+            "c1",
             "basic",
             "alice",
             "./wallet");
@@ -65,7 +65,7 @@ public class Controller {
     @GetMapping(path = "/tours/{userid}/{tourid}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Object> get_tour(@PathVariable String userid, @PathVariable String tourid) {
-    	
+
         logger.debug("Request: GET /tours/" + userid + "/" + tourid);
         ResponseEntity<Object> response;
         try {

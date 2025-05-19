@@ -14,9 +14,10 @@ import org.scray.logbookappApi.Operations.BlockchainOperations;
 public class ReadDataMain {
 
 	public static void main(String[] args) {
+
 		try {
 		 BlockchainOperations blockchainOperations = new BlockchainOperations(
-		            "alice-dev",
+		            "c1",
 		            "basic",
 		            "alice",
 		            "C:\\Users\\st.obermeier\\git\\logbook-app\\rest-api\\wallet");
@@ -34,6 +35,7 @@ public class ReadDataMain {
 			blockchainOperations.writeTour("alice", "v42",  newTour);
 
 			System.out.println("New tour created successfully!");
+
 
 			var tours = blockchainOperations.readTours("alice");
 

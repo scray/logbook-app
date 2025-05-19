@@ -2,40 +2,39 @@
 name: "test-network-org1"
 version: "1.0.0"
 client:
-  organization: "peer400"
+  organization: "peer801"
   connection:
     timeout:
       peer:
         endorser: "300"
 organizations:
-  peer400:
-    mspid: "peer400MSP"
+  peer801:
+    mspid: "peer801MSP"
     peers:
-    - "peer400.see.ledger.s-node.de"
+    - "peer801.hso.dlt.s-node.de"
 peers:
-  peer400.see.ledger.s-node.de:
-    url: "grpcs://peer0.peer400.see.ledger.s-node.de:32752"
+  peer801.hso.dlt.s-node.de:
+    url: "grpcs://peer0.peer801.hso.dlt.s-node.de:30478"
     tlsCACerts:
       pem: |-
         -----BEGIN CERTIFICATE-----
-        MIICdDCCAhqgAwIBAgIRAKAfM8hKQqhWiUptpMBgzHUwCgYIKoZIzj0EAwIwgYMx
-        CzAJBgNVBAYTAkRFMQ4wDAYDVQQIEwVCYWRlbjEQMA4GA1UEBxMHQnJldHRlbjEl
-        MCMGA1UEChMccGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTErMCkGA1UEAxMi
-        dGxzY2EucGVlcjQwMC5zZWUubGVkZ2VyLnMtbm9kZS5kZTAeFw0yMzA3MTgxMzE3
-        MDBaFw0zMzA3MTUxMzE3MDBaMIGDMQswCQYDVQQGEwJERTEOMAwGA1UECBMFQmFk
-        ZW4xEDAOBgNVBAcTB0JyZXR0ZW4xJTAjBgNVBAoTHHBlZXI0MDAuc2VlLmxlZGdl
-        ci5zLW5vZGUuZGUxKzApBgNVBAMTInRsc2NhLnBlZXI0MDAuc2VlLmxlZGdlci5z
-        LW5vZGUuZGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATLqf1i18XcWWDHtyfY
-        48W0fLy6PlGC/Tjj6a/g4plmAMrGsQY2OK8+SJzdHaTpOiWmiTJvIuGzgyEyLHB9
-        q3RCo20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsG
-        AQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEICy9cCAPdYjsv6Y9OgHX
-        l65zNOqAsVyejonoes1rDv5oMAoGCCqGSM49BAMCA0gAMEUCICkaVGwxD+oO3Caa
-        251wVdiFBvDR8QWBwXQ6nRvSXoPhAiEAtelZwHdmdbSYXLD5kTa9SqqohTHVPO34
-        /TbCIj38Gd4=
+        MIICZjCCAgygAwIBAgIRAJa4FC0tcJx62jFRF/vYG6IwCgYIKoZIzj0EAwIwfTEL
+        MAkGA1UEBhMCREUxDjAMBgNVBAgTBUJhZGVuMRAwDgYDVQQHEwdCcmV0dGVuMSIw
+        IAYDVQQKExlwZWVyODAxLmhzby5kbHQucy1ub2RlLmRlMSgwJgYDVQQDEx90bHNj
+        YS5wZWVyODAxLmhzby5kbHQucy1ub2RlLmRlMB4XDTI1MDUxOTIxMDEwMFoXDTM1
+        MDUxNzIxMDEwMFowfTELMAkGA1UEBhMCREUxDjAMBgNVBAgTBUJhZGVuMRAwDgYD
+        VQQHEwdCcmV0dGVuMSIwIAYDVQQKExlwZWVyODAxLmhzby5kbHQucy1ub2RlLmRl
+        MSgwJgYDVQQDEx90bHNjYS5wZWVyODAxLmhzby5kbHQucy1ub2RlLmRlMFkwEwYH
+        KoZIzj0CAQYIKoZIzj0DAQcDQgAEp3hZsPXyF4Ygq/tHQ/4VLHif/6lGW12BodsE
+        +lqud6iFiGjqHlI+BH+seD5fxBOS6FqRftuuHMbFRq02lGSAF6NtMGswDgYDVR0P
+        AQH/BAQDAgGmMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMB
+        Af8EBTADAQH/MCkGA1UdDgQiBCD7N0Z21BYqedsQTo/uahXzIv+8DYf99mZMj7o0
+        BYDlADAKBggqhkjOPQQDAgNIADBFAiBL9Gp8sTPiskDU1oayLyQNC7m3P3bPF26M
+        JepZ0ZFyTwIhANvn5kglUeBR9LNST87T0LiPBc/ZBNeZD0CBg2khmTId
         -----END CERTIFICATE-----
 grpcOptions:
-  ssl-target-name-override: "peer0.peer400.peer400.see.ledger.s-node.de"
-  hostnameOverride: "peer0.peer400.peer400.see.ledger.s-node.de"
+  ssl-target-name-override: "peer0.peer801.hso.dlt.s-node.de"
+  hostnameOverride: "peer0.peer801.hso.dlt.s-node.de"
 orderers:
-  orderer.example.com:
-    url: "grpc://orderer1.int.hsa.ledger.s-node.de:31944"
+  orderer1.hso.dlt.s-node.de:
+    url: "grpc://orderer1.hso.dlt.s-node.de:30742"
