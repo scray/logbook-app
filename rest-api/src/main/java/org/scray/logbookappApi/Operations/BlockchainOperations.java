@@ -120,7 +120,6 @@ public class BlockchainOperations {
 		}
 		Network network = gateway.getNetwork(channel);
 		Contract contract = network.getContract(smartContract);
-		contract.submitTransaction("createTour", userid, vehicleId, tour);
 		data = new String(contract.submitTransaction("createTour", userid, vehicleId, tour));
 		while (data.contains("\\\"")) {
 			data = data.replace("\\\"", "\"");
