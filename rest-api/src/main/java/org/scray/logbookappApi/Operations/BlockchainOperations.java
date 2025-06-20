@@ -4,10 +4,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.*;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
 
 import org.hyperledger.fabric.gateway.*;
 import org.scray.logbookappApi.LogbookApi;
@@ -22,8 +26,53 @@ public class BlockchainOperations {
 	@Value("${mock-mode:false}")
 	private boolean mockMode = false;
 
-	Gson gson = new Gson();
+
+	Gson gson = new GsonBuilder()
+			.serializeNulls()
+			.setPrettyPrinting()
+			.registerTypeAdapter(Map.class, (JsonDeserializer<Map<String, Boolean>>) (json, typeOfT, context) -> {
+				if (json.isJsonObject()) {
+					JsonObject obj = json.getAsJsonObject();
+					Map<String, Boolean> map = new HashMap<>();
+
+					// Falls das alte boolean Format vorliegt
+					if (obj.has("internationaleFahrten") && obj.get("internationaleFahrten").isJsonPrimitive()) {
+						boolean oldValue = obj.get("internationaleFahrten").getAsBoolean();
+						map.put("eu", oldValue);
+						map.put("eu_ch", oldValue);
+						map.put("inland", !oldValue);
+						return map;
+					}
+
+					// Normale Map deserialization
+					obj.entrySet().forEach(entry -> {
+						if (entry.getValue().isJsonPrimitive()) {
+							map.put(entry.getKey(), entry.getValue().getAsBoolean());
+						}
+					});
+
+					// Falls Map leer ist, Defaults setzen
+					if (map.isEmpty()) {
+						map.put("eu", false);
+						map.put("eu_ch", false);
+						map.put("inland", true);
+					}
+
+					return map;
+				}
+
+				// Fallback: Default Map
+				Map<String, Boolean> defaultMap = new HashMap<>();
+				defaultMap.put("eu", false);
+				defaultMap.put("eu_ch", false);
+				defaultMap.put("inland", true);
+				return defaultMap;
+			})
+			.create();
+
 	private static Logger logger = LoggerFactory.getLogger(LogbookApi.class);
+
+
 
 	String channel;
 	String smartContract;
@@ -110,17 +159,47 @@ public class BlockchainOperations {
 	// ------------------------------------ //
 
 	public Tour writeTour(String userid, String vechicleId, Tour tour) throws Exception {
-		return writeTour(userid, vechicleId, gson.toJson(tour));
+		System.out.println("=== DEBUG: writeTour called ===");
+		System.out.println("Tour before JSON conversion: " + tour.toString());
+		System.out.println("InternationaleFahrten before JSON: " + tour.getInternationaleFahrten());
+
+		// Sicherstellen dass internationaleFahrten nicht null/leer ist
+		if (tour.getInternationaleFahrten() == null || tour.getInternationaleFahrten().isEmpty()) {
+			System.out.println("InternationaleFahrten is null/empty, setting defaults");
+			Map<String, Boolean> defaults = new HashMap<>();
+			defaults.put("eu", false);
+			defaults.put("eu_ch", false);
+			defaults.put("inland", true);
+			tour.setInternationaleFahrten(defaults);
+		}
+
+		String jsonString = gson.toJson(tour);
+		System.out.println("JSON string: " + jsonString);
+
+		return writeTour(userid, vechicleId, jsonString);
 	}
 
 	private Tour writeTour(String userid, String vehicleId, String tour) throws Exception {
-		String data;
+		System.out.println("=== DEBUG: writeTour(String) called ===");
+		System.out.println("JSON received: " + tour);
+
 		if (gateway == null) {
 			gateway = connect();
 		}
 		Network network = gateway.getNetwork(channel);
 		Contract contract = network.getContract(smartContract);
-		data = new String(contract.submitTransaction("createTour", userid, vehicleId, tour));
+
+		// Parse und validate vor dem senden
+		Tour tourObject = gson.fromJson(tour, Tour.class);
+		System.out.println("Parsed tour object internationaleFahrten: " + tourObject.getInternationaleFahrten());
+
+		String data = new String(contract.submitTransaction(
+				"createTour",
+				userid,
+				vehicleId,
+				tour
+		));
+
 		while (data.contains("\\\"")) {
 			data = data.replace("\\\"", "\"");
 		}
@@ -151,11 +230,52 @@ public class BlockchainOperations {
 	// ------------------------------------ UPDATE BLOCKCHAIN REQUEST
 	// ------------------------------------ //
 
-	public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {
-		return updateTour(userid, tourid, gson.toJson(wp));
+
+
+	public Tour updateTourInternationaleFahrten(String userid, String tourid, Map<String, Boolean> internationaleFahrten) throws Exception {
+		if (gateway == null) {
+			gateway = connect();
+		}
+		Network network = gateway.getNetwork(channel);
+		Contract contract = network.getContract(smartContract);
+
+		Tour currentTour = readTour(userid, tourid);
+		if (currentTour == null) {
+			throw new Exception("Tour with id " + tourid + " does not exist.");
+		}
+
+		currentTour.setInternationaleFahrten(internationaleFahrten);
+
+		String tourJson = gson.toJson(currentTour);
+		System.out.println("testtest"+" "+tourJson);
+		String data = new String(contract.submitTransaction(
+				"updateTour",
+				userid,
+				tourid,
+				tourJson
+		));
+
+		while (data.contains("\\\"")) {
+			data = data.replace("\\\"", "\"");
+		}
+
+		if (data.equalsIgnoreCase("false")) {
+			throw new Exception("Tour could not be updated.");
+		}
+
+		try {
+			return gson.fromJson(data, Tour.class);
+		} catch (Exception e) {
+			return gson.fromJson(data.substring(1, data.length() - 1), Tour.class);
+		}
 	}
 
-	private Waypoint updateTour(String userid, String tourid, String wp) throws Exception {
+
+	public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {
+			return updateTour(userid, tourid, gson.toJson(wp));
+		}
+
+		private Waypoint updateTour(String userid, String tourid, String wp) throws Exception {
 		if (gateway == null) {
 			gateway = connect();
 		}
@@ -206,6 +326,8 @@ public class BlockchainOperations {
 		return 0;
 	}
 
+
+
 	private Tour getDummyTour(String tourId) {
 		var waypoints = new ArrayList<Waypoint>();
 
@@ -214,7 +336,16 @@ public class BlockchainOperations {
 		waypoints.add(new Waypoint(1.3f, 1.9f, 1679696800L));
 		waypoints.add(new Waypoint(1.4f, 2.0f, 1679696840L));
 
-		return new Tour("alice", tourId, waypoints);
+		Tour tour = new Tour("alice", tourId, waypoints);
+
+		// Default internationale Fahrten setzen
+		Map<String, Boolean> internationaleFahrten = new HashMap<>();
+		internationaleFahrten.put("eu", false);
+		internationaleFahrten.put("eu_ch", false);
+		internationaleFahrten.put("inland", true);
+		tour.setInternationaleFahrten(internationaleFahrten);
+
+		return tour;
 	}
 
 	private Tour[] getDummyTours() {
@@ -225,10 +356,23 @@ public class BlockchainOperations {
 		waypoints.add(new Waypoint(1.3f, 1.9f, 1679696800L));
 		waypoints.add(new Waypoint(1.4f, 2.0f, 1679696840L));
 
-		Tour[] tours = new Tour[] { new Tour("alice", "tour1", waypoints), new Tour("alice", "tour2", waypoints) };
+		Tour tour1 = new Tour("alice", "tour1", waypoints);
+		Tour tour2 = new Tour("alice", "tour2", waypoints);
 
+		// Default internationale Fahrten für beide Tours setzen
+		Map<String, Boolean> internationaleFahrten = new HashMap<>();
+		internationaleFahrten.put("eu", false);
+		internationaleFahrten.put("eu_ch", false);
+		internationaleFahrten.put("inland", true);
+
+		tour1.setInternationaleFahrten(internationaleFahrten);
+		tour2.setInternationaleFahrten(new HashMap<>(internationaleFahrten)); // Kopie für tour2
+
+		Tour[] tours = new Tour[] { tour1, tour2 };
 		return tours;
 	}
+
+
 
 	public double calculateAverageTourTime(String userId) throws Exception {
 		if (gateway == null) {

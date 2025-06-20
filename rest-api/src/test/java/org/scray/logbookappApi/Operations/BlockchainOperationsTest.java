@@ -16,7 +16,7 @@ class BlockchainOperationsTest {
     Gson gson = new Gson();
 
     private final BlockchainOperations blockchainOperations = new BlockchainOperations(
-            "channel-t",
+            "c1",
             "basic",
             "alice",
             "./wallet");

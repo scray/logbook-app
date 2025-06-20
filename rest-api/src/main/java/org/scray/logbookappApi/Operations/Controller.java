@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.scray.logbookappApi.Objects.Tour;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(path = "/tour-app")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -22,10 +24,31 @@ public class Controller {
             "c1",
             "basic",
             "alice",
-            "./wallet");
+            "C:\\Users\\Özgür\\Projekte\\logbook-app\\rest-api\\wallet");
 
     // ------------------------------------ POST METHODS ------------------------------------ //
+    //UpdateTour
+    @PutMapping("/tours/{userid}/{tourid}/international")
+    @ResponseBody
+    public ResponseEntity<Object> updateTourInternationaleFahrten(
+            @PathVariable String userid,
+            @PathVariable String tourid,
+            @RequestBody Map<String, Boolean> internationaleFahrten) {
 
+        logger.debug("Request: PUT /tours/" + userid + "/" + tourid + "/international " + gson.toJson(internationaleFahrten));
+        ResponseEntity<Object> response;
+
+        try {
+            Tour updatedTour = blockchainOperations.updateTourInternationaleFahrten(userid, tourid, internationaleFahrten);
+            response = ResponseEntity.ok(updatedTour);
+        } catch (Exception e) {
+            response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        logger.debug("Response: " + response.getBody());
+        return response;
+    }
 
     //add vehicle
     @PostMapping("/tours/{userid}")

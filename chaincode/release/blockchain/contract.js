@@ -55,6 +55,45 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     }
 
+    updateTour(context, userId, tourId, updatedTourJson) {
+        return __awaiter(this, void 0, void 0, function* () {
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to update tour " + tourId + " for user " + userId);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
+
+            let userData = JSON.parse(bytes.toString());
+            let tourIndex = userData.tours.findIndex(tour => tour.tourId === tourId);
+
+            if (tourIndex === -1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId + " for user " + userId);
+                return false;
+            }
+
+            try {
+                let updatedTourData = JSON.parse(updatedTourJson);
+
+                updatedTourData.userId = userData.tours[tourIndex].userId;
+                updatedTourData.tourId = userData.tours[tourIndex].tourId;
+
+                userData.tours[tourIndex] = updatedTourData;
+
+                yield context.stub.putState(userId, Buffer.from(JSON.stringify(userData)));
+
+                __1.Logger.write(logger_1.Prefix.SUCCESS, "Tour " + tourId + " for user " + userId + " has been updated successfully.");
+
+                return JSON.stringify(userData.tours[tourIndex]);
+
+            } catch (error) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "Error parsing updated tour data: " + error);
+                return false;
+            }
+        });
+    }
+
     //returns all trips, not one distance
     //need userId or TourId to be integrated
     calculateDistances(tour) {
