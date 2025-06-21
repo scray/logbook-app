@@ -23,6 +23,39 @@ class Contracts extends fabric_contract_api_1.Contract {
         __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
 
+    // ==================== BENUTZER-AUTORISIERUNG ==================== //
+
+    /**
+     * Prüft ob der aktuelle Benutzer autorisiert ist, Änderungen vorzunehmen
+     */
+    static checkWriteAuthorization(context, operation) {
+        const clientIdentity = context.clientIdentity;
+        const crtUserId = clientIdentity.getID();
+        __1.Logger.write(logger_1.Prefix.NORMAL, `User ${crtUserId} attempting ${operation}`);
+
+        const authorizedUsers = [
+            'x509::/CN=alice/OU=admin::/C=DE/ST=Baden/L=Bretten/O=peer801.hso.dlt.s-node.de/CN=ca.peer801.hso.dlt.s-node.de'
+        ];
+
+
+        if (!authorizedUsers.includes(crtUserId)) {
+            __1.Logger.write(logger_1.Prefix.ERROR, `User ${crtUserId} is not authorized for ${operation}`);
+            throw new Error(`User is not authorized to ${operation}. Only Alice can modify tours.`);
+        }
+
+        __1.Logger.write(logger_1.Prefix.SUCCESS, `User ${crtUserId} authorized for ${operation}`);
+        return true;
+    }
+
+    /**
+     * Extrahiert den Benutzernamen aus der Client-Identität
+     */
+    static extractUsername(clientId) {
+        // Extrahiere CN (Common Name) aus der X.509 Identität
+        const match = clientId.match(/CN=([^/]+)/);
+        return match ? match[1] : 'unknown';
+    }
+
     // ==================== GEOGRAFISCHE VALIDIERUNG ==================== //
 
     /**
@@ -67,9 +100,9 @@ class Contracts extends fabric_contract_api_1.Contract {
             longitude >= minLon && longitude <= maxLon;
     }
 
-
-     // Validiert Waypoint basierend auf Tour-Einstellungen
-
+    /**
+     * Validiert Waypoint basierend auf Tour-Einstellungen
+     */
     static validateWaypointLocation(waypoint, internationaleFahrten) {
         const latitude = waypoint.latitude;
         const longitude = waypoint.longitude;
@@ -112,8 +145,13 @@ class Contracts extends fabric_contract_api_1.Contract {
         return true;
     }
 
+    // ==================== CONTRACT METHODEN ==================== //
+
     createTour(context, userId, vehicleId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Autorisierung prüfen
+            Contracts.checkWriteAuthorization(context, 'create tour');
+
             /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
             let data;
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
@@ -139,12 +177,13 @@ class Contracts extends fabric_contract_api_1.Contract {
             __1.Logger.write(logger_1.Prefix.NORMAL, tour);
             return JSON.stringify(tour_data);
         });
-
-
     }
 
     updateTour(context, userId, tourId, updatedTourJson) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Autorisierung prüfen
+            Contracts.checkWriteAuthorization(context, 'update tour');
+
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to update tour " + tourId + " for user " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -182,36 +221,11 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
-    //returns all trips, not one distance
-    //need userId or TourId to be integrated
-    calculateDistances(tour) {
-        const T_Distances = [];
-        const waypoints = tour.waypoints;
-        for (var i = 0; i < waypoints.length; i++){
-            if (waypoints[i+1] == null) break;
-            const lon1 = waypoints[i].longitude;
-            const lat1 = waypoints[i].latitude;
-            const time1 = waypoints[i].timestamp;
-
-            const lon2 = waypoints[i+1].longitude;
-            const lat2 = waypoints[i+1].latitude;
-            const time2 = waypoints[i+1].timestamp;
-
-            const distance = haversineDistance(lon1, lat1, lon2, lat2);
-
-            console.log(distance);
-            const time = time2 - time1;
-
-            T_Distances.push({ distance: distance, time: time });
-
-            __1.Logger.write(logger_1.Prefix.NORMAL, "Distance for " + Tour.tourId + " is:: " + distance);
-            __1.Logger.write(logger_1.Prefix.NORMAL, "Time for " + Tour.tourId + " is:: " + time);
-        }
-        return T_Distances;
-    }
-
     addWaypoint(context, userId, tourId, waypoint) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Autorisierung prüfen
+            Contracts.checkWriteAuthorization(context, 'add waypoint');
+
             /* Adding a waypoint to the given tourId from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to add Waypoint");
             let bytes = yield context.stub.getState(userId);
@@ -255,8 +269,16 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    // READ-ONLY METHODEN (keine Autorisierung nötig)
+
     getTour(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
+            const clientIdentity = context.clientIdentity;
+            const crtUserId = clientIdentity.getID();
+            const username = Contracts.extractUsername(crtUserId);
+            __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tour ${tourId}`);
+
             /* Request the tour with the given tourId from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, " Request the tour with the given tourId from the given user with " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
@@ -276,6 +298,12 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
+            const clientIdentity = context.clientIdentity;
+            const crtUserId = clientIdentity.getID();
+            const username = Contracts.extractUsername(crtUserId);
+            __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tours for ${userId}`);
+
             /* Request all tours from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, " Test message of user: " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
@@ -291,26 +319,30 @@ class Contracts extends fabric_contract_api_1.Contract {
     }
 
     createTransport(context, transport) {
-            return __awaiter(this, void 0, void 0, function* () {
-                let data;
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a transport with ID " + transport.id + ".");
-                let bytes = yield context.stub.getState(transport.id);
-                if (bytes.length < 1) {
-                    data = new asset_1.Vehicle(transport.id, transport.name, transport.emissionPerKm);
-                } else {
-                    __1.Logger.write(logger_1.Prefix.WARNING, "Transport with ID " + transport.id + " already exists. Updating the data.");
-                    data = JSON.parse(bytes.toString());
-                    data.name = transport.name;
-                    data.emissionPerKm = transport.emissionPerKm;
-                }
-                context.stub.putState(transport.id, Buffer.from(JSON.stringify(data)));
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Transport with ID " + transport.id + " has been created/updated.");
-                return JSON.stringify(data);
-            });
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            // Autorisierung prüfen
+            Contracts.checkWriteAuthorization(context, 'create transport');
+
+            let data;
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a transport with ID " + transport.id + ".");
+            let bytes = yield context.stub.getState(transport.id);
+            if (bytes.length < 1) {
+                data = new asset_1.Vehicle(transport.id, transport.name, transport.emissionPerKm);
+            } else {
+                __1.Logger.write(logger_1.Prefix.WARNING, "Transport with ID " + transport.id + " already exists. Updating the data.");
+                data = JSON.parse(bytes.toString());
+                data.name = transport.name;
+                data.emissionPerKm = transport.emissionPerKm;
+            }
+            context.stub.putState(transport.id, Buffer.from(JSON.stringify(data)));
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Transport with ID " + transport.id + " has been created/updated.");
+            return JSON.stringify(data);
+        });
+    }
 
     getTransport(context, transportId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, " Requesting transport with ID " + transportId + " from the blockchain.");
             let bytes = yield context.stub.getState(transportId);
             if (bytes.length <= 0) {
@@ -323,27 +355,30 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    // CALCULATION METHODEN (Read-Only)
+
     calculateTotalDistance(context, userId) {
-            return __awaiter(this, void 0, void 0, function* () {
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
 
-                let bytes = yield context.stub.getState(userId);
-                if (bytes.length < 1) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
-                    return false;
-                }
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
 
-                let data = JSON.parse(bytes.toString());
-                let totalDistance = 0;
+            let data = JSON.parse(bytes.toString());
+            let totalDistance = 0;
 
-                data.tours.forEach((tour) => {
-                    totalDistance += this.calculateTourDistance(tour);
-                });
-
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Total distance calculated for user " + userId + ": " + totalDistance);
-                return totalDistance;
+            data.tours.forEach((tour) => {
+                totalDistance += this.calculateTourDistance(tour);
             });
-        }
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS, "Total distance calculated for user " + userId + ": " + totalDistance);
+            return totalDistance;
+        });
+    }
 
     calculateTourDistance(tour) {
         let tourDistance = 0;
@@ -361,41 +396,41 @@ class Contracts extends fabric_contract_api_1.Contract {
         return tourDistance;
     }
 
-     calculateAverageTourTime(context, userId) {
-            return __awaiter(this, void 0, void 0, function* () {
-                __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
+    calculateAverageTourTime(context, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
 
-                let bytes = yield context.stub.getState(userId);
-                if (bytes.length < 1) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
-                    return false;
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let totalTourTime = 0;
+            let totalTours = data.tours.length;
+
+            data.tours.forEach((tour) => {
+                const tourTime = this.calculateTourTime(tour);
+                if (tourTime > 0) {
+                    totalTourTime += tourTime;
+                    totalTours++;
                 }
-
-                let data = JSON.parse(bytes.toString());
-                let totalTourTime = 0;
-                let totalTours = data.tours.length;
-
-                data.tours.forEach((tour) => {
-                            const tourTime = this.calculateTourTime(tour);
-                            if (tourTime > 0) {
-                                totalTourTime += tourTime;
-                                totalTours++;
-                            }
-                        });
-
-                if (totalTours === 0) {
-                    __1.Logger.write(logger_1.Prefix.ERROR, "No tours available for user " + userId);
-                    return false;
-                }
-
-                const averageTourTimeInSeconds = totalTourTime / totalTours;
-                const averageTourTimeInHours = averageTourTimeInSeconds / 3600;
-                const roundedAverageTourTimeInHours = +averageTourTimeInHours.toFixed(2);
-
-
-                __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInHours + " hours");
-                return averageTourTimeInHours;
             });
+
+            if (totalTours === 0) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No tours available for user " + userId);
+                return false;
+            }
+
+            const averageTourTimeInSeconds = totalTourTime / totalTours;
+            const averageTourTimeInHours = averageTourTimeInSeconds / 3600;
+            const roundedAverageTourTimeInHours = +averageTourTimeInHours.toFixed(2);
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS, "Average tour time calculated for user " + userId + ": " + averageTourTimeInHours + " hours");
+            return averageTourTimeInHours;
+        });
     }
 
     calculateTourTime(tour) {
@@ -422,7 +457,6 @@ class Contracts extends fabric_contract_api_1.Contract {
             const lat2 = waypoints[i + 1].latitude;
             const distance = haversineDistance(lon1, lat1, lon2, lat2);
 
-
             const emissionPerKm = tour.vehicle.emissionPerKm;
             const CO2ForSegment = distance * emissionPerKm;
 
@@ -434,6 +468,7 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     calculateAverageCO2(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average CO2 for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -466,6 +501,32 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    //returns all trips, not one distance
+    //need userId or TourId to be integrated
+    calculateDistances(tour) {
+        const T_Distances = [];
+        const waypoints = tour.waypoints;
+        for (var i = 0; i < waypoints.length; i++){
+            if (waypoints[i+1] == null) break;
+            const lon1 = waypoints[i].longitude;
+            const lat1 = waypoints[i].latitude;
+            const time1 = waypoints[i].timestamp;
 
+            const lon2 = waypoints[i+1].longitude;
+            const lat2 = waypoints[i+1].latitude;
+            const time2 = waypoints[i+1].timestamp;
+
+            const distance = haversineDistance(lon1, lat1, lon2, lat2);
+
+            console.log(distance);
+            const time = time2 - time1;
+
+            T_Distances.push({ distance: distance, time: time });
+
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Distance for " + tour.tourId + " is:: " + distance);
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Time for " + tour.tourId + " is:: " + time);
+        }
+        return T_Distances;
+    }
 }
 exports.Contracts = Contracts;

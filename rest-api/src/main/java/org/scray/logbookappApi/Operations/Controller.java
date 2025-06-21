@@ -5,6 +5,7 @@ import org.scray.logbookappApi.Objects.Waypoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import org.scray.logbookappApi.Objects.Tour;
@@ -25,7 +26,7 @@ public class Controller {
             "c1",
             "basic",
             "alice",
-            "C:\\Users\\Özgür\\Projekte\\logbook-app\\rest-api\\wallet");
+            "C:\\Users\\Özgür\\IdeaProjects\\logbook1-app\\rest-api\\wallet");
 
     // ------------------------------------ POST METHODS ------------------------------------ //
     //UpdateTour
@@ -43,8 +44,22 @@ public class Controller {
             Tour updatedTour = blockchainOperations.updateTourInternationaleFahrten(userid, tourid, internationaleFahrten);
             response = ResponseEntity.ok(updatedTour);
         } catch (Exception e) {
-            response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            logger.error("Error updating tour: " + errorMessage);
+
+            if (errorMessage != null && errorMessage.contains("not authorized")) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "AUTHORIZATION_ERROR");
+                errorResponse.put("message", errorMessage);
+                errorResponse.put("type", "USER_NOT_AUTHORIZED");
+                response = ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+            } else {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "UPDATE_ERROR");
+                errorResponse.put("message", errorMessage != null ? errorMessage : "Unbekannter Fehler");
+                errorResponse.put("type", "GENERAL_ERROR");
+                response = ResponseEntity.badRequest().body(errorResponse);
+            }
         }
 
         logger.debug("Response: " + response.getBody());
@@ -60,8 +75,19 @@ public class Controller {
         try {
             response = ResponseEntity.ok(blockchainOperations.writeTour(userid, obj_tour.getVehiceId(), obj_tour));
         } catch (Exception e) {
-            response = ResponseEntity.badRequest().body("Error: " + e.getMessage());
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            logger.error("Error creating tour: " + errorMessage);
+
+            // Prüfe auf Autorisierungsfehler
+            if (errorMessage != null && errorMessage.contains("not authorized")) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "AUTHORIZATION_ERROR");
+                errorResponse.put("message", errorMessage);
+                errorResponse.put("type", "USER_NOT_AUTHORIZED");
+                response = ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+            } else {
+                response = ResponseEntity.badRequest().body("Error: " + errorMessage);
+            }
         }
         logger.debug("Response: " + response.getBody());
         return response;
@@ -81,24 +107,30 @@ public class Controller {
             String errorMessage = e.getMessage();
             logger.error("Error updating tour: " + errorMessage);
 
+            Map<String, String> errorResponse = new HashMap<>();
+
+            // Prüfe auf Autorisierungsfehler
+            if (errorMessage != null && errorMessage.contains("not authorized")) {
+                errorResponse.put("error", "AUTHORIZATION_ERROR");
+                errorResponse.put("message", errorMessage);
+                errorResponse.put("type", "USER_NOT_AUTHORIZED");
+                response = ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+            }
             // Prüfe ob es ein Validierungsfehler ist
-            if (errorMessage != null && (
+            else if (errorMessage != null && (
                     errorMessage.contains("außerhalb Deutschlands") ||
                             errorMessage.contains("außerhalb der EU") ||
                             errorMessage.contains("außerhalb EU/Schweiz") ||
                             errorMessage.contains("in der Schweiz"))) {
-
-                // Validierungsfehler - 400 Bad Request
-                Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", "VALIDATION_ERROR");
                 errorResponse.put("message", errorMessage);
                 errorResponse.put("type", "LOCATION_NOT_ALLOWED");
                 response = ResponseEntity.badRequest().body(errorResponse);
             } else {
-                // Andere Fehler - 500 Internal Server Error
-                Map<String, String> errorResponse = new HashMap<>();
+                // Andere Fehler
                 errorResponse.put("error", "INTERNAL_ERROR");
                 errorResponse.put("message", errorMessage != null ? errorMessage : "Unbekannter Fehler");
+                errorResponse.put("type", "GENERAL_ERROR");
                 response = ResponseEntity.status(500).body(errorResponse);
             }
         }
@@ -201,7 +233,4 @@ public class Controller {
         logger.debug("Response: " + response.getBody());
         return response;
     }
-
-
-
 }
