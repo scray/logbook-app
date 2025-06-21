@@ -23,6 +23,94 @@ class Contracts extends fabric_contract_api_1.Contract {
         __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
 
+    // ==================== GEOGRAFISCHE VALIDIERUNG ==================== //
+
+    /**
+     * Prüft ob Koordinaten in Deutschland liegen
+     */
+    static isInGermany(latitude, longitude) {
+        // Deutschland ungefähre Grenzen
+        const minLat = 47.3;   // Südgrenze (Bodensee)
+        const maxLat = 55.0;   // Nordgrenze (Dänemark)
+        const minLon = 5.9;    // Westgrenze (Niederlande)
+        const maxLon = 15.0;   // Ostgrenze (Polen)
+
+        return latitude >= minLat && latitude <= maxLat &&
+            longitude >= minLon && longitude <= maxLon;
+    }
+
+    /**
+     * Prüft ob Koordinaten in Europa liegen
+     */
+    static isInEurope(latitude, longitude) {
+        // Rough geographic boundaries of Europe
+        const minLat = 34.0;   // Southern Europe (e.g. Crete, Greece)
+        const maxLat = 72.0;   // Northern Europe (e.g. northern Norway)
+        const minLon = -25.0;  // Western edge (e.g. Azores)
+        const maxLon = 45.0;   // Eastern edge (e.g. Ural mountains)
+
+        return latitude >= minLat && latitude <= maxLat &&
+            longitude >= minLon && longitude <= maxLon;
+    }
+
+    /**
+     * Prüft ob Koordinaten in der Schweiz liegen
+     */
+    static isInSwitzerland(latitude, longitude) {
+        // Schweiz ungefähre Grenzen
+        const minLat = 45.8;   // Südgrenze
+        const maxLat = 47.8;   // Nordgrenze
+        const minLon = 5.9;    // Westgrenze
+        const maxLon = 10.5;   // Ostgrenze
+
+        return latitude >= minLat && latitude <= maxLat &&
+            longitude >= minLon && longitude <= maxLon;
+    }
+
+
+     // Validiert Waypoint basierend auf Tour-Einstellungen
+
+    static validateWaypointLocation(waypoint, internationaleFahrten) {
+        const latitude = waypoint.latitude;
+        const longitude = waypoint.longitude;
+
+        __1.Logger.write(logger_1.Prefix.NORMAL,
+            `Validating waypoint: lat=${latitude}, lon=${longitude}, intl=${JSON.stringify(internationaleFahrten)}`);
+
+        // Default: nur Inland erlaubt
+        if (!internationaleFahrten || Object.keys(internationaleFahrten).length === 0) {
+            internationaleFahrten = { inland: true, eu: false, eu_ch: false };
+        }
+
+        // Prüflogik basierend auf internationaleFahrten
+        if (internationaleFahrten.inland && !internationaleFahrten.eu && !internationaleFahrten.eu_ch) {
+            // Nur Inland erlaubt
+            if (!Contracts.isInGermany(latitude, longitude)) {
+                __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb Deutschlands');
+                throw new Error('Waypoint außerhalb Deutschlands. Diese Tour erlaubt nur Inlandsfahrten.');
+            }
+        } else if (internationaleFahrten.eu && !internationaleFahrten.eu_ch) {
+            // EU erlaubt (aber nicht Schweiz)
+            if (!Contracts.isInEurope(latitude, longitude)) {
+                __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb der EU');
+                throw new Error('Waypoint außerhalb der EU. Diese Tour erlaubt nur EU-Fahrten.');
+            }
+            // Zusätzlich prüfen dass es nicht in der Schweiz ist
+            if (Contracts.isInSwitzerland(latitude, longitude)) {
+                __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint in der Schweiz, aber nur EU erlaubt');
+                throw new Error('Waypoint in der Schweiz. Diese Tour erlaubt nur EU-Fahrten (ohne Schweiz).');
+            }
+        } else if (internationaleFahrten.eu_ch) {
+            // EU + Schweiz erlaubt
+            if (!Contracts.isInEurope(latitude, longitude) && !Contracts.isInSwitzerland(latitude, longitude)) {
+                __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb EU/Schweiz');
+                throw new Error('Waypoint außerhalb EU/Schweiz. Diese Tour erlaubt nur Fahrten in EU und Schweiz.');
+            }
+        }
+
+        __1.Logger.write(logger_1.Prefix.SUCCESS, 'Waypoint location validated successfully');
+        return true;
+    }
 
     createTour(context, userId, vehicleId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -128,16 +216,37 @@ class Contracts extends fabric_contract_api_1.Contract {
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to add Waypoint");
             let bytes = yield context.stub.getState(userId);
             if (bytes.length < 1) {
-                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id" + userId);
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
                 return false;
             }
             let data = JSON.parse(bytes.toString());
             let found = data.tours.find(element => element.tourId == tourId);
             if (!found) {
-                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id" + tourId);
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId);
                 return false;
             }
+
+            // Parse waypoint data
             let waypoint_data = JSON.parse(waypoint);
+
+            try {
+                // Hole internationale Fahrten Einstellungen der Tour
+                const internationaleFahrten = found.internationaleFahrten || {
+                    inland: true,
+                    eu: false,
+                    eu_ch: false
+                };
+
+                // Validiere Waypoint Location
+                Contracts.validateWaypointLocation(waypoint_data, internationaleFahrten);
+
+            } catch (validationError) {
+                __1.Logger.write(logger_1.Prefix.ERROR,
+                    "Waypoint validation failed: " + validationError.message);
+                // Werfe den Fehler weiter, damit er an den Client zurückgegeben wird
+                throw validationError;
+            }
+            // Waypoint hinzufügen wenn Validierung erfolgreich
             found.waypoints.push(waypoint_data);
             context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
             __1.Logger.write(logger_1.Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");

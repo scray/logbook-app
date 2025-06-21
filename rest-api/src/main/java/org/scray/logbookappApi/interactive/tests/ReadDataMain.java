@@ -31,15 +31,15 @@ public class ReadDataMain {
 
 			Transport transport = new Transport("Car", 0.2, 50, "petrol", 1000.0);
 
-			//Tour newTour = new Tour("alice", Arrays.asList(waypoint1, waypoint2, waypoint3), "28", transport,true);
+			Tour newTour = new Tour("alice", Arrays.asList(waypoint1, waypoint2, waypoint3), "28", transport,true);
 			Map<String, Boolean> internationaleFahrten = new HashMap<>();
 			internationaleFahrten.put("eu", false);
 			internationaleFahrten.put("eu_ch", false);
 			internationaleFahrten.put("inland", false);
-			//newTour.setInternationaleFahrten(internationaleFahrten);
+			newTour.setInternationaleFahrten(internationaleFahrten);
 
-			//System.out.println("12345"+newTour.getInternationaleFahrten());
-			//blockchainOperations.writeTour("alice", "v42",  newTour);
+			System.out.println("12345"+newTour.getInternationaleFahrten());
+			blockchainOperations.writeTour("alice", "v42",  newTour);
 			blockchainOperations.readTours("alice");
 			System.out.println("New tour created successfully!");
 

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.scray.logbookappApi.Objects.Tour;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -68,17 +69,38 @@ public class Controller {
 
     // ------------------------------------ PUT METHODS ------------------------------------ //
 
-    //do we really need to add a vehicle here?
     @PutMapping("/tours/{userid}/{tourid}")
     @ResponseBody
     public ResponseEntity<Object> update_tour(@PathVariable String userid, @PathVariable String tourid, @RequestBody Waypoint obj_wp) {
         logger.debug("Request: PUT /tours/" + userid + "/" + tourid + " " + gson.toJson(obj_wp));
         ResponseEntity<Object> response;
         try {
-            response = ResponseEntity.ok(blockchainOperations.updateTour(userid, tourid, obj_wp));
+            Waypoint result = blockchainOperations.updateTour(userid, tourid, obj_wp);
+            response = ResponseEntity.ok(result);
         } catch (Exception e) {
-            response = ResponseEntity.badRequest().body(e.getMessage());
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            logger.error("Error updating tour: " + errorMessage);
+
+            // Prüfe ob es ein Validierungsfehler ist
+            if (errorMessage != null && (
+                    errorMessage.contains("außerhalb Deutschlands") ||
+                            errorMessage.contains("außerhalb der EU") ||
+                            errorMessage.contains("außerhalb EU/Schweiz") ||
+                            errorMessage.contains("in der Schweiz"))) {
+
+                // Validierungsfehler - 400 Bad Request
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "VALIDATION_ERROR");
+                errorResponse.put("message", errorMessage);
+                errorResponse.put("type", "LOCATION_NOT_ALLOWED");
+                response = ResponseEntity.badRequest().body(errorResponse);
+            } else {
+                // Andere Fehler - 500 Internal Server Error
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "INTERNAL_ERROR");
+                errorResponse.put("message", errorMessage != null ? errorMessage : "Unbekannter Fehler");
+                response = ResponseEntity.status(500).body(errorResponse);
+            }
         }
         logger.debug("Response: " + response.getBody());
         return response;

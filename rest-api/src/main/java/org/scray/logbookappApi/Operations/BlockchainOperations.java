@@ -270,30 +270,43 @@ public class BlockchainOperations {
 		}
 	}
 
-
 	public Waypoint updateTour(String userid, String tourid, Waypoint wp) throws Exception {
-			return updateTour(userid, tourid, gson.toJson(wp));
-		}
-
-		private Waypoint updateTour(String userid, String tourid, String wp) throws Exception {
+		return updateTour(userid, tourid, gson.toJson(wp));
+	}
+	private Waypoint updateTour(String userid, String tourid, String wp) throws Exception {
 		if (gateway == null) {
 			gateway = connect();
 		}
 		Network network = gateway.getNetwork(channel);
 		Contract contract = network.getContract(smartContract);
+
+		// Submit transaction
 		String data = new String(contract.submitTransaction("addWaypoint", userid, tourid, wp));
-		data = data.substring(data.length());
+
+		// Bereinige escaped quotes
 		while (data.contains("\\\"")) {
 			data = data.replace("\\\"", "\"");
 		}
+
+		logger.info("Response from addWaypoint: " + data);
+
+		// Prüfe auf Fehler
 		if (data.equalsIgnoreCase("false")) {
 			throw new Exception("Waypoint could not be added.");
 		}
+
+		// Parse die Antwort
 		try {
 			return gson.fromJson(data, Waypoint.class);
 		} catch (Exception e) {
-			logger.error("Unable to parse waypint {} Exception: {}", data, e);
-			return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
+			logger.error("Unable to parse waypoint {} Exception: {}", data, e);
+
+			// Versuche nochmal mit bereinigtem String
+			if (data.startsWith("\"") && data.endsWith("\"")) {
+				return gson.fromJson(data.substring(1, data.length() - 1), Waypoint.class);
+			}
+
+			throw e;
 		}
 	}
 
