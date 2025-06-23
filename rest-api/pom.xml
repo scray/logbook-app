@@ -35,6 +35,20 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- AWS SDK für S3 -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.565</version>
+		</dependency>
+
+		<!-- Commons IO für File Operations -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
 		<!-- DEPENDENCY FOR import org.json.JSONObject >>> -->
 		<dependency>
 			<groupId>org.json</groupId>

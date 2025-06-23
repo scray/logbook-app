@@ -23,11 +23,6 @@ class Contracts extends fabric_contract_api_1.Contract {
         __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
 
-    // ==================== BENUTZER-AUTORISIERUNG ==================== //
-
-    /**
-     * Prüft ob der aktuelle Benutzer autorisiert ist, Änderungen vorzunehmen
-     */
     static checkWriteAuthorization(context, operation) {
         const clientIdentity = context.clientIdentity;
         const crtUserId = clientIdentity.getID();
@@ -36,7 +31,6 @@ class Contracts extends fabric_contract_api_1.Contract {
         const authorizedUsers = [
             'x509::/CN=alice/OU=admin::/C=DE/ST=Baden/L=Bretten/O=peer801.hso.dlt.s-node.de/CN=ca.peer801.hso.dlt.s-node.de'
         ];
-
 
         if (!authorizedUsers.includes(crtUserId)) {
             __1.Logger.write(logger_1.Prefix.ERROR, `User ${crtUserId} is not authorized for ${operation}`);
@@ -47,62 +41,41 @@ class Contracts extends fabric_contract_api_1.Contract {
         return true;
     }
 
-    /**
-     * Extrahiert den Benutzernamen aus der Client-Identität
-     */
     static extractUsername(clientId) {
-        // Extrahiere CN (Common Name) aus der X.509 Identität
         const match = clientId.match(/CN=([^/]+)/);
         return match ? match[1] : 'unknown';
     }
 
-    // ==================== GEOGRAFISCHE VALIDIERUNG ==================== //
-
-    /**
-     * Prüft ob Koordinaten in Deutschland liegen
-     */
     static isInGermany(latitude, longitude) {
-        // Deutschland ungefähre Grenzen
-        const minLat = 47.3;   // Südgrenze (Bodensee)
-        const maxLat = 55.0;   // Nordgrenze (Dänemark)
-        const minLon = 5.9;    // Westgrenze (Niederlande)
-        const maxLon = 15.0;   // Ostgrenze (Polen)
+        const minLat = 47.3;
+        const maxLat = 55.0;
+        const minLon = 5.9;
+        const maxLon = 15.0;
 
         return latitude >= minLat && latitude <= maxLat &&
             longitude >= minLon && longitude <= maxLon;
     }
 
-    /**
-     * Prüft ob Koordinaten in Europa liegen
-     */
     static isInEurope(latitude, longitude) {
-        // Rough geographic boundaries of Europe
-        const minLat = 34.0;   // Southern Europe (e.g. Crete, Greece)
-        const maxLat = 72.0;   // Northern Europe (e.g. northern Norway)
-        const minLon = -25.0;  // Western edge (e.g. Azores)
-        const maxLon = 45.0;   // Eastern edge (e.g. Ural mountains)
+        const minLat = 34.0;
+        const maxLat = 72.0;
+        const minLon = -25.0;
+        const maxLon = 45.0;
 
         return latitude >= minLat && latitude <= maxLat &&
             longitude >= minLon && longitude <= maxLon;
     }
 
-    /**
-     * Prüft ob Koordinaten in der Schweiz liegen
-     */
     static isInSwitzerland(latitude, longitude) {
-        // Schweiz ungefähre Grenzen
-        const minLat = 45.8;   // Südgrenze
-        const maxLat = 47.8;   // Nordgrenze
-        const minLon = 5.9;    // Westgrenze
-        const maxLon = 10.5;   // Ostgrenze
+        const minLat = 45.8;
+        const maxLat = 47.8;
+        const minLon = 5.9;
+        const maxLon = 10.5;
 
         return latitude >= minLat && latitude <= maxLat &&
             longitude >= minLon && longitude <= maxLon;
     }
 
-    /**
-     * Validiert Waypoint basierend auf Tour-Einstellungen
-     */
     static validateWaypointLocation(waypoint, internationaleFahrten) {
         const latitude = waypoint.latitude;
         const longitude = waypoint.longitude;
@@ -110,31 +83,25 @@ class Contracts extends fabric_contract_api_1.Contract {
         __1.Logger.write(logger_1.Prefix.NORMAL,
             `Validating waypoint: lat=${latitude}, lon=${longitude}, intl=${JSON.stringify(internationaleFahrten)}`);
 
-        // Default: nur Inland erlaubt
         if (!internationaleFahrten || Object.keys(internationaleFahrten).length === 0) {
             internationaleFahrten = { inland: true, eu: false, eu_ch: false };
         }
 
-        // Prüflogik basierend auf internationaleFahrten
         if (internationaleFahrten.inland && !internationaleFahrten.eu && !internationaleFahrten.eu_ch) {
-            // Nur Inland erlaubt
             if (!Contracts.isInGermany(latitude, longitude)) {
                 __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb Deutschlands');
                 throw new Error('Waypoint außerhalb Deutschlands. Diese Tour erlaubt nur Inlandsfahrten.');
             }
         } else if (internationaleFahrten.eu && !internationaleFahrten.eu_ch) {
-            // EU erlaubt (aber nicht Schweiz)
             if (!Contracts.isInEurope(latitude, longitude)) {
                 __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb der EU');
                 throw new Error('Waypoint außerhalb der EU. Diese Tour erlaubt nur EU-Fahrten.');
             }
-            // Zusätzlich prüfen dass es nicht in der Schweiz ist
             if (Contracts.isInSwitzerland(latitude, longitude)) {
                 __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint in der Schweiz, aber nur EU erlaubt');
                 throw new Error('Waypoint in der Schweiz. Diese Tour erlaubt nur EU-Fahrten (ohne Schweiz).');
             }
         } else if (internationaleFahrten.eu_ch) {
-            // EU + Schweiz erlaubt
             if (!Contracts.isInEurope(latitude, longitude) && !Contracts.isInSwitzerland(latitude, longitude)) {
                 __1.Logger.write(logger_1.Prefix.ERROR, 'Waypoint außerhalb EU/Schweiz');
                 throw new Error('Waypoint außerhalb EU/Schweiz. Diese Tour erlaubt nur Fahrten in EU und Schweiz.');
@@ -145,14 +112,280 @@ class Contracts extends fabric_contract_api_1.Contract {
         return true;
     }
 
-    // ==================== CONTRACT METHODEN ==================== //
+    // Phase 1 des Zwei-Phasen-Commits: Bereitet Upload vor und prüft Autorisierung
+    prepareDocument(context, userId, tourId, documentJson) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkWriteAuthorization(context, 'prepare document upload');
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                "Preparing document upload for tour " + tourId);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId);
+                return false;
+            }
+
+            let document = JSON.parse(documentJson);
+            document.status = "PENDING";
+            document.preparedAt = Date.now();
+            document.expiresAt = Date.now() + (5 * 60 * 1000); // 5 Minuten Timeout
+
+            if (!found.documents) {
+                found.documents = [];
+            }
+
+            const existingIndex = found.documents.findIndex(doc => doc.fileName === document.fileName);
+            if (existingIndex >= 0) {
+                document.version = (found.documents[existingIndex].version || 1) + 1;
+                found.documents[existingIndex] = document;
+            } else {
+                document.version = 1;
+                found.documents.push(document);
+            }
+
+            yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS,
+                "Document upload prepared for " + document.fileName);
+
+            return JSON.stringify(document);
+        });
+    }
+
+    // Phase 3 des Zwei-Phasen-Commits: Finalisiert Upload mit S3 Key
+    commitDocument(context, userId, tourId, fileName, s3Key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkWriteAuthorization(context, 'commit document upload');
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                "Committing document " + fileName + " with S3 key " + s3Key);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found || !found.documents) {
+                return false;
+            }
+
+            let document = found.documents.find(doc => doc.fileName === fileName);
+            if (!document) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "Document not found: " + fileName);
+                return false;
+            }
+
+            if (document.status !== "PENDING") {
+                __1.Logger.write(logger_1.Prefix.ERROR,
+                    "Document not in PENDING state: " + document.status);
+                return false;
+            }
+
+            // Timeout-Prüfung
+            if (Date.now() > document.expiresAt) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "Document preparation expired");
+                document.status = "EXPIRED";
+                yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+                return false;
+            }
+
+            document.s3Key = s3Key;
+            document.status = "ACTIVE";
+            document.committedAt = Date.now();
+            delete document.preparedAt;
+            delete document.expiresAt;
+
+            yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS,
+                "Document " + fileName + " committed successfully");
+
+            return JSON.stringify(document);
+        });
+    }
+
+    // Rollback bei Fehler: Bricht Upload ab
+    abortDocument(context, userId, tourId, fileName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkWriteAuthorization(context, 'abort document upload');
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                "Aborting document upload for " + fileName);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found || !found.documents) {
+                return false;
+            }
+
+            let documentIndex = found.documents.findIndex(doc => doc.fileName === fileName);
+            if (documentIndex < 0) {
+                return false;
+            }
+
+            let document = found.documents[documentIndex];
+
+            if (document.status === "PENDING") {
+                if (document.version === 1) {
+                    found.documents.splice(documentIndex, 1);
+                } else {
+                    document.status = "ABORTED";
+                    document.abortedAt = Date.now();
+                }
+
+                yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+                __1.Logger.write(logger_1.Prefix.SUCCESS,
+                    "Document upload aborted for " + fileName);
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    addDocument(context, userId, tourId, documentJson) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkWriteAuthorization(context, 'add document');
+
+            __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to add document to tour " + tourId);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId);
+                return false;
+            }
+
+            let document = JSON.parse(documentJson);
+
+            if (!found.documents) {
+                found.documents = [];
+            }
+
+            const existingDoc = found.documents.find(doc => doc.fileName === document.fileName);
+            if (existingDoc) {
+                __1.Logger.write(logger_1.Prefix.WARNING, "Document with same filename already exists, updating");
+                Object.assign(existingDoc, document);
+            } else {
+                found.documents.push(document);
+            }
+
+            yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS,
+                "Document " + document.fileName + " added to tour " + tourId);
+
+            return JSON.stringify(document);
+        });
+    }
+
+    updateDocument(context, userId, tourId, fileName, updatedDocumentJson) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkWriteAuthorization(context, 'update document');
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                "Trying to update document " + fileName + " in tour " + tourId);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length < 1) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such user with id " + userId);
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId);
+                return false;
+            }
+
+            if (!found.documents) {
+                found.documents = [];
+            }
+
+            let updatedDocument = JSON.parse(updatedDocumentJson);
+
+            const documentIndex = found.documents.findIndex(doc => doc.fileName === fileName);
+
+            if (documentIndex === -1) {
+                __1.Logger.write(logger_1.Prefix.ERROR,
+                    "Document " + fileName + " not found in tour " + tourId);
+                return false;
+            }
+
+            if (!updatedDocument.uploadDate) {
+                updatedDocument.uploadDate = found.documents[documentIndex].uploadDate;
+            }
+
+            updatedDocument.fileName = fileName;
+            found.documents[documentIndex] = updatedDocument;
+
+            yield context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS,
+                "Document " + fileName + " updated in tour " + tourId);
+
+            return JSON.stringify(updatedDocument);
+        });
+    }
+
+    getDocuments(context, userId, tourId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const clientIdentity = context.clientIdentity;
+            const crtUserId = clientIdentity.getID();
+            const username = Contracts.extractUsername(crtUserId);
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                `User ${username} reading documents for tour ${tourId}`);
+
+            let bytes = yield context.stub.getState(userId);
+            if (bytes.length <= 0) {
+                __1.Logger.write(logger_1.Prefix.ERROR,
+                    "The required entry with id " + userId + " is not available.");
+                return false;
+            }
+
+            let data = JSON.parse(bytes.toString());
+            let found = data.tours.find(element => element.tourId == tourId);
+            if (!found) {
+                __1.Logger.write(logger_1.Prefix.ERROR, "No such tour with id " + tourId);
+                return false;
+            }
+
+            const documents = found.documents || [];
+
+            __1.Logger.write(logger_1.Prefix.SUCCESS,
+                "Documents for tour " + tourId + " retrieved successfully");
+
+            return JSON.stringify(documents);
+        });
+    }
 
     createTour(context, userId, vehicleId, tour) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Autorisierung prüfen
             Contracts.checkWriteAuthorization(context, 'create tour');
 
-            /* Creating a tour with the given userId and tourId to fill it with waypoints.  */
             let data;
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to create a tour for user id " + userId + ".");
             let bytes = yield context.stub.getState(userId);
@@ -181,7 +414,6 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     updateTour(context, userId, tourId, updatedTourJson) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Autorisierung prüfen
             Contracts.checkWriteAuthorization(context, 'update tour');
 
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to update tour " + tourId + " for user " + userId);
@@ -223,10 +455,8 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     addWaypoint(context, userId, tourId, waypoint) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Autorisierung prüfen
             Contracts.checkWriteAuthorization(context, 'add waypoint');
 
-            /* Adding a waypoint to the given tourId from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, "Trying to add Waypoint");
             let bytes = yield context.stub.getState(userId);
             if (bytes.length < 1) {
@@ -240,27 +470,23 @@ class Contracts extends fabric_contract_api_1.Contract {
                 return false;
             }
 
-            // Parse waypoint data
             let waypoint_data = JSON.parse(waypoint);
 
             try {
-                // Hole internationale Fahrten Einstellungen der Tour
                 const internationaleFahrten = found.internationaleFahrten || {
                     inland: true,
                     eu: false,
                     eu_ch: false
                 };
 
-                // Validiere Waypoint Location
                 Contracts.validateWaypointLocation(waypoint_data, internationaleFahrten);
 
             } catch (validationError) {
                 __1.Logger.write(logger_1.Prefix.ERROR,
                     "Waypoint validation failed: " + validationError.message);
-                // Werfe den Fehler weiter, damit er an den Client zurückgegeben wird
                 throw validationError;
             }
-            // Waypoint hinzufügen wenn Validierung erfolgreich
+
             found.waypoints.push(waypoint_data);
             context.stub.putState(userId, Buffer.from(JSON.stringify(data)));
             __1.Logger.write(logger_1.Prefix.NORMAL, "The waypoint " + waypoint + " for tour " + tourId + " for user " + userId + " has been generated.");
@@ -269,17 +495,13 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
-    // READ-ONLY METHODEN (keine Autorisierung nötig)
-
     getTour(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             const clientIdentity = context.clientIdentity;
             const crtUserId = clientIdentity.getID();
             const username = Contracts.extractUsername(crtUserId);
             __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tour ${tourId}`);
 
-            /* Request the tour with the given tourId from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, " Request the tour with the given tourId from the given user with " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
             let bytes = yield context.stub.getState(userId);
@@ -298,13 +520,11 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             const clientIdentity = context.clientIdentity;
             const crtUserId = clientIdentity.getID();
             const username = Contracts.extractUsername(crtUserId);
             __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tours for ${userId}`);
 
-            /* Request all tours from the given user with userId */
             __1.Logger.write(logger_1.Prefix.NORMAL, " Test message of user: " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
             let bytes = yield context.stub.getState(userId);
@@ -320,7 +540,6 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     createTransport(context, transport) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Autorisierung prüfen
             Contracts.checkWriteAuthorization(context, 'create transport');
 
             let data;
@@ -342,7 +561,6 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     getTransport(context, transportId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, " Requesting transport with ID " + transportId + " from the blockchain.");
             let bytes = yield context.stub.getState(transportId);
             if (bytes.length <= 0) {
@@ -355,11 +573,8 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
-    // CALCULATION METHODEN (Read-Only)
-
     calculateTotalDistance(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -398,7 +613,6 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     calculateAverageTourTime(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -468,7 +682,6 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     calculateAverageCO2(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Keine Autorisierung nötig - alle dürfen lesen
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average CO2 for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -501,8 +714,6 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
-    //returns all trips, not one distance
-    //need userId or TourId to be integrated
     calculateDistances(tour) {
         const T_Distances = [];
         const waypoints = tour.waypoints;

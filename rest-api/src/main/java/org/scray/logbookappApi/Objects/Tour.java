@@ -1,8 +1,7 @@
-// KOMPLETTE Tour.java - Entferne den @JsonAdapter KOMPLETT:
-
 package org.scray.logbookappApi.Objects;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -13,13 +12,13 @@ public class Tour {
 	private String vehiceId = "vehice1";
 	private long startTime;
 	private long endTime;
-
-	// ENTFERNE DEN @JsonAdapter KOMPLETT!
 	private Map<String, Boolean> internationaleFahrten;
+	private List<Document> documents;
 
 	public Tour() {
 		super();
 		this.internationaleFahrten = createDefaultInternationaleFahrtenMap();
+		this.documents = new ArrayList<>();
 	}
 
 	public Tour(String userId, String tourId, List<Waypoint> waypoints) {
@@ -28,6 +27,7 @@ public class Tour {
 		this.waypoints = waypoints;
 		this.tourId = tourId;
 		this.internationaleFahrten = createDefaultInternationaleFahrtenMap();
+		this.documents = new ArrayList<>();
 
 		this.startTime = waypoints.stream()
 				.mapToLong(Waypoint::getTimestamp)
@@ -45,6 +45,7 @@ public class Tour {
 		this.waypoints = waypoints;
 		this.tourId = tourId;
 		this.internationaleFahrten = createDefaultInternationaleFahrtenMap();
+		this.documents = new ArrayList<>();
 	}
 
 	public Tour(String userId, List<Waypoint> waypoints, String tourId, Transport transport, boolean internationaleFahrten) {
@@ -53,9 +54,10 @@ public class Tour {
 		this.tourId = tourId;
 		// Migration: boolean zu Map
 		this.internationaleFahrten = createInternationaleFahrtenMap(internationaleFahrten);
+		this.documents = new ArrayList<>();
 	}
 
-	// Getter und Setter
+
 	public String getVehiceId() {
 		return vehiceId;
 	}
@@ -131,6 +133,25 @@ public class Tour {
 		this.internationaleFahrten = createInternationaleFahrtenMap(internationaleFahrten);
 	}
 
+
+	public List<Document> getDocuments() {
+		if (documents == null) {
+			documents = new ArrayList<>();
+		}
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public void addDocument(Document document) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(document);
+	}
+
 	public void ensureInternationaleFahrtenInitialized() {
 		if (internationaleFahrten == null) {
 			internationaleFahrten = new HashMap<>();
@@ -142,7 +163,8 @@ public class Tour {
 
 	@Override
 	public String toString() {
-		return "Tour [userId=" + userId + ", waypoints=" + waypoints + ", tourId=" + tourId + ", internationaleFahrten=" + internationaleFahrten + "]";
+		return "Tour [userId=" + userId + ", waypoints=" + waypoints + ", tourId=" + tourId
+				+ ", internationaleFahrten=" + internationaleFahrten + ", documents=" + documents + "]";
 	}
 
 	private Map<String, Boolean> createInternationaleFahrtenMap(boolean isInternational) {
@@ -161,5 +183,5 @@ public class Tour {
 		return map;
 	}
 
-	// ENTFERNE ALLE Custom Deserializer/Serializer Klassen komplett!
+
 }
