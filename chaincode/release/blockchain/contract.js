@@ -17,33 +17,129 @@ const asset_1 = require("./asset");
 const vehicle_1 = require("./vehicle")
 
 const haversineDistance = require("../../libs/cf-calculator/cf-calculation.js");
+
 class Contracts extends fabric_contract_api_1.Contract {
     constructor() {
         super("ContractsContract");
         __1.Logger.write(logger_1.Prefix.WARNING, "Contract has been started.");
     }
 
+    /**
+     * Prüft, ob der Benutzer ein Admin ist basierend auf dem Zertifikat
+     */
+    static isAdmin(clientIdentity) {
+        try {
+
+            const ou = clientIdentity.getAttributeValue('ou');
+            const mspId = clientIdentity.getMSPID();
+            const clientId = clientIdentity.getID();
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                `Checking admin status - OU: ${ou}, MSP: ${mspId}, ID: ${clientId}`);
+
+            if (ou && ou.toLowerCase() === 'admin') {
+                return true;
+            }
+
+            const ouMatch = clientId.match(/OU=([^/:]+)/);
+            if (ouMatch && ouMatch[1].toLowerCase() === 'admin') {
+                return true;
+            }
+
+            if (mspId && mspId.includes('Admin')) {
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            __1.Logger.write(logger_1.Prefix.ERROR,
+                `Error checking admin status: ${error.message}`);
+            return false;
+        }
+    }
+
+    /**
+     * Prüft die Autorisierung für Schreiboperationen
+     */
     static checkWriteAuthorization(context, operation) {
         const clientIdentity = context.clientIdentity;
-        const crtUserId = clientIdentity.getID();
-        __1.Logger.write(logger_1.Prefix.NORMAL, `User ${crtUserId} attempting ${operation}`);
+        const clientId = clientIdentity.getID();
+        const username = Contracts.extractUsername(clientId);
 
-        const authorizedUsers = [
-            'x509::/CN=alice/OU=admin::/C=DE/ST=Baden/L=Bretten/O=peer801.hso.dlt.s-node.de/CN=ca.peer801.hso.dlt.s-node.de'
-        ];
+        __1.Logger.write(logger_1.Prefix.NORMAL,
+            `User ${username} attempting ${operation}`);
 
-        if (!authorizedUsers.includes(crtUserId)) {
-            __1.Logger.write(logger_1.Prefix.ERROR, `User ${crtUserId} is not authorized for ${operation}`);
-            throw new Error(`User is not authorized to ${operation}. Only Alice can modify tours.`);
+        if (!Contracts.isAdmin(clientIdentity)) {
+            __1.Logger.write(logger_1.Prefix.ERROR,
+                `User ${username} is not authorized for ${operation} - admin role required`);
+            throw new Error(`User ${username} is not authorized to ${operation}. Admin role required.`);
         }
 
-        __1.Logger.write(logger_1.Prefix.SUCCESS, `User ${crtUserId} authorized for ${operation}`);
+        __1.Logger.write(logger_1.Prefix.SUCCESS,
+            `User ${username} (admin) authorized for ${operation}`);
         return true;
     }
 
+    /**
+     * Prüft die Autorisierung für Leseoperationen
+     * Alle authentifizierten Benutzer dürfen lesen
+     */
+    static checkReadAuthorization(context, operation) {
+        const clientIdentity = context.clientIdentity;
+        const clientId = clientIdentity.getID();
+        const username = Contracts.extractUsername(clientId);
+
+        __1.Logger.write(logger_1.Prefix.NORMAL,
+            `User ${username} attempting ${operation}`);
+
+        // Alle authentifizierten Benutzer dürfen lesen
+        // Die Authentifizierung erfolgt bereits durch Fabric
+        __1.Logger.write(logger_1.Prefix.SUCCESS,
+            `User ${username} authorized for ${operation}`);
+
+        return true;
+    }
+
+    /**
+     * Extrahiert den Benutzernamen aus der Client ID
+     */
     static extractUsername(clientId) {
         const match = clientId.match(/CN=([^/]+)/);
         return match ? match[1] : 'unknown';
+    }
+
+    /**
+     * Nützlich für Debugging und Audit
+     */
+    getUserInfo(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const clientIdentity = context.clientIdentity;
+
+            const userInfo = {
+                id: clientIdentity.getID(),
+                mspId: clientIdentity.getMSPID(),
+                username: Contracts.extractUsername(clientIdentity.getID()),
+                isAdmin: Contracts.isAdmin(clientIdentity),
+                attributes: {}
+            };
+
+            try {
+                userInfo.attributes.ou = clientIdentity.getAttributeValue('ou');
+            } catch (e) {
+                // Attribut existiert möglicherweise nicht
+            }
+
+            try {
+                userInfo.attributes.role = clientIdentity.getAttributeValue('role');
+            } catch (e) {
+                // Attribut existiert möglicherweise nicht
+            }
+
+            __1.Logger.write(logger_1.Prefix.NORMAL,
+                `User info requested: ${JSON.stringify(userInfo)}`);
+
+            return JSON.stringify(userInfo);
+        });
     }
 
     static isInGermany(latitude, longitude) {
@@ -351,13 +447,10 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    // Leseoperationen - nur Autorisierung für Lesen erforderlich
     getDocuments(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clientIdentity = context.clientIdentity;
-            const crtUserId = clientIdentity.getID();
-            const username = Contracts.extractUsername(crtUserId);
-            __1.Logger.write(logger_1.Prefix.NORMAL,
-                `User ${username} reading documents for tour ${tourId}`);
+            Contracts.checkReadAuthorization(context, 'read documents');
 
             let bytes = yield context.stub.getState(userId);
             if (bytes.length <= 0) {
@@ -495,12 +588,10 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    // Leseoperationen
     getTour(context, userId, tourId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clientIdentity = context.clientIdentity;
-            const crtUserId = clientIdentity.getID();
-            const username = Contracts.extractUsername(crtUserId);
-            __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tour ${tourId}`);
+            Contracts.checkReadAuthorization(context, 'read tour');
 
             __1.Logger.write(logger_1.Prefix.NORMAL, " Request the tour with the given tourId from the given user with " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
@@ -520,10 +611,7 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     getTours(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clientIdentity = context.clientIdentity;
-            const crtUserId = clientIdentity.getID();
-            const username = Contracts.extractUsername(crtUserId);
-            __1.Logger.write(logger_1.Prefix.NORMAL, `User ${username} reading tours for ${userId}`);
+            Contracts.checkReadAuthorization(context, 'read tours');
 
             __1.Logger.write(logger_1.Prefix.NORMAL, " Test message of user: " + userId);
             __1.Logger.write(logger_1.Prefix.NORMAL, "Request entry with the id " + userId + " from the blockchain.");
@@ -561,6 +649,8 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     getTransport(context, transportId) {
         return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkReadAuthorization(context, 'read transport');
+
             __1.Logger.write(logger_1.Prefix.NORMAL, " Requesting transport with ID " + transportId + " from the blockchain.");
             let bytes = yield context.stub.getState(transportId);
             if (bytes.length <= 0) {
@@ -573,8 +663,11 @@ class Contracts extends fabric_contract_api_1.Contract {
         });
     }
 
+    // Berechnungsmethoden - nur Leserechte erforderlich
     calculateTotalDistance(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkReadAuthorization(context, 'calculate total distance');
+
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating total distance for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -613,6 +706,8 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     calculateAverageTourTime(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkReadAuthorization(context, 'calculate average tour time');
+
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average tour time for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
@@ -682,6 +777,8 @@ class Contracts extends fabric_contract_api_1.Contract {
 
     calculateAverageCO2(context, userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            Contracts.checkReadAuthorization(context, 'calculate average CO2');
+
             __1.Logger.write(logger_1.Prefix.NORMAL, "Calculating average CO2 for user: " + userId);
 
             let bytes = yield context.stub.getState(userId);
