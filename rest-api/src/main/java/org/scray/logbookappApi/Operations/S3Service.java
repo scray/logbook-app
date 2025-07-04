@@ -31,21 +31,15 @@ public class S3Service {
 
     private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
 
-    // ALTE IONOS Konfiguration (auskommentiert)
-    // private static final String BUCKET_NAME = "logichain-docs";
-    // private static final String ENDPOINT_URL = "https://s3.eu-central-3.ionoscloud.com";
-    // private static final String ACCESS_KEY = "EEAAAAT7hMVqlLZLapl0ThRI5K3otCk_ljLMUPCl1M0gB1XtRAAAAAEB7H2IAAAAAAHsfYjzjo2KoPCYSMw96M5SLGAS";
 
-    // NEUE Minio Konfiguration
+
     private static final String BUCKET_NAME = "logichain-docs"; // Bucket Name - evtl. anpassen!
     private static final String ENDPOINT_URL = "https://de-fra.i3storage.com"; // Falls HTTPS nicht geht, "http://" probieren
     private static final String ACCESS_KEY = "9aypxwt7ifvel18e";
 
-    // Secret Key - entweder aus application.properties oder direkt hier
     @Value("${s3.secret-key:DtFImSGHUVQaNBf6GRdhRNIHL19Hs5dxqbi4sc0yivfBbnRy}")
     private String secretKey;
 
-    // Erlaubte Dateitypen
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "application/pdf",
             "application/vnd.ms-excel",
@@ -69,7 +63,6 @@ public class S3Service {
                 .withPathStyleAccessEnabled(true) // Wichtig für Minio!
                 .build();
 
-        // Test ob Bucket existiert, sonst erstellen
         try {
             if (!s3Client.doesBucketExistV2(BUCKET_NAME)) {
                 logger.info("Creating bucket: " + BUCKET_NAME);
@@ -84,8 +77,7 @@ public class S3Service {
 
         logger.info("Minio Client initialized for bucket: " + BUCKET_NAME);
 
-        // Optional: Connection Test beim Start
-        // testConnection();
+
     }
 
     /**
@@ -133,19 +125,15 @@ public class S3Service {
      * Lädt eine Datei zu S3 hoch
      */
     public String uploadFile(MultipartFile file, String userId, String tourId) throws IOException {
-        // Validierung
         validateFile(file);
 
-        // S3 Key generieren: userId/tourId/timestamp_filename
         String fileName = System.currentTimeMillis() + "_" + sanitizeFileName(file.getOriginalFilename());
         String s3Key = userId + "/" + tourId + "/" + fileName;
 
-        // Metadata setzen
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
 
-        // Hash berechnen
         String hash = calculateSHA256(file.getBytes());
         metadata.addUserMetadata("sha256", hash);
 
@@ -206,24 +194,20 @@ public class S3Service {
      * Validiert die hochgeladene Datei
      */
     private void validateFile(MultipartFile file) {
-        // Größe prüfen
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException("Datei ist zu groß. Maximum: 10MB");
         }
 
-        // Dateityp prüfen
         String contentType = file.getContentType();
         if (!ALLOWED_CONTENT_TYPES.contains(contentType)) {
             throw new IllegalArgumentException("Dateityp nicht erlaubt. Erlaubt sind: PDF, Excel, CSV");
         }
 
-        // Dateiname prüfen
         String fileName = file.getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Dateiname darf nicht leer sein");
         }
 
-        // Extension prüfen
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         if (!Arrays.asList("pdf", "xls", "xlsx", "csv").contains(extension)) {
             throw new IllegalArgumentException("Ungültige Dateierweiterung. Erlaubt: .pdf, .xls, .xlsx, .csv");

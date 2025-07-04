@@ -267,7 +267,7 @@ public class Controller {
 
     // ==================== DELETE METHODS ==================== //
 
-    @DeleteMapping("/tours/{userid}/{tourid}/documents/{filename}")
+   @DeleteMapping("/tours/{userid}/{tourid}/documents/{filename}")
     @ResponseBody
     public ResponseEntity<Object> deleteDocument(
             @PathVariable String userid,
@@ -278,34 +278,39 @@ public class Controller {
         ResponseEntity<Object> response;
 
         try {
-            // Hole aktuelles Dokument
             List<Document> documents = blockchainOperations.getDocuments(userid, tourid);
             Document document = documents.stream()
                     .filter(d -> d.getFileName().equals(filename))
                     .findFirst()
                     .orElseThrow(() -> new Exception("Document not found"));
 
-            // Markiere Dokument als gelöscht (soft delete)
+            String originalS3Key = document.getS3Key();
+
             Document deletedDocument = new Document(
                     document.getFileName(),
                     document.getHash(),
                     document.getUploadDate(),
-                    document.getS3Key() + "_DELETED", // Markierung im S3Key
+                    document.getS3Key() + "_DELETED",
                     document.getFileSize(),
                     document.getContentType()
             );
             deletedDocument.setStatus("DELETED");
             deletedDocument.setLastModified(System.currentTimeMillis() / 1000);
 
-            // Update in Blockchain
             blockchainOperations.updateDocument(userid, tourid, filename, deletedDocument);
 
-            // Optional: S3 Datei behalten für Audit-Trail
-            logger.info("Document marked as deleted (soft delete): " + filename);
+            try {
+                s3Service.deleteFile(originalS3Key);
+                logger.info("Document deleted from S3: " + originalS3Key);
+            } catch (Exception s3Error) {
+                logger.error("Failed to delete file from S3: " + s3Error.getMessage());
+            }
+
+            logger.info("Document marked as deleted and removed from S3: " + filename);
 
             Map<String, String> result = new HashMap<>();
-            result.put("message", "Document marked as deleted successfully");
-            result.put("note", "Document remains in blockchain for audit trail");
+            result.put("message", "Document successfully deleted");
+            result.put("note", "Document marked as deleted in blockchain and removed from S3");
             response = ResponseEntity.ok(result);
 
         } catch (Exception e) {
